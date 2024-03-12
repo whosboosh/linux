@@ -74,10 +74,10 @@
  73 files changed, 2147 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 31b3a25680d0..52ff60af2044 100644
+index 77c3d1a7f116..4b692acd0199 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6829,6 +6829,15 @@
+@@ -6838,6 +6838,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -90,7 +90,7 @@ index 31b3a25680d0..52ff60af2044 100644
 +			2 - unprivileged bpf() syscall access is disabled.
 +			Default value is 2.
 +
- 	unwind_debug	[X86-64]
+ 	unwind_debug	[X86-64,EARLY]
  			Enable unwinder debug output.  This can be
  			useful for debugging certain unwinder error
 diff --git a/Kconfig b/Kconfig
@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index c7ee53f4bf04..a151f77036d7 100644
+index d18fa2a6240d..358f465e4ff5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -250,10 +250,10 @@ index d1f3b56e7afc..eaefd0d7cfff 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index fbc4e60d027c..42df548e212b 100644
+index 39792077f65b..a9fb676fd6df 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1588,6 +1588,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1550,6 +1550,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		cpu_detect(c);
  		get_cpu_vendor(c);
  		get_cpu_cap(c);
@@ -262,7 +262,7 @@ index fbc4e60d027c..42df548e212b 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 84201071dfac..d00c2713281e 100644
+index 46d5a8c520ad..36d4567c980b 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -294,7 +294,7 @@ index 84201071dfac..d00c2713281e 100644
 +	guest = (x86_hyper_type != X86_HYPER_NATIVE || boot_cpu_has(X86_FEATURE_HYPERVISOR));
 +
 +	/* RHEL supports single cpu on guests only */
-+	if (((boot_cpu_data.x86_max_cores * smp_num_siblings) == 1) &&
++	if (((topology_num_threads_per_package() * __max_threads_per_core) == 1) &&
 +	    !guest && is_kdump_kernel()) {
 +		pr_crit("Detected single cpu native boot.\n");
 +		pr_crit("Important:  In this kernel, single threaded, single CPU 64-bit physical systems are unsupported.");
@@ -375,7 +375,7 @@ index 84201071dfac..d00c2713281e 100644
  	reserve_ibft_region();
  	dmi_setup();
  
-@@ -1064,19 +1146,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1062,19 +1144,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -396,7 +396,7 @@ index 84201071dfac..d00c2713281e 100644
  
  	reserve_initrd();
  
-@@ -1191,6 +1261,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1186,6 +1256,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -1712,10 +1712,10 @@ index ee4da9ab8013..d395d11eadc4 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0a96362912ce..d99b3bc5f649 100644
+index 00864a634470..a9e31f5c20b5 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -252,6 +252,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
+@@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
  
  static blk_status_t nvme_error_status(u16 status)
  {
@@ -1725,7 +1725,7 @@ index 0a96362912ce..d99b3bc5f649 100644
  	switch (status & 0x7ff) {
  	case NVME_SC_SUCCESS:
  		return BLK_STS_OK;
-@@ -366,6 +369,7 @@ enum nvme_disposition {
+@@ -375,6 +378,7 @@ enum nvme_disposition {
  	COMPLETE,
  	RETRY,
  	FAILOVER,
@@ -1733,7 +1733,7 @@ index 0a96362912ce..d99b3bc5f649 100644
  	AUTHENTICATE,
  };
  
-@@ -377,15 +381,16 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -386,15 +390,16 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if ((nvme_req(req)->status & 0x7ff) == NVME_SC_AUTH_REQUIRED)
  		return AUTHENTICATE;
  
@@ -1753,7 +1753,7 @@ index 0a96362912ce..d99b3bc5f649 100644
  	} else {
  		if (blk_queue_dying(req->q))
  			return COMPLETE;
-@@ -422,6 +427,14 @@ static inline void nvme_end_req(struct request *req)
+@@ -431,6 +436,14 @@ static inline void nvme_end_req(struct request *req)
  	blk_mq_end_request(req, status);
  }
  
@@ -1768,7 +1768,7 @@ index 0a96362912ce..d99b3bc5f649 100644
  void nvme_complete_rq(struct request *req)
  {
  	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -451,6 +464,9 @@ void nvme_complete_rq(struct request *req)
+@@ -460,6 +473,9 @@ void nvme_complete_rq(struct request *req)
  	case FAILOVER:
  		nvme_failover_req(req);
  		return;
@@ -1779,7 +1779,7 @@ index 0a96362912ce..d99b3bc5f649 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 74de1e64aeea..1b0e59c232f8 100644
+index 5397fb428b24..3df9c79197d0 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -80,14 +80,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -1815,7 +1815,7 @@ index 74de1e64aeea..1b0e59c232f8 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -913,8 +919,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -914,8 +920,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */
@@ -1826,10 +1826,10 @@ index 74de1e64aeea..1b0e59c232f8 100644
  
  	if (!ctrl->max_namespaces ||
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 7b87763e2f8a..b25333a39ed7 100644
+index 24193fcb8bd5..de88d8023c8c 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -919,6 +919,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -920,6 +920,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -1837,7 +1837,7 @@ index 7b87763e2f8a..b25333a39ed7 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -961,6 +962,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -962,6 +963,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
@@ -2222,7 +2222,7 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 5f60f163bd56..6352c3cf4c3c 100644
+index 9b4b66dcdd4f..f51cc9a24e63 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
 @@ -591,6 +591,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
@@ -2249,10 +2249,10 @@ index 5f60f163bd56..6352c3cf4c3c 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 0f931d0c227d..e0234d6f4157 100644
+index a8ba84eabab2..bf17694658cb 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5610,6 +5610,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5611,6 +5611,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -2389,7 +2389,7 @@ index 76458b6d53da..b80d5835be72 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 96bc462872c0..910919c76fac 100644
+index 1153b0d99a80..7e7b12225a92 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -418,6 +418,7 @@ struct module {
@@ -3072,10 +3072,10 @@ index d0eb20f90b26..a99c045730e9 100644
  				    size_t *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index e24b0780fdff..e4e1a6ea60ad 100644
+index 7dce08198b13..0e124798a5e5 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1151,6 +1151,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1156,6 +1156,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -3760,7 +3760,7 @@ index 000000000000..616692b1ac11
 +
 +#endif /* __RH_MESSAGES_H */
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 267b9a0a3abc..12612f58ca58 100644
+index bf7c4b4b5ff4..31b9d3e4faf7 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -22,6 +22,7 @@
