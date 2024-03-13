@@ -1,5 +1,5 @@
-"https://gitlab.com/cki-project/kernel-ark/-/commit"/526de217dc1aaf63ab45fff84454eeeaf5b65c75
- 526de217dc1aaf63ab45fff84454eeeaf5b65c75 arch/x86/kernel/setup.c: fixup rh_check_supported
+"https://gitlab.com/cki-project/kernel-ark/-/commit"/e2354555abc8dcf010149c0d0931cf3b2c9efad4
+ e2354555abc8dcf010149c0d0931cf3b2c9efad4 arch/x86/kernel/setup.c: fixup rh_check_supported
 
 "https://gitlab.com/cki-project/kernel-ark/-/commit"/917edb952c84e83066447f2dae05c2a92d93c702
  917edb952c84e83066447f2dae05c2a92d93c702 arch/x86: mark x86_64-v1 and x86_64-v2 processors as deprecated
