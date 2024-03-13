@@ -1,3 +1,6 @@
+"https://gitlab.com/cki-project/kernel-ark/-/commit"/f750649d94f92a8b96722222410e9264507c7fd6
+ f750649d94f92a8b96722222410e9264507c7fd6 lsm: update security_lock_kernel_down
+
 "https://gitlab.com/cki-project/kernel-ark/-/commit"/e2354555abc8dcf010149c0d0931cf3b2c9efad4
  e2354555abc8dcf010149c0d0931cf3b2c9efad4 arch/x86/kernel/setup.c: fixup rh_check_supported
 

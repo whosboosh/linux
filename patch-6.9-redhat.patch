@@ -3866,7 +3866,7 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
  
  const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index a07f43c58d65..e12482f1692f 100644
+index a07f43c58d65..89648841cbf4 100644
 --- a/security/security.c
 +++ b/security/security.c
 @@ -5561,6 +5561,18 @@ int security_locked_down(enum lockdown_reason what)
@@ -3881,7 +3881,7 @@ index a07f43c58d65..e12482f1692f 100644
 + */
 +int security_lock_kernel_down(const char *where, enum lockdown_reason level)
 +{
-+	return call_int_hook(lock_kernel_down, 0, where, level);
++	return call_int_hook(lock_kernel_down, where, level);
 +}
 +EXPORT_SYMBOL(security_lock_kernel_down);
 +

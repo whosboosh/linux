@@ -3962,6 +3962,7 @@ fi\
 #
 %changelog
 * Wed Mar 13 2024 Augusto Caringi <acaringi@redhat.com> [6.9.0-0.rc0.20240313gitb0546776ad3f.4]
+- lsm: update security_lock_kernel_down (Scott Weaver)
 - Add new string kunit modules to mod-internal.list (Thorsten Leemhuis)
 
 * Wed Mar 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc0.b0546776ad3f.4]
