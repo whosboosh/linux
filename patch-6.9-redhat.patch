@@ -74,10 +74,10 @@
  73 files changed, 2147 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 479ff1737c2f..89fbad9fb445 100644
+index 62feb8f31381..75d0d2a7eca4 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6863,6 +6863,15 @@
+@@ -6864,6 +6864,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index d18fa2a6240d..358f465e4ff5 100644
+index 6fe2ae1a6d92..489be1b99888 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -158,7 +158,7 @@ index d18fa2a6240d..358f465e4ff5 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -1247,7 +1259,13 @@ define filechk_version.h
+@@ -1238,7 +1250,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -174,10 +174,10 @@ index d18fa2a6240d..358f465e4ff5 100644
  
  $(version_h): PATCHLEVEL := $(or $(PATCHLEVEL), 0)
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index c46ec54c5363..ce87f4ab746e 100644
+index 702d97a9c304..b62058b3327e 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1222,9 +1222,9 @@ config HIGHMEM
+@@ -1223,9 +1223,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -190,10 +190,10 @@ index c46ec54c5363..ce87f4ab746e 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ae0db7c97435..2eb8e4481c61 100644
+index 64c2996e12e8..01d4b0dc4c9d 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1325,7 +1325,7 @@ endchoice
+@@ -1323,7 +1323,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -262,7 +262,7 @@ index ba8cf5e9ce56..c76e2217d879 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 46d5a8c520ad..36d4567c980b 100644
+index 3e1e96efadfe..146a7a506fbb 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -742,10 +742,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 3b722e4c0f06..a4b15d7a2721 100644
+index 7c157bf92695..aa186a7dfb43 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1796,6 +1796,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1798,6 +1798,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1848,7 +1848,7 @@ index 24193fcb8bd5..de88d8023c8c 100644
  {
  }
 diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 51ec9e7e784f..8c3713edc7a6 100644
+index af2996d0d17f..75d5971b9025 100644
 --- a/drivers/pci/pci-driver.c
 +++ b/drivers/pci/pci-driver.c
 @@ -19,6 +19,7 @@
@@ -1873,10 +1873,10 @@ index 51ec9e7e784f..8c3713edc7a6 100644
  	if (!rc)
  		return rc;
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index d797df6e5f3e..a6921ee1535a 100644
+index bf4833221816..b8574e70160d 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
-@@ -4433,6 +4433,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
+@@ -4441,6 +4441,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9084,
  				quirk_bridge_cavm_thrx2_pcie_root);
  
@@ -2283,7 +2283,7 @@ index b164da5e129e..59021b8609a7 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index f0d56f106b60..f661094d374a 100644
+index d59b0947fba0..8b1e2e71d485 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2295,7 +2295,7 @@ index f0d56f106b60..f661094d374a 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -867,6 +869,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+@@ -872,6 +874,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
  #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
  #define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
  #define EFI_PRESERVE_BS_REGIONS	12	/* Are EFI boot-services memory segments available? */
@@ -2310,7 +2310,7 @@ index f0d56f106b60..f661094d374a 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -878,6 +888,8 @@ static inline bool efi_enabled(int feature)
+@@ -883,6 +893,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2319,7 +2319,7 @@ index f0d56f106b60..f661094d374a 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -899,6 +911,8 @@ static inline bool efi_enabled(int feature)
+@@ -904,6 +916,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2328,7 +2328,7 @@ index f0d56f106b60..f661094d374a 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -913,6 +927,7 @@ static inline void efi_find_mirror(void) {}
+@@ -918,6 +932,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2336,7 +2336,7 @@ index f0d56f106b60..f661094d374a 100644
  
  /*
   * Variable Attributes
-@@ -1129,13 +1144,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1134,13 +1149,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -2376,7 +2376,7 @@ index d718fbec72dd..b5736cbff0a1 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index a8057a3f8de6..d3b5fb95e79d 100644
+index 334e00efbde4..5c962e31ffe5 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
 @@ -436,6 +436,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
@@ -2439,7 +2439,7 @@ index 6717b15e798c..8e1d3eae1686 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 213109d3c601..032d8fce6680 100644
+index 16493426a04f..ef487d49985d 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
 @@ -1621,6 +1621,7 @@ int pci_add_dynid(struct pci_driver *drv,
@@ -3049,7 +3049,7 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index f249f5b9a9d7..fdcf8a93c5ba 100644
+index 41a8f667bdfa..e2aebf520337 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -507,6 +507,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
@@ -3057,7 +3057,7 @@ index f249f5b9a9d7..fdcf8a93c5ba 100644
  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
  int security_locked_down(enum lockdown_reason what);
 +int security_lock_kernel_down(const char *where, enum lockdown_reason level);
- int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, size_t *uctx_len,
+ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
  		      void *val, size_t val_len, u64 id, u64 flags);
  #else /* CONFIG_SECURITY */
 @@ -1477,6 +1478,10 @@ static inline int security_locked_down(enum lockdown_reason what)
@@ -3069,13 +3069,13 @@ index f249f5b9a9d7..fdcf8a93c5ba 100644
 +	return 0;
 +}
  static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
- 				    size_t *uctx_len, void *val, size_t val_len,
+ 				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index d002f30f7f24..146d351a5693 100644
+index 2ca52474d0c3..54db73dab243 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1156,6 +1156,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1153,6 +1153,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -3086,7 +3086,7 @@ index d002f30f7f24..146d351a5693 100644
  		if (!strcmp(fn_name, entry->buf)) {
  			pr_debug("initcall %s blacklisted\n", fn_name);
 diff --git a/kernel/Makefile b/kernel/Makefile
-index ce105a5558fc..2c2c468fbf91 100644
+index 3c13240dfc9f..c5f42d2ce38b 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
 @@ -12,6 +12,7 @@ obj-y     = fork.o exec_domain.o panic.o \
@@ -3146,7 +3146,7 @@ index ae2ff73bde7e..d5165f6883b6 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 689def7676c4..9f9923b8ca2a 100644
+index e1e8a7a9d6c1..0bd15c7606e2 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -528,6 +528,7 @@ static struct module_attribute modinfo_##field = {                    \
@@ -3165,7 +3165,7 @@ index 689def7676c4..9f9923b8ca2a 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2817,6 +2819,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2822,6 +2824,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3201,10 +3201,10 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index f22d8f33ea14..4f8e50030190 100644
+index 747c3f3d289a..f848d7d13386 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -491,6 +491,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+@@ -495,6 +495,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
  	[ TAINT_AUX ]			= { 'X', ' ', true },
  	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
  	[ TAINT_TEST ]			= { 'N', ' ', true },
@@ -3866,10 +3866,10 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
  
  const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index a07f43c58d65..89648841cbf4 100644
+index 7e118858b545..4098efab18c6 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5561,6 +5561,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5567,6 +5567,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
