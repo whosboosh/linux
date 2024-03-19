@@ -74,10 +74,10 @@
  73 files changed, 2147 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 62feb8f31381..75d0d2a7eca4 100644
+index bb884c14b2f6..2939d792fecd 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6864,6 +6864,15 @@
+@@ -6880,6 +6880,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -2351,10 +2351,10 @@ index d59b0947fba0..8b1e2e71d485 100644
  enum efi_secureboot_mode efi_get_secureboot_mode(efi_get_variable_t *get_var)
  {
 diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index d718fbec72dd..b5736cbff0a1 100644
+index be2e8c0a187e..114e213c89e2 100644
 --- a/include/linux/kernel.h
 +++ b/include/linux/kernel.h
-@@ -401,4 +401,20 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+@@ -402,4 +402,20 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
  	 /* OTHER_WRITABLE?  Generally considered a bad idea. */		\
  	 BUILD_BUG_ON_ZERO((perms) & 2) +					\
  	 (perms))
