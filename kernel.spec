@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc1.20240326git928a87efa423.17
+%define pkgrelease 0.rc1.20240327git7033999ecd7b.18
 %define kversion 6
-%define tarfile_release 6.9-rc1-5-g928a87efa423
+%define tarfile_release 6.9-rc1-9-g7033999ecd7b
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240326git928a87efa423.17%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240327git7033999ecd7b.18%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -1129,6 +1129,7 @@ This package contains the kernel source perf library.
 
 %package -n libperf-devel
 Summary: Developement files for the perf library from kernel source
+Requires: libperf = %{version}-%{release}
 %description -n libperf-devel
 This package includes libraries and header files needed for development
 of applications which use perf library from kernel source.
@@ -1145,7 +1146,7 @@ This package provides debug information for the libperf package.
 # symlinks because of the trailing nonmatching alternation and
 # the leading .*, because of find-debuginfo.sh's buggy handling
 # of matching the pattern against the symlinks file.
-%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_libdir}/libperf.so(\.debug)?|XXX' -o libperf-debuginfo.list}
+%{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_libdir}/libperf.so.*(\.debug)?|XXX' -o libperf-debuginfo.list}
 # with_libperf
 %endif
 
@@ -3818,7 +3819,7 @@ fi\
 %ghost /%{image_install_path}/dtb-%{KVERREL}%{?3:+%{3}} \
 %endif\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/System.map\
-%ghost %attr(0600, root, root) /boot/System.map-%{KVERREL}%{?3:+%{3}}\
+%ghost /boot/System.map-%{KVERREL}%{?3:+%{3}}\
 %dir /lib/modules\
 %dir /lib/modules/%{KVERREL}%{?3:+%{3}}\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/symvers.%compext\
@@ -3957,6 +3958,15 @@ fi\
 #
 #
 %changelog
+* Wed Mar 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.7033999ecd7b.18]
+- kernel.spec: fix libperf-debuginfo content (Jan Stancek)
+- Turn on DM_VDO for Fedora (Justin M. Forbes)
+- redhat: make libperf-devel require libperf %%{version}-%%{release} (Jan Stancek)
+- kernel.spec: drop custom mode also for System.map ghost entry (Jan Stancek)
+- Octopus merges are too conservative, serialize instead (Don Zickus)
+- Add tracking branches for rt-devel (Don Zickus)
+- Linux v6.9.0-0.rc1.7033999ecd7b
+
 * Tue Mar 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.928a87efa423.17]
 - all: clean-up i915 (Peter Robinson)
 - Turn on CONFIG_READ_ONLY_THP_FOR_FS for Fedora (Justin M. Forbes)
