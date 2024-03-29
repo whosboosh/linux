@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc1.20240327git7033999ecd7b.18
+%define pkgrelease 0.rc1.20240329git317c7bc0ef03.20
 %define kversion 6
-%define tarfile_release 6.9-rc1-9-g7033999ecd7b
+%define tarfile_release 6.9-rc1-178-g317c7bc0ef03
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240327git7033999ecd7b.18%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240329git317c7bc0ef03.20%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3958,6 +3958,12 @@ fi\
 #
 #
 %changelog
+* Fri Mar 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.317c7bc0ef03.20]
+- Linux v6.9.0-0.rc1.317c7bc0ef03
+
+* Thu Mar 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.8d025e2092e2.19]
+- Linux v6.9.0-0.rc1.8d025e2092e2
+
 * Wed Mar 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.7033999ecd7b.18]
 - kernel.spec: fix libperf-debuginfo content (Jan Stancek)
 - Turn on DM_VDO for Fedora (Justin M. Forbes)

@@ -1595,7 +1595,7 @@ index ef9ea295f9e0..0103334e8f32 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 098869007c69..2a979992c4bc 100644
+index a95a483def2d..e11ceb8b6df0 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -2222,10 +2222,10 @@ index a14f6013e316..6c20453fdf76 100644
 
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 69308fd73e4a..69ee109847e9 100644
+index c0eb139adb07..19ded3068180 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -584,6 +584,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -583,6 +583,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  	struct inode *inode;
  	struct erofs_sb_info *sbi;
  	struct erofs_fs_context *ctx = fc->fs_private;
@@ -2235,7 +2235,7 @@ index 69308fd73e4a..69ee109847e9 100644
  	int err;
 
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -702,6 +705,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -701,6 +704,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
 
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
