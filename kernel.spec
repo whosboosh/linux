@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc1.20240329git317c7bc0ef03.20
+%define pkgrelease 0.rc2.23
 %define kversion 6
-%define tarfile_release 6.9-rc1-178-g317c7bc0ef03
+%define tarfile_release 6.9-rc2
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240329git317c7bc0ef03.20%{?buildid}%{?dist}
+%define specrelease 0.rc2.23%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3958,6 +3958,17 @@ fi\
 #
 #
 %changelog
+* Mon Apr 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.23]
+- Linux v6.9.0-0.rc2
+
+* Sun Mar 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.712e14250dd2.22]
+- Linux v6.9.0-0.rc1.712e14250dd2
+
+* Sat Mar 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.486291a0e624.21]
+- redhat/configs: Enable CONFIG_AMDTEE for x86 (David Arcari)
+- redhat/configs: enable CONFIG_TEST_LOCKUP for debug kernel (Čestmír Kalina)
+- Linux v6.9.0-0.rc1.486291a0e624
+
 * Fri Mar 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc1.317c7bc0ef03.20]
 - Linux v6.9.0-0.rc1.317c7bc0ef03
 
