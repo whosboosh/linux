@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc2.23
+%define pkgrelease 0.rc2.20240402git026e680b0a08.24
 %define kversion 6
-%define tarfile_release 6.9-rc2
+%define tarfile_release 6.9-rc2-2-g026e680b0a08
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.23%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240402git026e680b0a08.24%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3958,6 +3958,12 @@ fi\
 #
 #
 %changelog
+* Tue Apr 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.026e680b0a08.24]
+- redhat/configs: build in Tegra210 SPI driver (Mark Salter)
+- redhat/configs: aarch64: Enable ARM_FFA driver (Mark Salter)
+- Base automotive-devel on rt-devel (Don Zickus)
+- Linux v6.9.0-0.rc2.026e680b0a08
+
 * Mon Apr 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.23]
 - Linux v6.9.0-0.rc2
 
