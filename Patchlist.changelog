@@ -1,3 +1,6 @@
+"https://gitlab.com/cki-project/kernel-ark/-/commit"/9ba38d5f5c49d3f4a9e429d05aa73cb397db5071
+ 9ba38d5f5c49d3f4a9e429d05aa73cb397db5071 Revert "Bluetooth: hci_qca: Set BDA quirk bit if fwnode exists in DT"
+
 "https://gitlab.com/cki-project/kernel-ark/-/commit"/fccd579ad79c032dd402f674fd94e80ad52519f6
  fccd579ad79c032dd402f674fd94e80ad52519f6 xfs: fix SEEK_HOLE/DATA for regions with active COW extents
 
