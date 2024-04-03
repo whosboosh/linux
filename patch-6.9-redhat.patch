@@ -262,7 +262,7 @@ index 5c1e6d6be267..aa9819032064 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 0109e6c510e0..311d272cdd78 100644
+index 0109e6c510e0..cbe8d89c5eb5 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -20,6 +20,7 @@
@@ -349,7 +349,7 @@ index 0109e6c510e0..311d272cdd78 100644
 +		   !boot_cpu_has(X86_FEATURE_FMA) ||
 +		   /* LZCNT is not explicitly listed, but appears to be paired with BMI2 */
 +		   !boot_cpu_has(X86_FEATURE_MOVBE) ||
-+		   !boot_cpu_has(X86_FEATURE_OSXSAVE)) {
++		   !boot_cpu_has(X86_FEATURE_XSAVE)) {
 +		mark_hardware_deprecated("x86_64-v2", "%s:%s",
 +					 boot_cpu_data.x86_vendor_id, boot_cpu_data.x86_model_id);
 +	}
