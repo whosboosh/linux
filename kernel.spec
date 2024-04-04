@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc2.20240403git026e680b0a08.25
+%define pkgrelease 0.rc2.20240404gitc85af715cac0.26
 %define kversion 6
-%define tarfile_release 6.9-rc2-2-g026e680b0a08
+%define tarfile_release 6.9-rc2-80-gc85af715cac0
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240403git026e680b0a08.25%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240404gitc85af715cac0.26%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3958,6 +3958,9 @@ fi\
 #
 #
 %changelog
+* Thu Apr 04 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.c85af715cac0.26]
+- Linux v6.9.0-0.rc2.c85af715cac0
+
 * Wed Apr 03 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.026e680b0a08.25]
 - arch/x86: Fix XSAVE check for x86_64-v2 check (Prarit Bhargava)
 - redhat/Makefile.variables: unquote a variable (Thorsten Leemhuis)

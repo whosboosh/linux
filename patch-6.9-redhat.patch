@@ -74,7 +74,7 @@
  73 files changed, 2147 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bb884c14b2f6..2939d792fecd 100644
+index 623fce7d5fcd..c412bbaf26bc 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -6880,6 +6880,15 @@
@@ -3866,7 +3866,7 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
  
  const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 7e118858b545..4098efab18c6 100644
+index 0a9a0ac3f266..a5cfc42f7c33 100644
 --- a/security/security.c
 +++ b/security/security.c
 @@ -5567,6 +5567,18 @@ int security_locked_down(enum lockdown_reason what)
