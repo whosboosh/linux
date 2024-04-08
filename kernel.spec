@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc2.20240405git8cb4a9a82b21.27
+%define pkgrelease 0.rc3.30
 %define kversion 6
-%define tarfile_release 6.9-rc2-194-g8cb4a9a82b21
+%define tarfile_release 6.9-rc3
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240405git8cb4a9a82b21.27%{?buildid}%{?dist}
+%define specrelease 0.rc3.30%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3958,6 +3958,16 @@ fi\
 #
 #
 %changelog
+* Mon Apr 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.30]
+- Linux v6.9.0-0.rc3
+
+* Sun Apr 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.f2f80ac80987.29]
+- Linux v6.9.0-0.rc2.f2f80ac80987
+
+* Sat Apr 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.6c6e47d69d82.28]
+- redhat/configs: remove CONFIG_INTEL_MENLOW as it is obsolete. (David Arcari)
+- Linux v6.9.0-0.rc2.6c6e47d69d82
+
 * Fri Apr 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc2.8cb4a9a82b21.27]
 - Linux v6.9.0-0.rc2.8cb4a9a82b21
 

@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 4bef6323c47d..72cb1c5cfe6d 100644
+index e1bf12891cb0..1a96ab05fc5d 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -262,7 +262,7 @@ index 5c1e6d6be267..aa9819032064 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 0109e6c510e0..cbe8d89c5eb5 100644
+index e125e059e2c4..88e7c5714629 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -20,6 +20,7 @@
@@ -273,7 +273,7 @@ index 0109e6c510e0..cbe8d89c5eb5 100644
  #include <linux/usb/xhci-dbgp.h>
  #include <linux/static_call.h>
  #include <linux/swiotlb.h>
-@@ -54,6 +55,7 @@
+@@ -55,6 +56,7 @@
  #include <asm/unwind.h>
  #include <asm/vsyscall.h>
  #include <linux/vmalloc.h>
@@ -281,7 +281,7 @@ index 0109e6c510e0..cbe8d89c5eb5 100644
  
  /*
   * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
-@@ -667,6 +669,79 @@ static void __init early_reserve_memory(void)
+@@ -668,6 +670,79 @@ static void __init early_reserve_memory(void)
  	trim_snb_memory();
  }
  
@@ -361,7 +361,7 @@ index 0109e6c510e0..cbe8d89c5eb5 100644
  /*
   * Dump out kernel offset information on panic.
   */
-@@ -900,6 +975,13 @@ void __init setup_arch(char **cmdline_p)
+@@ -901,6 +976,13 @@ void __init setup_arch(char **cmdline_p)
  	if (efi_enabled(EFI_BOOT))
  		efi_init();
  
@@ -375,7 +375,7 @@ index 0109e6c510e0..cbe8d89c5eb5 100644
  	reserve_ibft_region();
  	x86_init.resources.dmi_setup();
  
-@@ -1061,19 +1143,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1063,19 +1145,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -396,7 +396,7 @@ index 0109e6c510e0..cbe8d89c5eb5 100644
  
  	reserve_initrd();
  
-@@ -1185,6 +1255,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1187,6 +1257,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -1712,7 +1712,7 @@ index ee4da9ab8013..d395d11eadc4 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 943d72bdd794..f605013cc0d2 100644
+index 27281a9a8951..62c23c3e8fc1 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -1826,7 +1826,7 @@ index 5397fb428b24..3df9c79197d0 100644
  
  	if (!ctrl->max_namespaces ||
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 24193fcb8bd5..de88d8023c8c 100644
+index d0ed64dc7380..e2a0044d1ccd 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
 @@ -920,6 +920,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
@@ -2162,7 +2162,7 @@ index 675332e49a7b..4a3cbddacef1 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 3cf898670290..cf5f017110b3 100644
+index 58fdf679341d..4a1f0b9eb0de 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
@@ -2249,7 +2249,7 @@ index c0eb139adb07..19ded3068180 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index cfb8449c731f..13455c35df4e 100644
+index 044135796f2b..7806462b4af2 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
 @@ -5606,6 +5606,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
