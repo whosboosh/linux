@@ -160,18 +160,18 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.8.4
-%define specversion 6.8.4
+%define specrpmversion 6.8.5
+%define specversion 6.8.5
 %define patchversion 6.8
 %define pkgrelease 300
 %define kversion 6
-%define tarfile_release 6.8.4
+%define tarfile_release 6.8.5
 # This is needed to do merge window version magic
 %define patchlevel 8
 # This allows pkg_release to have configurable %%{?dist} tag
 %define specrelease 300%{?buildid}%{?dist}
 # This defines the kabi tarball version
-%define kabiversion 6.8.4
+%define kabiversion 6.8.5
 
 # If this variable is set to 1, a bpf selftests build failure will cause a
 # fatal kernel package build error
@@ -3959,6 +3959,13 @@ fi\
 #
 #
 %changelog
+* Wed Apr 10 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.8.5-0]
+- Set configs for SPECTRE_BHI (Justin M. Forbes)
+- Add AMD PMF bug (Justin M. Forbes)
+- redhat/configs: Enable CONFIG_AMDTEE for x86 (David Arcari)
+- Add CVE fix for 6.8.5 (Justin M. Forbes)
+- Linux v6.8.5
+
 * Thu Apr 04 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.8.4-0]
 - Linux v6.8.4
 
