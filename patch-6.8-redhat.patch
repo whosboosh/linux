@@ -13,6 +13,8 @@
  drivers/firmware/efi/efi.c                         | 124 +++++++++++----
  drivers/firmware/efi/secureboot.c                  |  38 +++++
  drivers/firmware/sysfb.c                           |  18 ++-
+ .../gpu/drm/nouveau/nvkm/subdev/devinit/gm107.c    |  12 +-
+ drivers/gpu/drm/nouveau/nvkm/subdev/devinit/r535.c |   1 +
  drivers/hid/hid-rmi.c                              |  66 --------
  drivers/hwtracing/coresight/coresight-etm4x-core.c |  19 +++
  drivers/input/rmi4/rmi_driver.c                    | 124 +++++++++------
@@ -29,13 +31,14 @@
  include/linux/security.h                           |   5 +
  kernel/module/main.c                               |   2 +
  kernel/module/signing.c                            |   9 +-
+ net/bluetooth/l2cap_core.c                         |   3 +-
  scripts/mod/modpost.c                              |   8 +
  scripts/tags.sh                                    |   2 +
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 ++
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 ++
- 37 files changed, 671 insertions(+), 177 deletions(-)
+ 40 files changed, 681 insertions(+), 183 deletions(-)
 
 diff --git a/Makefile b/Makefile
 index f29a75b75861..90586379d1e8 100644
@@ -578,6 +581,48 @@ index 3c197db42c9d..16e4a2e90fae 100644
  		pd = sysfb_create_simplefb(si, &mode);
  		if (!IS_ERR(pd))
  			goto unlock_mutex;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm107.c b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm107.c
+index 7bcbc4895ec2..271bfa038f5b 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm107.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/gm107.c
+@@ -25,6 +25,7 @@
+ 
+ #include <subdev/bios.h>
+ #include <subdev/bios/init.h>
++#include <subdev/gsp.h>
+ 
+ void
+ gm107_devinit_disable(struct nvkm_devinit *init)
+@@ -33,10 +34,13 @@ gm107_devinit_disable(struct nvkm_devinit *init)
+ 	u32 r021c00 = nvkm_rd32(device, 0x021c00);
+ 	u32 r021c04 = nvkm_rd32(device, 0x021c04);
+ 
+-	if (r021c00 & 0x00000001)
+-		nvkm_subdev_disable(device, NVKM_ENGINE_CE, 0);
+-	if (r021c00 & 0x00000004)
+-		nvkm_subdev_disable(device, NVKM_ENGINE_CE, 2);
++	/* gsp only wants to enable/disable display */
++	if (!nvkm_gsp_rm(device->gsp)) {
++		if (r021c00 & 0x00000001)
++			nvkm_subdev_disable(device, NVKM_ENGINE_CE, 0);
++		if (r021c00 & 0x00000004)
++			nvkm_subdev_disable(device, NVKM_ENGINE_CE, 2);
++	}
+ 	if (r021c04 & 0x00000001)
+ 		nvkm_subdev_disable(device, NVKM_ENGINE_DISP, 0);
+ }
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/r535.c
+index 11b4c9c274a1..666eb93b1742 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/r535.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/r535.c
+@@ -41,6 +41,7 @@ r535_devinit_new(const struct nvkm_devinit_func *hw,
+ 
+ 	rm->dtor = r535_devinit_dtor;
+ 	rm->post = hw->post;
++	rm->disable = hw->disable;
+ 
+ 	ret = nv50_devinit_new_(rm, device, type, inst, pdevinit);
+ 	if (ret)
 diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
 index d4af17fdba46..154f0403cbf4 100644
 --- a/drivers/hid/hid-rmi.c
@@ -1415,6 +1460,20 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  }
  
  int module_sig_check(struct load_info *info, int flags)
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index ab5a9d42fae7..706d2478ddb3 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -4054,8 +4054,7 @@ static int l2cap_connect_req(struct l2cap_conn *conn,
+ 		return -EPROTO;
+ 
+ 	hci_dev_lock(hdev);
+-	if (hci_dev_test_flag(hdev, HCI_MGMT) &&
+-	    !test_and_set_bit(HCI_CONN_MGMT_CONNECTED, &hcon->flags))
++	if (hci_dev_test_flag(hdev, HCI_MGMT))
+ 		mgmt_device_connected(hdev, hcon, NULL, 0);
+ 	hci_dev_unlock(hdev);
+ 
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
 index 6568f8177e39..14d8237af366 100644
 --- a/scripts/mod/modpost.c
