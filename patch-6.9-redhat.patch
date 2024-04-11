@@ -74,10 +74,10 @@
  73 files changed, 2147 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 623fce7d5fcd..c412bbaf26bc 100644
+index 70046a019d42..e672fd963195 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6880,6 +6880,15 @@
+@@ -6892,6 +6892,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -250,10 +250,10 @@ index 24ed33f044ec..5dd65c88310d 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5c1e6d6be267..aa9819032064 100644
+index 754d91857d63..6462ea617d57 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1582,6 +1582,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1590,6 +1590,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		cpu_detect(c);
  		get_cpu_vendor(c);
  		get_cpu_cap(c);
@@ -3072,10 +3072,10 @@ index 41a8f667bdfa..e2aebf520337 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index 2ca52474d0c3..54db73dab243 100644
+index 881f6230ee59..ba8a684d3158 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1153,6 +1153,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1158,6 +1158,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
