@@ -742,7 +742,7 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 7c157bf92695..aa186a7dfb43 100644
+index d1464324de95..a3b2f99a2d78 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
 @@ -1798,6 +1798,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
@@ -1873,10 +1873,10 @@ index af2996d0d17f..75d5971b9025 100644
  	if (!rc)
  		return rc;
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index bf4833221816..b8574e70160d 100644
+index eff7f5df08e2..b58145ce7775 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
-@@ -4441,6 +4441,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
+@@ -4433,6 +4433,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9084,
  				quirk_bridge_cavm_thrx2_pcie_root);
  

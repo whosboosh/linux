@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc3.20240411gite8c39d0f57f3.33
+%define pkgrelease 0.rc3.20240413git8f2c057754b2.35
 %define kversion 6
-%define tarfile_release 6.9-rc3-73-ge8c39d0f57f3
+%define tarfile_release 6.9-rc3-344-g8f2c057754b2
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240411gite8c39d0f57f3.33%{?buildid}%{?dist}
+%define specrelease 0.rc3.20240413git8f2c057754b2.35%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -320,7 +320,8 @@ Summary: The Linux kernel
 %endif
 %global clang_make_opts HOSTCC=clang CC=clang LLVM_IAS=%{llvm_ias}
 %if %{with clang_lto}
-%global clang_make_opts %{clang_make_opts} LD=ld.lld HOSTLD=ld.lld AR=llvm-ar NM=llvm-nm HOSTAR=llvm-ar HOSTNM=llvm-nm
+# LLVM=1 enables use of all LLVM tools.
+%global clang_make_opts %{clang_make_opts} LLVM=1
 %endif
 %global make_opts %{make_opts} %{clang_make_opts}
 # clang does not support the -fdump-ipa-clones option
@@ -3934,6 +3935,15 @@ fi\
 #
 #
 %changelog
+* Sat Apr 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.8f2c057754b2.35]
+- docs: point out that python3-pyyaml is now required (Thorsten Leemhuis)
+- Linux v6.9.0-0.rc3.8f2c057754b2
+
+* Fri Apr 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.586b5dfb51b9.34]
+- Use LLVM=1 for clang_lto build (Nikita Popov)
+- redhat: fix def_variants.yaml check (Jan Stancek)
+- Linux v6.9.0-0.rc3.586b5dfb51b9
+
 * Thu Apr 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.e8c39d0f57f3.33]
 - redhat: sanity check yaml files (Jan Stancek)
 - spec: rework filter-mods and mod-denylist (Jan Stancek)
