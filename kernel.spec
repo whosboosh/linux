@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc3.20240413git8f2c057754b2.35
+%define pkgrelease 0.rc4.37
 %define kversion 6
-%define tarfile_release 6.9-rc3-344-g8f2c057754b2
+%define tarfile_release 6.9-rc4
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240413git8f2c057754b2.35%{?buildid}%{?dist}
+%define specrelease 0.rc4.37%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,6 +3935,12 @@ fi\
 #
 #
 %changelog
+* Mon Apr 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.37]
+- Linux v6.9.0-0.rc4
+
+* Sun Apr 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.7efd0a74039f.36]
+- Linux v6.9.0-0.rc3.7efd0a74039f
+
 * Sat Apr 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc3.8f2c057754b2.35]
 - docs: point out that python3-pyyaml is now required (Thorsten Leemhuis)
 - Linux v6.9.0-0.rc3.8f2c057754b2
