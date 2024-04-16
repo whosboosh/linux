@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/2a740e17e8b448f7189bc35eba53784ffd1344e4
+ 2a740e17e8b448f7189bc35eba53784ffd1344e4 [redhat] rh_messages.h: initial driver and device lists
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/e178d550963b1ae5f80cf21e7ebb0ea4a8371ec5
  e178d550963b1ae5f80cf21e7ebb0ea4a8371ec5 arch/x86: Fix XSAVE check for x86_64-v2 check
 
