@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc4.20240416git96fca68c4fbf7.38
+%define pkgrelease 0.rc4.20240417git96fca68c4fbf.39
 %define kversion 6
-%define tarfile_release 6.9-rc4-31-g96fca68c4fbf7
+%define tarfile_release 6.9-rc4-31-g96fca68c4fbf
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240416git96fca68c4fbf7.38%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240417git96fca68c4fbf.39%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,8 +3935,11 @@ fi\
 #
 #
 %changelog
-* Tue Apr 16 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.9.0-0.rc4.20240416git96fca68c4fbf7.38]
-- Linux v6.9.0-0.rc4.20240416git96fca68c4fbf7
+* Wed Apr 17 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.9.0-0.rc4.20240417git96fca68c4fbf.39]
+- Turn on UBSAN for Fedora (Justin M. Forbes)
+
+* Wed Apr 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.96fca68c4fbf.39]
+- Turn on XEN_BALLOON_MEMORY_HOTPLUG for Fedora (Justin M. Forbes)
 
 * Tue Apr 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.96fca68c4fbf.38]
 - Linux v6.9.0-0.rc4.96fca68c4fbf
