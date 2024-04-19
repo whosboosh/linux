@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc4.20240418git8cd26fd90c1a.40
+%define pkgrelease 0.rc4.20240419git2668e3ae2ef3.41
 %define kversion 6
-%define tarfile_release 6.9-rc4-38-g8cd26fd90c1a
+%define tarfile_release 6.9-rc4-113-g2668e3ae2ef3
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240418git8cd26fd90c1a.40%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240419git2668e3ae2ef3.41%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3445,7 +3445,7 @@ fi\
 rm -f %{_localstatedir}/lib/rpm-state/%{name}/installing_core_%{KVERREL}%{?-v:+%{-v*}}\
 /bin/kernel-install add %{KVERREL}%{?-v:+%{-v*}} /lib/modules/%{KVERREL}%{?-v:+%{-v*}}/vmlinuz%{?-u:-%{-u*}.efi} || exit $?\
 if [[ ! -e "/boot/symvers-%{KVERREL}%{?-v:+%{-v*}}.%compext" ]]; then\
-    ln -s "/lib/modules/%{KVERREL}%{?-v:+%{-v*}}/symvers.%compext" "/boot/symvers-%{KVERREL}%{?-v:+%{-v*}}.%compext"\
+    cp "/lib/modules/%{KVERREL}%{?-v:+%{-v*}}/symvers.%compext" "/boot/symvers-%{KVERREL}%{?-v:+%{-v*}}.%compext"\
     if command -v restorecon &>/dev/null; then\
         restorecon "/boot/symvers-%{KVERREL}%{?-v:+%{-v*}}.%compext"\
     fi\
@@ -3935,6 +3935,12 @@ fi\
 #
 #
 %changelog
+* Fri Apr 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.2668e3ae2ef3.41]
+- gitlab-ci: harmonize DataWarehouse tree names (Michael Hofmann)
+- redhat/configs: Enable CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON for rhel (Jerry Snitselaar)
+- spec: make sure posttrans script doesn't fail if /boot is non-POSIX (glb)
+- Linux v6.9.0-0.rc4.2668e3ae2ef3
+
 * Thu Apr 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.8cd26fd90c1a.40]
 - Turn on UBSAN for Fedora (Justin M. Forbes)
 - Linux v6.9.0-0.rc4.8cd26fd90c1a

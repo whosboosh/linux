@@ -852,7 +852,7 @@ index b0eedc4595b3..a9024c1dd68a 100644
  	rv = ipmi_register_driver();
  	mutex_unlock(&ipmi_interfaces_mutex);
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 456be28ba67c..be318d417622 100644
+index 2597cb43f438..d860f4f6ba2c 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
 @@ -51,6 +51,7 @@
