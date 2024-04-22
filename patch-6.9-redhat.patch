@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 59d8a7f95d0a..00a119137141 100644
+index 43b10f3d438c..b2fcd099c968 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -3072,10 +3072,10 @@ index 41a8f667bdfa..e2aebf520337 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index 881f6230ee59..ba8a684d3158 100644
+index 5dcf5274c09c..2664c52d1566 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1158,6 +1158,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1160,6 +1160,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  

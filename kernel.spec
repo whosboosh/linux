@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc4.20240419git2668e3ae2ef3.41
+%define pkgrelease 0.rc5.44
 %define kversion 6
-%define tarfile_release 6.9-rc4-113-g2668e3ae2ef3
+%define tarfile_release 6.9-rc5
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240419git2668e3ae2ef3.41%{?buildid}%{?dist}
+%define specrelease 0.rc5.44%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,6 +3935,18 @@ fi\
 #
 #
 %changelog
+* Mon Apr 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.44]
+- fedora: aarch64: Enable a QCom Robotics platforms requirements (Peter Robinson)
+- fedora: updates for 6.9 merge window (Peter Robinson)
+- gitlab-ci: rename GitLab jobs ark -> rawhide (Michael Hofmann)
+- Linux v6.9.0-0.rc5
+
+* Sun Apr 21 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.977b1ef51866.43]
+- Linux v6.9.0-0.rc4.977b1ef51866
+
+* Sat Apr 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.13a2e429f644.42]
+- Linux v6.9.0-0.rc4.13a2e429f644
+
 * Fri Apr 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc4.2668e3ae2ef3.41]
 - gitlab-ci: harmonize DataWarehouse tree names (Michael Hofmann)
 - redhat/configs: Enable CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON for rhel (Jerry Snitselaar)
