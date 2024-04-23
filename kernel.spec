@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc5.44
+%define pkgrelease 0.rc5.20240423git71b1543c83d6.45
 %define kversion 6
-%define tarfile_release 6.9-rc5
+%define tarfile_release 6.9-rc5-31-g71b1543c83d6
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.44%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240423git71b1543c83d6.45%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,6 +3935,9 @@ fi\
 #
 #
 %changelog
+* Tue Apr 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.71b1543c83d6.45]
+- Linux v6.9.0-0.rc5.71b1543c83d6
+
 * Mon Apr 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.44]
 - fedora: aarch64: Enable a QCom Robotics platforms requirements (Peter Robinson)
 - fedora: updates for 6.9 merge window (Peter Robinson)
