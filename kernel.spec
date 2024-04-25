@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc5.20240424git9d1ddab261f3.46
+%define pkgrelease 0.rc5.20240425gite88c4cfcb7b8.47
 %define kversion 6
-%define tarfile_release 6.9-rc5-36-g9d1ddab261f3
+%define tarfile_release 6.9-rc5-42-ge88c4cfcb7b8
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240424git9d1ddab261f3.46%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240425gite88c4cfcb7b8.47%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,6 +3935,9 @@ fi\
 #
 #
 %changelog
+* Thu Apr 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.e88c4cfcb7b8.47]
+- Linux v6.9.0-0.rc5.e88c4cfcb7b8
+
 * Wed Apr 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.9d1ddab261f3.46]
 - redhat/configs: enable CONFIG_TEST_LOCKUP for non-debug kernels (Čestmír Kalina)
 - redhat/rhel_files: add test_lockup.ko to modules-extra (Čestmír Kalina)
