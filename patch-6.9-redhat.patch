@@ -74,10 +74,10 @@
  73 files changed, 2357 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 902ecd92a29f..23bd65b59904 100644
+index 213d0719e2b7..c3495f6bbfdc 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6890,6 +6890,15 @@
+@@ -6893,6 +6893,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 43b10f3d438c..b2fcd099c968 100644
+index 40fb2ca6fe4c..0eb7348422fb 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \

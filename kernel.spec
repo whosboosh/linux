@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc5.20240426gitc942a0cd3603.48
+%define pkgrelease 0.rc6.51
 %define kversion 6
-%define tarfile_release 6.9-rc5-159-gc942a0cd3603
+%define tarfile_release 6.9-rc6
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240426gitc942a0cd3603.48%{?buildid}%{?dist}
+%define specrelease 0.rc6.51%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3935,6 +3935,16 @@ fi\
 #
 #
 %changelog
+* Mon Apr 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.51]
+- gitlab-ci: enable pipelines with c10s buildroot (Michael Hofmann)
+- Linux v6.9.0-0.rc6
+
+* Sun Apr 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.2c8159388952.50]
+- Linux v6.9.0-0.rc5.2c8159388952
+
+* Sat Apr 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.5eb4573ea63d.49]
+- Linux v6.9.0-0.rc5.5eb4573ea63d
+
 * Fri Apr 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc5.c942a0cd3603.48]
 - Turn on ISM for Fedora (Justin M. Forbes)
 - Linux v6.9.0-0.rc5.c942a0cd3603
