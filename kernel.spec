@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc6.51
+%define pkgrelease 0.rc6.52
 %define kversion 6
 %define tarfile_release 6.9-rc6
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.51%{?buildid}%{?dist}
+%define specrelease 0.rc6.52%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -584,6 +584,9 @@ Summary: The Linux kernel
 %else
 %define cpupowerarchs i686 x86_64 ppc64le aarch64
 %endif
+
+# Architectures we build kernel livepatching selftests on
+%define klptestarches x86_64 ppc64le
 
 %if 0%{?use_vdso}
 %define _use_vdso 1
@@ -2810,6 +2813,11 @@ BuildKernel %make_target %kernel_image %{_use_vdso}
 # and some variables so that the various userspace tools can be built.
 %{log_msg "Initialize userspace tools build environment"}
 InitBuildVars
+# Some tests build also modules, and need Module.symvers
+if ! [[ -e Module.symvers ]] && [[ -f $DevelDir/Module.symvers ]]; then
+    %{log_msg "Found Module.symvers in DevelDir, copying to ."}
+    cp "$DevelDir/Module.symvers" .
+fi
 %endif
 %endif
 
@@ -2942,7 +2950,14 @@ pushd tools/testing/selftests
 %endif
 
 %{log_msg "main selftests compile"}
-%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf mm livepatch net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
+%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf mm net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
+
+%ifarch %{klptestarches}
+	# kernel livepatching selftest test_modules will build against
+	# /lib/modules/$(shell uname -r)/build tree unless KDIR is set
+	export KDIR=$(realpath $(pwd)/../../..)
+	%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="livepatch" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install || true
+%endif
 
 # 'make install' for bpf is broken and upstream refuses to fix it.
 # Install the needed files manually.
@@ -3935,6 +3950,12 @@ fi\
 #
 #
 %changelog
+* Tue Apr 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.52]
+- kernel.spec: adjust for livepatching kselftests (Joe Lawrence)
+- redhat/configs: remove CONFIG_TEST_LIVEPATCH (Joe Lawrence)
+- Turn on CONFIG_RANDOM_KMALLOC_CACHES for Fedora (Justin M. Forbes)
+- Set Fedora configs for 6.9 (Justin M. Forbes)
+
 * Mon Apr 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.51]
 - gitlab-ci: enable pipelines with c10s buildroot (Michael Hofmann)
 - Linux v6.9.0-0.rc6
