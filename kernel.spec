@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc6.52
+%define pkgrelease 0.rc6.20240501git18daea77cca6.53
 %define kversion 6
-%define tarfile_release 6.9-rc6
+%define tarfile_release 6.9-rc6-46-g18daea77cca6
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.52%{?buildid}%{?dist}
+%define specrelease 0.rc6.20240501git18daea77cca6.53%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3950,6 +3950,11 @@ fi\
 #
 #
 %changelog
+* Wed May 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.18daea77cca6.53]
+- redhat/configs: Enable CONFIG_DM_VDO in RHEL (Benjamin Marzinski)
+- redhat/configs: Enable DRM_NOUVEAU_GSP_DEFAULT everywhere (Neal Gompa)
+- Linux v6.9.0-0.rc6.18daea77cca6
+
 * Tue Apr 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.52]
 - kernel.spec: adjust for livepatching kselftests (Joe Lawrence)
 - redhat/configs: remove CONFIG_TEST_LIVEPATCH (Joe Lawrence)

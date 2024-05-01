@@ -2162,7 +2162,7 @@ index 675332e49a7b..4a3cbddacef1 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 58fdf679341d..4a1f0b9eb0de 100644
+index 65cdc8b77e35..7916ecf1af90 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
@@ -2180,7 +2180,7 @@ index 58fdf679341d..4a1f0b9eb0de 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4247,6 +4255,8 @@ static int __init init_sd(void)
+@@ -4249,6 +4257,8 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2222,20 +2222,20 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index c0eb139adb07..19ded3068180 100644
+index 30b49b2eee53..0ff37b43e0ec 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -583,6 +583,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -582,6 +582,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
  	struct inode *inode;
- 	struct erofs_sb_info *sbi;
- 	struct erofs_fs_context *ctx = fc->fs_private;
+ 	struct erofs_sb_info *sbi = EROFS_SB(sb);
 +#ifdef CONFIG_RHEL_DIFFERENCES
 +	static bool printed = false;
 +#endif
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -701,6 +704,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -687,6 +690,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
