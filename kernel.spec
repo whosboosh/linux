@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc6.20240502git0106679839f7.55
+%define pkgrelease 0.rc6.20240503gitf03359bca01b.56
 %define kversion 6
-%define tarfile_release 6.9-rc6-53-g0106679839f7
+%define tarfile_release 6.9-rc6-131-gf03359bca01b
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.20240502git0106679839f7.55%{?buildid}%{?dist}
+%define specrelease 0.rc6.20240503gitf03359bca01b.56%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3936,6 +3936,9 @@ fi\
 #
 #
 %changelog
+* Fri May 03 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.f03359bca01b.56]
+- Linux v6.9.0-0.rc6.f03359bca01b
+
 * Thu May 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc6.0106679839f7.55]
 - redhat: Use redhatsecureboot701 for ppc64le (Jan Stancek)
 - redhat: switch the kernel package to use certs from system-sb-certs (Jan Stancek)
