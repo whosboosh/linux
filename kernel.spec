@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc7.58
+%define pkgrelease 0.rc7.20240507gitdccb07f2914c.59
 %define kversion 6
-%define tarfile_release 6.9-rc7
+%define tarfile_release 6.9-rc7-12-gdccb07f2914c
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.58%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240507gitdccb07f2914c.59%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3936,6 +3936,13 @@ fi\
 #
 #
 %changelog
+* Tue May 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.dccb07f2914c.59]
+- redhat/rhel_files: move tipc.ko and tipc_diag.ko to modules-extra (Xin Long) [RHEL-23931]
+- redhat: move amd-pstate-ut.ko to modules-internal (Jan Stancek)
+- redhat/configs: enable CONFIG_LEDS_TRIGGER_NETDEV also for RHEL (Michal Schmidt) [RHEL-32110]
+- redhat/configs: Remove CONFIG_AMD_IOMMU_V2 (Jerry Snitselaar)
+- Linux v6.9.0-0.rc7.dccb07f2914c
+
 * Mon May 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.58]
 - Linux v6.9.0-0.rc7
 
