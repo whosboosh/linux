@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc7.20240507gitdccb07f2914c.59
+%define pkgrelease 0.rc7.20240508gitdccb07f2914c.60
 %define kversion 6
 %define tarfile_release 6.9-rc7-12-gdccb07f2914c
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240507gitdccb07f2914c.59%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240508gitdccb07f2914c.60%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3936,6 +3936,9 @@ fi\
 #
 #
 %changelog
+* Wed May 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.dccb07f2914c.60]
+- Consolidate configs to common for 6.9 (Justin M. Forbes)
+
 * Tue May 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.dccb07f2914c.59]
 - redhat/rhel_files: move tipc.ko and tipc_diag.ko to modules-extra (Xin Long) [RHEL-23931]
 - redhat: move amd-pstate-ut.ko to modules-internal (Jan Stancek)

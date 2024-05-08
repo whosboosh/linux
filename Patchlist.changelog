@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/b57ff83c206c815792a50aa0dc14cc293b1937da
+ b57ff83c206c815792a50aa0dc14cc293b1937da [redhat] rh_messages.h: mark mlx5 on Bluefield-3 as unmaintained
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/2a740e17e8b448f7189bc35eba53784ffd1344e4
  2a740e17e8b448f7189bc35eba53784ffd1344e4 [redhat] rh_messages.h: initial driver and device lists
 

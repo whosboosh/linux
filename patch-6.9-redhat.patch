@@ -3646,7 +3646,7 @@ index 000000000000..bb69e8965748
 +}
 diff --git a/kernel/rh_messages.h b/kernel/rh_messages.h
 new file mode 100644
-index 000000000000..053aeb047617
+index 000000000000..5c44026c6c81
 --- /dev/null
 +++ b/kernel/rh_messages.h
 @@ -0,0 +1,319 @@
@@ -3912,7 +3912,6 @@ index 000000000000..053aeb047617
 +	{ 0x15B3, 0x100e, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x15B3, 0x100f, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x15B3, 0x1010, PCI_ANY_ID, PCI_ANY_ID },
-+	{ 0x15B3, 0xA2DC, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0064, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0065, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0070, PCI_ANY_ID, PCI_ANY_ID },
@@ -3948,6 +3947,7 @@ index 000000000000..053aeb047617
 +	{ 0x1000, 0x0071, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0073, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0079, PCI_ANY_ID, PCI_ANY_ID },
++	{ 0x15B3, 0xA2DC, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x006E, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0080, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0081, PCI_ANY_ID, PCI_ANY_ID },
