@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc7.20240508gitdccb07f2914c.60
+%define pkgrelease 0.rc7.20240509git45db3ab70092.61
 %define kversion 6
-%define tarfile_release 6.9-rc7-12-gdccb07f2914c
+%define tarfile_release 6.9-rc7-56-g45db3ab70092
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240508gitdccb07f2914c.60%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240509git45db3ab70092.61%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -3936,6 +3936,12 @@ fi\
 #
 #
 %changelog
+* Thu May 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.45db3ab70092.61]
+- scsi: sd: condition probe_type under RHEL_DIFFERENCES (Eric Chanudet)
+- scsi: sd: remove unused sd_probe_types (Eric Chanudet)
+- Turn on INIT_ON_ALLOC_DEFAULT_ON for Fedora (Justin M. Forbes)
+- Linux v6.9.0-0.rc7.45db3ab70092
+
 * Wed May 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.dccb07f2914c.60]
 - Consolidate configs to common for 6.9 (Justin M. Forbes)
 

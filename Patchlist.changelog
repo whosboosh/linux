@@ -1,3 +1,9 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/4ab353ee7fd3b6ed9eadfb77260de8976d983b1a
+ 4ab353ee7fd3b6ed9eadfb77260de8976d983b1a scsi: sd: condition probe_type under RHEL_DIFFERENCES
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/0130c7220f300b67decb1d8c4d668fe05ea21a04
+ 0130c7220f300b67decb1d8c4d668fe05ea21a04 scsi: sd: remove unused sd_probe_types
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/b57ff83c206c815792a50aa0dc14cc293b1937da
  b57ff83c206c815792a50aa0dc14cc293b1937da [redhat] rh_messages.h: mark mlx5 on Bluefield-3 as unmaintained
 

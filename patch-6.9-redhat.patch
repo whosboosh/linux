@@ -41,7 +41,7 @@
  drivers/scsi/mpt3sas/mpt3sas_scsih.c               |   4 +
  drivers/scsi/qla2xxx/qla_os.c                      |   6 +
  drivers/scsi/qla4xxx/ql4_os.c                      |   2 +
- drivers/scsi/sd.c                                  |  10 +
+ drivers/scsi/sd.c                                  |  13 +
  drivers/usb/core/hub.c                             |   7 +
  fs/afs/main.c                                      |   3 +
  fs/erofs/super.c                                   |   9 +
@@ -71,13 +71,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 73 files changed, 2357 insertions(+), 207 deletions(-)
+ 73 files changed, 2360 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 213d0719e2b7..c3495f6bbfdc 100644
+index 396137ee018d..ff1db21fad9c 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6893,6 +6893,15 @@
+@@ -6894,6 +6894,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -2162,30 +2162,33 @@ index 675332e49a7b..4a3cbddacef1 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 65cdc8b77e35..7916ecf1af90 100644
+index 65cdc8b77e35..af5fb98808aa 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
  	"write back, no read (daft)"
  };
  
-+static const char *sd_probe_types[] = { "async", "sync" };
-+
++#ifdef CONFIG_RHEL_DIFFERENCES
 +static char sd_probe_type[6] = "async";
 +module_param_string(probe, sd_probe_type, sizeof(sd_probe_type),
 +		    S_IRUGO|S_IWUSR);
 +MODULE_PARM_DESC(probe, "async or sync. Setting to 'sync' disables asynchronous "
 +		 "device number assignments (sda, sdb, ...).");
++#endif
 +
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4249,6 +4257,8 @@ static int __init init_sd(void)
+@@ -4249,6 +4257,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
++#ifdef CONFIG_RHEL_DIFFERENCES
 +	if (!strcmp(sd_probe_type, "sync"))
 +		sd_template.gendrv.probe_type = PROBE_FORCE_SYNCHRONOUS;
++#endif
++
  	err = scsi_register_driver(&sd_template.gendrv);
  	if (err)
  		goto err_out_driver;
