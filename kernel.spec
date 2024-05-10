@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.9.0
 %define specversion 6.9.0
 %define patchversion 6.9
-%define pkgrelease 0.rc7.20240509git45db3ab70092.61
+%define pkgrelease 0.rc7.20240510git448b3fe5a0ea.62
 %define kversion 6
-%define tarfile_release 6.9-rc7-56-g45db3ab70092
+%define tarfile_release 6.9-rc7-117-g448b3fe5a0ea
 # This is needed to do merge window version magic
 %define patchlevel 9
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240509git45db3ab70092.61%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240510git448b3fe5a0ea.62%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.9.0
 
@@ -2634,8 +2634,12 @@ BuildKernel() {
         fi
         # this creates ../modules-*.list output, where each kmod path is as it
         # appears in modules.dep (relative to lib/modules/$KernelVer)
-        %{SOURCE22} sort -d $RPM_BUILD_ROOT/lib/modules/$KernelVer/modules.dep -c configs/def_variants.yaml $variants_param -o ..
+        %{SOURCE22} -l "../filtermods-$KernelVer.log" sort -d $RPM_BUILD_ROOT/lib/modules/$KernelVer/modules.dep -c configs/def_variants.yaml $variants_param -o ..
         if [ $? -ne 0 ]; then
+            echo "8< --- filtermods-$KernelVer.log ---"
+            cat "../filtermods-$KernelVer.log"
+            echo "--- filtermods-$KernelVer.log --- >8"
+
             echo "8< --- modules.dep ---"
             cat $RPM_BUILD_ROOT/lib/modules/$KernelVer/modules.dep
             echo "--- modules.dep --- >8"
@@ -3936,6 +3940,10 @@ fi\
 #
 #
 %changelog
+* Fri May 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.448b3fe5a0ea.62]
+- redhat: make filtermods.py less verbose by default (Jan Stancek)
+- Linux v6.9.0-0.rc7.448b3fe5a0ea
+
 * Thu May 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.9.0-0.rc7.45db3ab70092.61]
 - scsi: sd: condition probe_type under RHEL_DIFFERENCES (Eric Chanudet)
 - scsi: sd: remove unused sd_probe_types (Eric Chanudet)

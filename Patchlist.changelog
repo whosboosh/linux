@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/8ee6673f39bf08112ee45c7bbc194a206699842a
+ 8ee6673f39bf08112ee45c7bbc194a206699842a [redhat] PCI: Fix pci_rh_check_status() call semantics
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/4ab353ee7fd3b6ed9eadfb77260de8976d983b1a
  4ab353ee7fd3b6ed9eadfb77260de8976d983b1a scsi: sd: condition probe_type under RHEL_DIFFERENCES
 
