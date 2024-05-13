@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index d51d411d44a8..86aabffe78aa 100644
+index 967e97878ecd..869a8ae5bcee 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -1826,10 +1826,10 @@ index d16e976ae1a4..4dd28efacef0 100644
  
  	if (!ctrl->max_namespaces ||
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index b564c5f1450c..37a1b9bc7ec3 100644
+index 05532c281177..a2138cba0ec3 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -941,6 +941,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -946,6 +946,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -1837,7 +1837,7 @@ index b564c5f1450c..37a1b9bc7ec3 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -983,6 +984,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -988,6 +989,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
