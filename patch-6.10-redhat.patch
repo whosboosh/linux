@@ -74,10 +74,10 @@
  73 files changed, 2362 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 396137ee018d..ff1db21fad9c 100644
+index fe39954ca058..a3aa9bb6a811 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6894,6 +6894,15 @@
+@@ -6922,6 +6922,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -215,7 +215,7 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 1486350a4177..a240be567f22 100644
+index 7dc54571f18e..1c2f69720e6c 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
 @@ -2519,3 +2519,8 @@ int ipl_report_free(struct ipl_report *report)
@@ -228,7 +228,7 @@ index 1486350a4177..a240be567f22 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index 24ed33f044ec..5dd65c88310d 100644
+index cbd5290939df..9693994acac0 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -250,10 +250,10 @@ index 24ed33f044ec..5dd65c88310d 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 605c26c009c8..9c3c1969f7d8 100644
+index cdaa795a9371..f3cf17f9ca63 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1590,6 +1590,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		cpu_detect(c);
  		get_cpu_vendor(c);
  		get_cpu_cap(c);
@@ -262,10 +262,10 @@ index 605c26c009c8..9c3c1969f7d8 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index e125e059e2c4..88e7c5714629 100644
+index 55a1fc332e20..2a62d67e52e4 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
-@@ -20,6 +20,7 @@
+@@ -21,6 +21,7 @@
  #include <linux/root_dev.h>
  #include <linux/hugetlb.h>
  #include <linux/tboot.h>
@@ -273,7 +273,7 @@ index e125e059e2c4..88e7c5714629 100644
  #include <linux/usb/xhci-dbgp.h>
  #include <linux/static_call.h>
  #include <linux/swiotlb.h>
-@@ -55,6 +56,7 @@
+@@ -56,6 +57,7 @@
  #include <asm/unwind.h>
  #include <asm/vsyscall.h>
  #include <linux/vmalloc.h>
@@ -281,7 +281,7 @@ index e125e059e2c4..88e7c5714629 100644
  
  /*
   * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
-@@ -668,6 +670,79 @@ static void __init early_reserve_memory(void)
+@@ -669,6 +671,79 @@ static void __init early_reserve_memory(void)
  	trim_snb_memory();
  }
  
@@ -361,7 +361,7 @@ index e125e059e2c4..88e7c5714629 100644
  /*
   * Dump out kernel offset information on panic.
   */
-@@ -901,6 +976,13 @@ void __init setup_arch(char **cmdline_p)
+@@ -902,6 +977,13 @@ void __init setup_arch(char **cmdline_p)
  	if (efi_enabled(EFI_BOOT))
  		efi_init();
  
@@ -375,7 +375,7 @@ index e125e059e2c4..88e7c5714629 100644
  	reserve_ibft_region();
  	x86_init.resources.dmi_setup();
  
-@@ -1063,19 +1145,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1064,19 +1146,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -396,7 +396,7 @@ index e125e059e2c4..88e7c5714629 100644
  
  	reserve_initrd();
  
-@@ -1187,6 +1257,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1188,6 +1258,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -461,7 +461,7 @@ index 3addce90930c..730b03de596a 100644
  
  /*
 diff --git a/crypto/rng.c b/crypto/rng.c
-index 279dffdebf59..d24dd37205cd 100644
+index 9d8804e46422..5ccb0485ff4b 100644
 --- a/crypto/rng.c
 +++ b/crypto/rng.c
 @@ -12,10 +12,13 @@
@@ -489,7 +489,7 @@ index 279dffdebf59..d24dd37205cd 100644
  struct crypto_rng *crypto_default_rng;
  EXPORT_SYMBOL_GPL(crypto_default_rng);
  static int crypto_default_rng_refcnt;
-@@ -136,31 +141,37 @@ struct crypto_rng *crypto_alloc_rng(const char *alg_name, u32 type, u32 mask)
+@@ -106,31 +111,37 @@ struct crypto_rng *crypto_alloc_rng(const char *alg_name, u32 type, u32 mask)
  }
  EXPORT_SYMBOL_GPL(crypto_alloc_rng);
  
@@ -536,7 +536,7 @@ index 279dffdebf59..d24dd37205cd 100644
  	mutex_unlock(&crypto_default_rng_lock);
  
  	return err;
-@@ -176,24 +187,33 @@ void crypto_put_default_rng(void)
+@@ -146,24 +157,33 @@ void crypto_put_default_rng(void)
  EXPORT_SYMBOL_GPL(crypto_put_default_rng);
  
  #if defined(CONFIG_CRYPTO_RNG) || defined(CONFIG_CRYPTO_RNG_MODULE)
@@ -576,7 +576,7 @@ index 279dffdebf59..d24dd37205cd 100644
  EXPORT_SYMBOL_GPL(crypto_del_default_rng);
  #endif
  
-@@ -251,5 +271,102 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
+@@ -217,5 +237,102 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
  }
  EXPORT_SYMBOL_GPL(crypto_unregister_rngs);
  
@@ -1635,10 +1635,10 @@ index a95a483def2d..e11ceb8b6df0 100644
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
 diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-index 300f8e955a53..9636f3391891 100644
+index 0f80c840afc3..e2e7683c915c 100644
 --- a/drivers/message/fusion/mptsas.c
 +++ b/drivers/message/fusion/mptsas.c
-@@ -5383,6 +5383,10 @@ static void mptsas_remove(struct pci_dev *pdev)
+@@ -5379,6 +5379,10 @@ static void mptsas_remove(struct pci_dev *pdev)
  }
  
  static struct pci_device_id mptsas_pci_table[] = {
@@ -1649,7 +1649,7 @@ index 300f8e955a53..9636f3391891 100644
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1064,
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068,
-@@ -5395,6 +5399,7 @@ static struct pci_device_id mptsas_pci_table[] = {
+@@ -5391,6 +5395,7 @@ static struct pci_device_id mptsas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068_820XELP,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -1712,7 +1712,7 @@ index ee4da9ab8013..d395d11eadc4 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 095f59e7aa93..76aadd77190b 100644
+index bf7615cb36ee..b5ac1fbc3c73 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2165,7 +2165,7 @@ index 675332e49a7b..4a3cbddacef1 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 65cdc8b77e35..af5fb98808aa 100644
+index 64c5129044b3..2de5310e0c97 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
@@ -2183,7 +2183,7 @@ index 65cdc8b77e35..af5fb98808aa 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4249,6 +4257,11 @@ static int __init init_sd(void)
+@@ -4241,6 +4249,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2255,10 +2255,10 @@ index 30b49b2eee53..0ff37b43e0ec 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 044135796f2b..7806462b4af2 100644
+index 3fce1b80c419..bc363bba581b 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5606,6 +5606,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5602,6 +5602,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -3078,7 +3078,7 @@ index 41a8f667bdfa..e2aebf520337 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index 5dcf5274c09c..2664c52d1566 100644
+index f4e6001ebe79..810e0e656d48 100644
 --- a/init/main.c
 +++ b/init/main.c
 @@ -1160,6 +1160,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
@@ -3976,7 +3976,7 @@ index 000000000000..5c44026c6c81
 +
 +#endif /* __RH_MESSAGES_H */
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 2f5b91da5afa..040cecc77778 100644
+index 937294ff164f..eaccbb8639d3 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -22,6 +22,7 @@
@@ -3987,7 +3987,7 @@ index 2f5b91da5afa..040cecc77778 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1997,6 +1998,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1992,6 +1993,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4000,7 +4000,7 @@ index 2f5b91da5afa..040cecc77778 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -2057,6 +2064,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -2052,6 +2059,7 @@ static void write_mod_c_file(struct module *mod)
  	add_depends(&buf, mod);
  	add_moddevtable(&buf, mod);
  	add_srcversion(&buf, mod);
