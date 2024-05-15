@@ -74,10 +74,10 @@
  73 files changed, 2362 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fe39954ca058..a3aa9bb6a811 100644
+index 45d95614ec44..8a1a3dfd7029 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6922,6 +6922,15 @@
+@@ -6927,6 +6927,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -190,10 +190,10 @@ index b14aed3a17ab..5e4b473f78e6 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7b11c98b3e84..20233a056d5f 100644
+index a04059c31aba..0a228ffb1395 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1323,7 +1323,7 @@ endchoice
+@@ -1325,7 +1325,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -250,10 +250,10 @@ index cbd5290939df..9693994acac0 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index cdaa795a9371..f3cf17f9ca63 100644
+index 2b170da84f97..deb6685fdd94 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1585,6 +1585,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1586,6 +1586,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		cpu_detect(c);
  		get_cpu_vendor(c);
  		get_cpu_cap(c);
@@ -742,7 +742,7 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index d1464324de95..a3b2f99a2d78 100644
+index e41fb5716bc0..3ee60d684c97 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
 @@ -1798,6 +1798,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
@@ -1635,10 +1635,10 @@ index a95a483def2d..e11ceb8b6df0 100644
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
 diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-index 0f80c840afc3..e2e7683c915c 100644
+index a0bcb0864ecd..d5f52a1283f3 100644
 --- a/drivers/message/fusion/mptsas.c
 +++ b/drivers/message/fusion/mptsas.c
-@@ -5379,6 +5379,10 @@ static void mptsas_remove(struct pci_dev *pdev)
+@@ -5380,6 +5380,10 @@ static void mptsas_remove(struct pci_dev *pdev)
  }
  
  static struct pci_device_id mptsas_pci_table[] = {
@@ -1649,7 +1649,7 @@ index 0f80c840afc3..e2e7683c915c 100644
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1064,
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068,
-@@ -5391,6 +5395,7 @@ static struct pci_device_id mptsas_pci_table[] = {
+@@ -5392,6 +5396,7 @@ static struct pci_device_id mptsas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068_820XELP,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -1658,10 +1658,10 @@ index 0f80c840afc3..e2e7683c915c 100644
  };
  MODULE_DEVICE_TABLE(pci, mptsas_pci_table);
 diff --git a/drivers/message/fusion/mptspi.c b/drivers/message/fusion/mptspi.c
-index 6c5920db1e9d..dfbc97b68e6a 100644
+index 574b882c9a85..5a8b2ea7365a 100644
 --- a/drivers/message/fusion/mptspi.c
 +++ b/drivers/message/fusion/mptspi.c
-@@ -1238,12 +1238,17 @@ static struct spi_function_template mptspi_transport_functions = {
+@@ -1239,12 +1239,17 @@ static struct spi_function_template mptspi_transport_functions = {
   */
  
  static struct pci_device_id mptspi_pci_table[] = {
@@ -1679,7 +1679,7 @@ index 6c5920db1e9d..dfbc97b68e6a 100644
  	{0}	/* Terminating entry */
  };
  MODULE_DEVICE_TABLE(pci, mptspi_pci_table);
-@@ -1534,6 +1539,7 @@ mptspi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+@@ -1535,6 +1540,7 @@ mptspi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  		    0, 0, 0, 0, 5);
  
  	scsi_scan_host(sh);
@@ -1688,7 +1688,7 @@ index 6c5920db1e9d..dfbc97b68e6a 100644
  
  out_mptspi_probe:
 diff --git a/drivers/net/wireguard/main.c b/drivers/net/wireguard/main.c
-index ee4da9ab8013..d395d11eadc4 100644
+index a00671b58701..eeef2766b8b3 100644
 --- a/drivers/net/wireguard/main.c
 +++ b/drivers/net/wireguard/main.c
 @@ -12,6 +12,7 @@
@@ -1698,7 +1698,7 @@ index ee4da9ab8013..d395d11eadc4 100644
 +#include <linux/fips.h>
  #include <linux/init.h>
  #include <linux/module.h>
- #include <linux/genetlink.h>
+ #include <net/genetlink.h>
 @@ -21,6 +22,11 @@ static int __init wg_mod_init(void)
  {
  	int ret;
@@ -1949,7 +1949,7 @@ index 06acb5ff609e..a54ea7cf7d6e 100644
  	{ 0 }
  };
 diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index af18d20f3079..0cebae77fd00 100644
+index 49c57a9c110b..c6e34a17d355 100644
 --- a/drivers/scsi/hpsa.c
 +++ b/drivers/scsi/hpsa.c
 @@ -82,7 +82,9 @@ MODULE_DESCRIPTION("Driver for HP Smart Array Controller version " \
@@ -2050,7 +2050,7 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 3d4f13da1ae8..7fdf37db9969 100644
+index def0d905b6d9..ea658313f356 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
@@ -2082,10 +2082,10 @@ index 3d4f13da1ae8..7fdf37db9969 100644
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index ef8ee93005ea..f6f0d7948867 100644
+index 89ef43a5ef86..7d8dd062e718 100644
 --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -12600,6 +12600,7 @@ bool scsih_ncq_prio_supp(struct scsi_device *sdev)
+@@ -12598,6 +12598,7 @@ bool scsih_ncq_prio_supp(struct scsi_device *sdev)
   * The pci device ids are defined in mpi/mpi2_cnfg.h.
   */
  static const struct pci_device_id mpt3sas_pci_table[] = {
@@ -2093,7 +2093,7 @@ index ef8ee93005ea..f6f0d7948867 100644
  	/* Spitfire ~ 2004 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2004,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12618,6 +12619,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12616,6 +12617,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2116_2,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2101,7 +2101,7 @@ index ef8ee93005ea..f6f0d7948867 100644
  	/* Thunderbolt ~ 2208 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2208_1,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12642,9 +12644,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12640,9 +12642,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2114,7 +2114,7 @@ index ef8ee93005ea..f6f0d7948867 100644
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI25_MFGPAGE_DEVID_SAS3004,
  		PCI_ANY_ID, PCI_ANY_ID },
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 1e2f52210f60..5606b4994b91 100644
+index fcb06df2ce4e..26089872a42a 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
 @@ -8123,6 +8123,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
@@ -2145,7 +2145,7 @@ index 1e2f52210f60..5606b4994b91 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2271) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2261) },
 diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 675332e49a7b..4a3cbddacef1 100644
+index 17cccd14765f..7f0cef737224 100644
 --- a/drivers/scsi/qla4xxx/ql4_os.c
 +++ b/drivers/scsi/qla4xxx/ql4_os.c
 @@ -9865,6 +9865,7 @@ static struct pci_device_id qla4xxx_pci_tbl[] = {
@@ -2165,7 +2165,7 @@ index 675332e49a7b..4a3cbddacef1 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 64c5129044b3..2de5310e0c97 100644
+index 332eb9dac22d..85b23c0a836d 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
@@ -2183,7 +2183,7 @@ index 64c5129044b3..2de5310e0c97 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4241,6 +4249,11 @@ static int __init init_sd(void)
+@@ -4240,6 +4248,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2228,7 +2228,7 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 30b49b2eee53..0ff37b43e0ec 100644
+index 044c79229a78..749068c1e247 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
 @@ -582,6 +582,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
@@ -2289,7 +2289,7 @@ index b164da5e129e..59021b8609a7 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index d59b0947fba0..8b1e2e71d485 100644
+index 418e555459da..fdd941287ae1 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2342,7 +2342,7 @@ index d59b0947fba0..8b1e2e71d485 100644
  
  /*
   * Variable Attributes
-@@ -1134,13 +1149,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1133,13 +1148,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -3104,7 +3104,7 @@ index 3c13240dfc9f..c5f42d2ce38b 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index c287925471f6..fed1012487f2 100644
+index cf6285760aea..a888a7ca4117 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3139,7 +3139,7 @@ index c287925471f6..fed1012487f2 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -5983,6 +6001,11 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
+@@ -6010,6 +6028,11 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;

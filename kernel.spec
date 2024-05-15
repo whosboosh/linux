@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240514gita5131c3fdf26.2
+%define pkgrelease 0.rc0.20240515git1b294a1f3561.4
 %define kversion 6
-%define tarfile_release 6.9-1768-ga5131c3fdf26
+%define tarfile_release 6.9-5151-g1b294a1f3561
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240514gita5131c3fdf26.2%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240515git1b294a1f3561.4%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -1228,7 +1228,7 @@ analysing the logical and timing behavior of Linux.
 # output with bpftool -V.
 %define bpftoolversion  %specrpmversion
 %else
-%define bpftoolversion 7.4.0
+%define bpftoolversion 7.5.0
 %endif
 
 %package -n bpftool
@@ -3957,6 +3957,13 @@ fi\
 #
 #
 %changelog
+* Wed May 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.1b294a1f3561.4]
+- Fix up a mismatch for RHEL (Justin M. Forbes)
+- Linux v6.10.0-0.rc0.1b294a1f3561
+
+* Wed May 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.a5131c3fdf26.3]
+- Reset changelog after rebase (Justin M. Forbes)
+
 * Tue May 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.a5131c3fdf26.2]
 - Reset RHEL_RELEASE to 0 for 6.10 (Justin M. Forbes)
 - configs: move CONFIG_BLK_DEV_UBLK into rhel/configs/generic (Ming Lei)
@@ -6310,3 +6317,10 @@ fi\
 - [initial commit] Add configs (Laura Abbott)
 - [initial commit] Add Makefiles (Laura Abbott)
 - Linux v6.10.0-0.rc0.a5131c3fdf26
+
+###
+# The following Emacs magic makes C-c C-e use UTC dates.
+# Local Variables:
+# rpm-change-log-uses-utc: t
+# End:
+###
