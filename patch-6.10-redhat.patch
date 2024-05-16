@@ -190,10 +190,10 @@ index b14aed3a17ab..5e4b473f78e6 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a04059c31aba..0a228ffb1395 100644
+index 2df0818c3ca9..6080be5a8983 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1325,7 +1325,7 @@ endchoice
+@@ -1326,7 +1326,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -2382,10 +2382,10 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 334e00efbde4..5c962e31ffe5 100644
+index f804b76cde44..0c99deb19b47 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -436,6 +436,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
+@@ -437,6 +437,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
  #endif /* CONFIG_BPF_SYSCALL */
  
  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
@@ -2395,7 +2395,7 @@ index 334e00efbde4..5c962e31ffe5 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 1153b0d99a80..7e7b12225a92 100644
+index ffa1c603163c..efa06d882b54 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -418,6 +418,7 @@ struct module {
@@ -2406,7 +2406,7 @@ index 1153b0d99a80..7e7b12225a92 100644
  	struct kobject *holders_dir;
  
  	/* Exported symbols */
-@@ -990,4 +991,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
+@@ -999,4 +1000,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
  
  #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
  
@@ -3055,7 +3055,7 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 41a8f667bdfa..e2aebf520337 100644
+index 21cf70346b33..acb8ced06b01 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -507,6 +507,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
@@ -3152,10 +3152,10 @@ index cf6285760aea..a888a7ca4117 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index e1e8a7a9d6c1..0bd15c7606e2 100644
+index 91e185607d4b..c21e454b1534 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
-@@ -528,6 +528,7 @@ static struct module_attribute modinfo_##field = {                    \
+@@ -529,6 +529,7 @@ static struct module_attribute modinfo_##field = {                    \
  
  MODINFO_ATTR(version);
  MODINFO_ATTR(srcversion);
@@ -3163,7 +3163,7 @@ index e1e8a7a9d6c1..0bd15c7606e2 100644
  
  static struct {
  	char name[MODULE_NAME_LEN + 1];
-@@ -980,6 +981,7 @@ struct module_attribute *modinfo_attrs[] = {
+@@ -981,6 +982,7 @@ struct module_attribute *modinfo_attrs[] = {
  	&module_uevent,
  	&modinfo_version,
  	&modinfo_srcversion,
@@ -3171,7 +3171,7 @@ index e1e8a7a9d6c1..0bd15c7606e2 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2822,6 +2824,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2813,6 +2815,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -4082,10 +4082,10 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
  
  const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 0a9a0ac3f266..a5cfc42f7c33 100644
+index e5da848c50b9..f2bc5810c4b7 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5567,6 +5567,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5568,6 +5568,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
