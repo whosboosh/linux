@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240516git3c999d1ae3c7.5
+%define pkgrelease 0.rc0.20240517gitea5f6ad9ad96.6
 %define kversion 6
-%define tarfile_release 6.9-7726-g3c999d1ae3c7
+%define tarfile_release 6.9-8284-gea5f6ad9ad96
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240516git3c999d1ae3c7.5%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240517gitea5f6ad9ad96.6%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -3957,8 +3957,10 @@ fi\
 #
 #
 %changelog
-* Thu May 16 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc0.20240516git3c999d1ae3c7.5]
+* Fri May 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.ea5f6ad9ad96.6]
+- Turn off KUNIT_FAULT_TEST as it causes problems for CI (Justin M. Forbes)
 - Add a config entry in pending for CONFIG_DRM_MSM_VALIDATE_XML (Justin M. Forbes)
+- Linux v6.10.0-0.rc0.ea5f6ad9ad96
 
 * Thu May 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.3c999d1ae3c7.5]
 - Flip CONFIG_SND_SOC_CS35L56_SPI in pending to avoid a mismatch (Justin M. Forbes)
