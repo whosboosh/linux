@@ -74,10 +74,10 @@
  73 files changed, 2362 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 45d95614ec44..8a1a3dfd7029 100644
+index ef25e06ec08c..f7397ca8a73b 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6927,6 +6927,15 @@
+@@ -6935,6 +6935,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -136,7 +136,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 967e97878ecd..869a8ae5bcee 100644
+index 77b283d16e73..4067e9eb6b92 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -158,7 +158,7 @@ index 967e97878ecd..869a8ae5bcee 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -1245,7 +1257,13 @@ define filechk_version.h
+@@ -1251,7 +1263,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -172,12 +172,12 @@ index 967e97878ecd..869a8ae5bcee 100644
 +	echo '#define RHEL_RELEASE "$(RHEL_RELEASE)"'
  endef
  
- $(version_h): PATCHLEVEL := $(or $(PATCHLEVEL), 0)
+ $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index b14aed3a17ab..5e4b473f78e6 100644
+index ee5115252aac..7f3796df8404 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1223,9 +1223,9 @@ config HIGHMEM
+@@ -1224,9 +1224,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -190,10 +190,10 @@ index b14aed3a17ab..5e4b473f78e6 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 2df0818c3ca9..6080be5a8983 100644
+index 00cbb794aeda..4a1df72a6170 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1326,7 +1326,7 @@ endchoice
+@@ -1325,7 +1325,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -215,10 +215,10 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 7dc54571f18e..1c2f69720e6c 100644
+index f3609a0d453d..e3c11b37e592 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
-@@ -2519,3 +2519,8 @@ int ipl_report_free(struct ipl_report *report)
+@@ -2520,3 +2520,8 @@ int ipl_report_free(struct ipl_report *report)
  }
  
  #endif
@@ -262,7 +262,7 @@ index 2b170da84f97..deb6685fdd94 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 55a1fc332e20..2a62d67e52e4 100644
+index 05c5aa951da7..09c1ad947f46 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -396,7 +396,7 @@ index 55a1fc332e20..2a62d67e52e4 100644
  
  	reserve_initrd();
  
-@@ -1188,6 +1258,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1186,6 +1256,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -742,10 +742,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index e41fb5716bc0..3ee60d684c97 100644
+index 503773707e01..2fead21fcb07 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1798,6 +1798,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1793,6 +1793,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1352,7 +1352,7 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index c2ca4a02dfce..891f445c763e 100644
+index e6cd9705596c..04b142e071f8 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
 @@ -10,6 +10,7 @@
@@ -1380,7 +1380,7 @@ index c2ca4a02dfce..891f445c763e 100644
  MODULE_DEVICE_TABLE(amba, etm4_ids);
  
  static struct amba_driver etm4x_amba_driver = {
-@@ -2408,6 +2419,11 @@ static int __init etm4x_init(void)
+@@ -2407,6 +2418,11 @@ static int __init etm4x_init(void)
  {
  	int ret;
  
@@ -1392,7 +1392,7 @@ index c2ca4a02dfce..891f445c763e 100644
  	ret = etm4_pm_setup();
  
  	/* etm4_pm_setup() does its own cleanup - exit on error */
-@@ -2434,6 +2450,9 @@ static int __init etm4x_init(void)
+@@ -2433,6 +2449,9 @@ static int __init etm4x_init(void)
  
  static void __exit etm4x_exit(void)
  {
@@ -1595,7 +1595,7 @@ index ef9ea295f9e0..0103334e8f32 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index a95a483def2d..e11ceb8b6df0 100644
+index 9df7cc75c1bc..60d541ae39e8 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -1606,7 +1606,7 @@ index a95a483def2d..e11ceb8b6df0 100644
  #include <linux/kernel.h>
  #include <linux/bits.h>
  #include <linux/bug.h>
-@@ -2913,6 +2914,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
+@@ -2916,6 +2917,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
  }
  EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
  
@@ -2255,10 +2255,10 @@ index 044c79229a78..749068c1e247 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 3fce1b80c419..bc363bba581b 100644
+index 893ab80dafba..2a8045723d6d 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5602,6 +5602,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5597,6 +5597,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -2273,9 +2273,9 @@ index 3fce1b80c419..bc363bba581b 100644
 +	}
 +#endif
 +
- 	return 0;
- 
- failed_mount10:
+ 	/* Register sysfs after all initializations are complete. */
+ 	err = ext4_register_sysfs(sb);
+ 	if (err)
 diff --git a/include/linux/crypto.h b/include/linux/crypto.h
 index b164da5e129e..59021b8609a7 100644
 --- a/include/linux/crypto.h
@@ -3078,10 +3078,10 @@ index 21cf70346b33..acb8ced06b01 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index f4e6001ebe79..810e0e656d48 100644
+index 206acdde51f5..2296734522f7 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1160,6 +1160,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1182,6 +1182,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -3104,7 +3104,7 @@ index 3c13240dfc9f..c5f42d2ce38b 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index cf6285760aea..a888a7ca4117 100644
+index 2222c3ff88e7..ad54d43bd078 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3152,10 +3152,10 @@ index cf6285760aea..a888a7ca4117 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 91e185607d4b..c21e454b1534 100644
+index d18a94b973e1..5ecbf9b2caa0 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
-@@ -529,6 +529,7 @@ static struct module_attribute modinfo_##field = {                    \
+@@ -530,6 +530,7 @@ static struct module_attribute modinfo_##field = {                    \
  
  MODINFO_ATTR(version);
  MODINFO_ATTR(srcversion);
@@ -3163,7 +3163,7 @@ index 91e185607d4b..c21e454b1534 100644
  
  static struct {
  	char name[MODULE_NAME_LEN + 1];
-@@ -981,6 +982,7 @@ struct module_attribute *modinfo_attrs[] = {
+@@ -982,6 +983,7 @@ struct module_attribute *modinfo_attrs[] = {
  	&module_uevent,
  	&modinfo_version,
  	&modinfo_srcversion,
@@ -3171,7 +3171,7 @@ index 91e185607d4b..c21e454b1534 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2813,6 +2815,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2825,6 +2827,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3207,10 +3207,10 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 747c3f3d289a..f848d7d13386 100644
+index 8bff183d6180..9c0597ff07f1 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -495,6 +495,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+@@ -494,6 +494,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
  	[ TAINT_AUX ]			= { 'X', ' ', true },
  	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
  	[ TAINT_TEST ]			= { 'N', ' ', true },

@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240517gitea5f6ad9ad96.6
+%define pkgrelease 0.rc0.20240520giteb6a9339efeb.9
 %define kversion 6
-%define tarfile_release 6.9-8284-gea5f6ad9ad96
+%define tarfile_release 6.9-9699-geb6a9339efeb
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240517gitea5f6ad9ad96.6%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240520giteb6a9339efeb.9%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -3957,6 +3957,16 @@ fi\
 #
 #
 %changelog
+* Mon May 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.eb6a9339efeb.9]
+- New configs in lib/kunit (Fedora Kernel Team)
+- Linux v6.10.0-0.rc0.eb6a9339efeb
+
+* Sun May 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.0450d2083be6.8]
+- Linux v6.10.0-0.rc0.0450d2083be6
+
+* Sat May 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.4b377b4868ef.7]
+- Linux v6.10.0-0.rc0.4b377b4868ef
+
 * Fri May 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.ea5f6ad9ad96.6]
 - Turn off KUNIT_FAULT_TEST as it causes problems for CI (Justin M. Forbes)
 - Add a config entry in pending for CONFIG_DRM_MSM_VALIDATE_XML (Justin M. Forbes)
