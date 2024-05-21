@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240520giteb6a9339efeb.9
+%define pkgrelease 0.rc0.20240521git8f6a15f095a6.10
 %define kversion 6
-%define tarfile_release 6.9-9699-geb6a9339efeb
+%define tarfile_release 6.9-10323-g8f6a15f095a6
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240520giteb6a9339efeb.9%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240521git8f6a15f095a6.10%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -3957,6 +3957,10 @@ fi\
 #
 #
 %changelog
+* Tue May 21 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.8f6a15f095a6.10]
+- Drop kexec_load syscall support (Baoquan He)
+- Linux v6.10.0-0.rc0.8f6a15f095a6
+
 * Mon May 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.eb6a9339efeb.9]
 - New configs in lib/kunit (Fedora Kernel Team)
 - Linux v6.10.0-0.rc0.eb6a9339efeb
