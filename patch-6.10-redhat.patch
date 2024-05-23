@@ -54,15 +54,17 @@
  include/linux/panic.h                              |  18 +-
  include/linux/pci.h                                |   5 +
  include/linux/random.h                             |  10 +
+ include/linux/rh_flags.h                           |  34 ++
  include/linux/rh_kabi.h                            | 541 +++++++++++++++++++++
  include/linux/rmi.h                                |   1 +
  include/linux/security.h                           |   5 +
  init/main.c                                        |   3 +
  kernel/Makefile                                    |   1 +
  kernel/bpf/syscall.c                               |  23 +
- kernel/module/main.c                               |   7 +
+ kernel/module/main.c                               |  13 +
  kernel/module/signing.c                            |   9 +-
  kernel/panic.c                                     |  13 +
+ kernel/rh_flags.c                                  | 116 +++++
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 319 ++++++++++++
  scripts/mod/modpost.c                              |   8 +
@@ -71,13 +73,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 73 files changed, 2362 insertions(+), 207 deletions(-)
+ 75 files changed, 2518 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ef25e06ec08c..f7397ca8a73b 100644
+index 500cfa776225..8de03fac88fc 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6935,6 +6935,15 @@
+@@ -6954,6 +6954,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -136,7 +138,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 77b283d16e73..4067e9eb6b92 100644
+index 452913ce42c8..9cd3a2040b3f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -158,7 +160,7 @@ index 77b283d16e73..4067e9eb6b92 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -1251,7 +1263,13 @@ define filechk_version.h
+@@ -1256,7 +1268,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -190,10 +192,10 @@ index ee5115252aac..7f3796df8404 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 00cbb794aeda..4a1df72a6170 100644
+index 2f31376e85aa..9f6d8a1466a3 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1325,7 +1325,7 @@ endchoice
+@@ -1326,7 +1326,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -215,10 +217,10 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index f3609a0d453d..e3c11b37e592 100644
+index 3a7d6e172211..8163a2173247 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
-@@ -2520,3 +2520,8 @@ int ipl_report_free(struct ipl_report *report)
+@@ -2479,3 +2479,8 @@ int ipl_report_free(struct ipl_report *report)
  }
  
  #endif
@@ -228,7 +230,7 @@ index f3609a0d453d..e3c11b37e592 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index cbd5290939df..9693994acac0 100644
+index 90c2c786bb35..ce2456f531f1 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -1352,7 +1354,7 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index e6cd9705596c..04b142e071f8 100644
+index bf01f01964cf..703896981e8a 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
 @@ -10,6 +10,7 @@
@@ -1363,7 +1365,7 @@ index e6cd9705596c..04b142e071f8 100644
  #include <linux/io.h>
  #include <linux/err.h>
  #include <linux/fs.h>
-@@ -2339,6 +2340,16 @@ static const struct amba_id etm4_ids[] = {
+@@ -2344,6 +2345,16 @@ static const struct amba_id etm4_ids[] = {
  	{},
  };
  
@@ -1380,7 +1382,7 @@ index e6cd9705596c..04b142e071f8 100644
  MODULE_DEVICE_TABLE(amba, etm4_ids);
  
  static struct amba_driver etm4x_amba_driver = {
-@@ -2407,6 +2418,11 @@ static int __init etm4x_init(void)
+@@ -2412,6 +2423,11 @@ static int __init etm4x_init(void)
  {
  	int ret;
  
@@ -1392,7 +1394,7 @@ index e6cd9705596c..04b142e071f8 100644
  	ret = etm4_pm_setup();
  
  	/* etm4_pm_setup() does its own cleanup - exit on error */
-@@ -2433,6 +2449,9 @@ static int __init etm4x_init(void)
+@@ -2438,6 +2454,9 @@ static int __init etm4x_init(void)
  
  static void __exit etm4x_exit(void)
  {
@@ -1876,7 +1878,7 @@ index af2996d0d17f..e40e09d086b4 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index eff7f5df08e2..b58145ce7775 100644
+index 568410e64ce6..6afbaee83950 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -4433,6 +4433,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
@@ -1949,7 +1951,7 @@ index 06acb5ff609e..a54ea7cf7d6e 100644
  	{ 0 }
  };
 diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 49c57a9c110b..c6e34a17d355 100644
+index e044ed09d7e0..aa5f9c19d222 100644
 --- a/drivers/scsi/hpsa.c
 +++ b/drivers/scsi/hpsa.c
 @@ -82,7 +82,9 @@ MODULE_DESCRIPTION("Driver for HP Smart Array Controller version " \
@@ -2050,7 +2052,7 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index def0d905b6d9..ea658313f356 100644
+index 88acefbf9aea..bf57fd3b9263 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
@@ -2196,10 +2198,10 @@ index 332eb9dac22d..85b23c0a836d 100644
  	if (err)
  		goto err_out_driver;
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 008053039875..f948a5c96006 100644
+index 4b93c0bd1d4b..b98906237306 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
-@@ -5845,6 +5845,13 @@ static void hub_event(struct work_struct *work)
+@@ -5844,6 +5844,13 @@ static void hub_event(struct work_struct *work)
  			(u16) hub->change_bits[0],
  			(u16) hub->event_bits[0]);
  
@@ -2228,7 +2230,7 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 044c79229a78..749068c1e247 100644
+index 348ef1660e50..a7d5fcf5452e 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
 @@ -582,6 +582,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
@@ -2255,10 +2257,10 @@ index 044c79229a78..749068c1e247 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 893ab80dafba..2a8045723d6d 100644
+index c682fb927b64..66f747b698ba 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5597,6 +5597,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5581,6 +5581,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -2445,10 +2447,10 @@ index 6717b15e798c..8e1d3eae1686 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 16493426a04f..ef487d49985d 100644
+index fb004fd4e889..985984c6fd65 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1621,6 +1621,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1620,6 +1620,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -2456,7 +2458,7 @@ index 16493426a04f..ef487d49985d 100644
  int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
  		    int pass);
  
-@@ -2686,6 +2687,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+@@ -2666,6 +2667,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
  	return false;
  }
  
@@ -2495,6 +2497,46 @@ index b0a940af4fff..8a52424fd0d5 100644
  #ifndef MODULE
  extern const struct file_operations random_fops, urandom_fops;
  #endif
+diff --git a/include/linux/rh_flags.h b/include/linux/rh_flags.h
+new file mode 100644
+index 000000000000..8132beb38d5a
+--- /dev/null
++++ b/include/linux/rh_flags.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * rh_flags.h -- Red Hat flags tracking
++ *
++ * Copyright (c) 2018 Red Hat, Inc. -- Jiri Benc <jbenc@redhat.com>
++ *
++ * The intent of the flag tracking is to provide better and more focused
++ * support. Only those flags that are of a special interest for customer
++ * support should be tracked.
++ *
++ * THE FLAGS DO NOT EXPRESS ANY SUPPORT POLICIES.
++ */
++
++#ifndef _LINUX_RH_FLAGS_H
++#define _LINUX_RH_FLAGS_H
++
++#if defined CONFIG_RHEL_DIFFERENCES
++bool __rh_add_flag(const char *flag_name);
++void rh_print_flags(void);
++
++#define rh_add_flag(flag_name)						\
++({									\
++	static bool __mark_once __read_mostly;				\
++	bool __ret_mark_once = !__mark_once;				\
++									\
++	if (!__mark_once)						\
++		__mark_once = __rh_add_flag(flag_name);			\
++	unlikely(__ret_mark_once);					\
++})
++#else
++void rh_print_flags(void) { };
++void rh_add_flag(const char *flag_name) { };
++#endif
++#endif
 diff --git a/include/linux/rh_kabi.h b/include/linux/rh_kabi.h
 new file mode 100644
 index 000000000000..5139cb2cabdc
@@ -3092,14 +3134,14 @@ index 206acdde51f5..2296734522f7 100644
  		if (!strcmp(fn_name, entry->buf)) {
  			pr_debug("initcall %s blacklisted\n", fn_name);
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 3c13240dfc9f..c5f42d2ce38b 100644
+index 3c13240dfc9f..61b2ac156a3e 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
 @@ -12,6 +12,7 @@ obj-y     = fork.o exec_domain.o panic.o \
  	    notifier.o ksysfs.o cred.o reboot.o \
  	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
  
-+obj-$(CONFIG_RHEL_DIFFERENCES) += rh_messages.o
++obj-$(CONFIG_RHEL_DIFFERENCES) += rh_messages.o rh_flags.o
  obj-$(CONFIG_USERMODE_DRIVER) += usermode_driver.o
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
@@ -3152,10 +3194,19 @@ index 2222c3ff88e7..ad54d43bd078 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index d18a94b973e1..5ecbf9b2caa0 100644
+index d18a94b973e1..ee713c33b736 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
-@@ -530,6 +530,7 @@ static struct module_attribute modinfo_##field = {                    \
+@@ -65,6 +65,8 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/module.h>
+ 
++#include <linux/rh_flags.h>
++
+ /*
+  * Mutex protects:
+  * 1) List of modules (also safely readable with preempt_disable),
+@@ -530,6 +532,7 @@ static struct module_attribute modinfo_##field = {                    \
  
  MODINFO_ATTR(version);
  MODINFO_ATTR(srcversion);
@@ -3163,7 +3214,7 @@ index d18a94b973e1..5ecbf9b2caa0 100644
  
  static struct {
  	char name[MODULE_NAME_LEN + 1];
-@@ -982,6 +983,7 @@ struct module_attribute *modinfo_attrs[] = {
+@@ -982,6 +985,7 @@ struct module_attribute *modinfo_attrs[] = {
  	&module_uevent,
  	&modinfo_version,
  	&modinfo_srcversion,
@@ -3171,7 +3222,7 @@ index d18a94b973e1..5ecbf9b2caa0 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2825,6 +2827,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2825,6 +2829,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3183,6 +3234,17 @@ index d18a94b973e1..5ecbf9b2caa0 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
+@@ -3377,6 +3386,10 @@ void print_modules(void)
+ 		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
+ 			last_unloaded_module.taints);
+ 	pr_cont("\n");
++
++#ifdef CONFIG_RHEL_DIFFERENCES
++	rh_print_flags();
++#endif
+ }
+ 
+ #ifdef CONFIG_MODULE_DEBUGFS
 diff --git a/kernel/module/signing.c b/kernel/module/signing.c
 index a2ff4242e623..f0d2be1ee4f1 100644
 --- a/kernel/module/signing.c
@@ -3230,6 +3292,128 @@ index 8bff183d6180..9c0597ff07f1 100644
  };
  
  /**
+diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
+new file mode 100644
+index 000000000000..b98c81d917ca
+--- /dev/null
++++ b/kernel/rh_flags.c
+@@ -0,0 +1,116 @@
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/proc_fs.h>
++#include <linux/seq_file.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/rh_flags.h>
++
++#define RH_FLAG_NAME_LEN	32
++#define MAX_RH_FLAGS		128
++#define MAX_RH_FLAG_NAME_LEN	(MAX_RH_FLAGS * RH_FLAG_NAME_LEN)
++
++struct rh_flag {
++	struct list_head list;
++	char name[RH_FLAG_NAME_LEN];
++};
++
++static LIST_HEAD(rh_flag_list);
++static DEFINE_SPINLOCK(rh_flag_lock);
++
++bool __rh_add_flag(const char *flag_name)
++{
++	struct rh_flag *feat, *iter;
++
++	BUG_ON(in_interrupt());
++	feat = kzalloc(sizeof(*feat), GFP_ATOMIC);
++	if (WARN(!feat, "Adding Red Hat flag %s.\n", flag_name))
++		return false;
++	strscpy(feat->name, flag_name, RH_FLAG_NAME_LEN);
++
++	spin_lock(&rh_flag_lock);
++	list_for_each_entry_rcu(iter, &rh_flag_list, list) {
++		if (!strcmp(iter->name, flag_name)) {
++			kfree(feat);
++			feat = NULL;
++			break;
++		}
++	}
++	if (feat)
++		list_add_rcu(&feat->list, &rh_flag_list);
++	spin_unlock(&rh_flag_lock);
++
++	if (feat)
++		pr_info("Adding Red Hat flag %s.\n", flag_name);
++	return true;
++}
++EXPORT_SYMBOL(__rh_add_flag);
++
++void rh_print_flags(void)
++{
++	struct rh_flag *feat;
++
++	/*
++	 * This function cannot do any locking, we're oopsing. Traversing
++	 * rh_flag_list is okay, though, even without the rcu_read_lock
++	 * taken: we never delete from that list and thus don't need the
++	 * delayed free. All we need are the smp barriers invoked by the rcu
++	 * list manipulation routines.
++	 */
++	if (list_empty(&rh_flag_list))
++		return;
++	printk(KERN_DEFAULT "Red Hat flags:");
++	list_for_each_entry_lockless(feat, &rh_flag_list, list) {
++		pr_cont(" %s", feat->name);
++	}
++	pr_cont("\n");
++}
++EXPORT_SYMBOL(rh_print_flags);
++
++#ifdef CONFIG_SYSCTL
++static int rh_flags_show(struct ctl_table *ctl, int write,
++			    void __user *buffer, size_t *lenp,
++			    loff_t *ppos)
++{
++	struct ctl_table tbl = { .maxlen = MAX_RH_FLAG_NAME_LEN, };
++	struct rh_flag *feat;
++	size_t offs = 0;
++	int ret;
++
++	tbl.data = kmalloc(tbl.maxlen, GFP_KERNEL);
++	if (!tbl.data)
++		return -ENOMEM;
++	((char *)tbl.data)[0] = '\0';
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(feat, &rh_flag_list, list) {
++		offs += scnprintf(tbl.data + offs, tbl.maxlen - offs, "%s%s",
++				  offs == 0 ? "" : " ", feat->name);
++	}
++	rcu_read_unlock();
++
++	ret = proc_dostring(&tbl, write, buffer, lenp, ppos);
++	kfree(tbl.data);
++	return ret;
++}
++
++static struct ctl_table rh_flags_table[] = {
++	{
++		.procname = "rh_flags",
++		.data = &rh_flag_list,
++		.maxlen = MAX_RH_FLAG_NAME_LEN,
++		.mode = 0444,
++		.proc_handler = rh_flags_show,
++	},
++	{ }
++};
++#endif
++
++static __init int rh_flags_init(void)
++{
++#ifdef CONFIG_SYSCTL
++	register_sysctl_init("kernel", rh_flags_table);
++#endif
++	return 0;
++}
++subsys_initcall(rh_flags_init);
 diff --git a/kernel/rh_messages.c b/kernel/rh_messages.c
 new file mode 100644
 index 000000000000..bb69e8965748

@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240521git8f6a15f095a6.10
+%define pkgrelease 0.rc0.20240523gitc760b3725e52.12
 %define kversion 6
-%define tarfile_release 6.9-10323-g8f6a15f095a6
+%define tarfile_release 6.9-11952-gc760b3725e52
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240521git8f6a15f095a6.10%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240523gitc760b3725e52.12%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2913,6 +2913,7 @@ popd
 if [ -f $DevelDir/vmlinux.h ]; then
   RPM_VMLINUX_H=$DevelDir/vmlinux.h
 fi
+echo "${RPM_VMLINUX_H}" > ../vmlinux_h_path
 
 %if %{with_bpftool}
 %global bpftool_make \
@@ -3072,6 +3073,9 @@ find Documentation -type d | xargs chmod u+w
 %install
 
 cd linux-%{KVERREL}
+
+# re-define RPM_VMLINUX_H, because it doesn't carry over from %build
+RPM_VMLINUX_H="$(cat ../vmlinux_h_path)"
 
 %if %{with_doc}
 docdir=$RPM_BUILD_ROOT%{_datadir}/doc/kernel-doc-%{specversion}-%{pkgrelease}
@@ -3957,6 +3961,19 @@ fi\
 #
 #
 %changelog
+* Thu May 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.c760b3725e52.12]
+- Linux v6.10.0-0.rc0.c760b3725e52
+
+* Wed May 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.29c73fc794c8.11]
+- redhat: pass correct RPM_VMLINUX_H to bpftool install (Jan Stancek)
+- rh_flags: Rename rh_features to rh_flags (Ricardo Robaina) [RHEL-32987]
+- kernel: rh_features: fix reading empty feature list from /proc (Ricardo Robaina) [RHEL-32987]
+- rh_features: move rh_features entry to sys/kernel (Ricardo Robaina) [RHEL-32987]
+- rh_features: convert to atomic allocation (Ricardo Robaina) [RHEL-32987]
+- add rh_features to /proc (Ricardo Robaina) [RHEL-32987]
+- add support for rh_features (Ricardo Robaina) [RHEL-32987]
+- Linux v6.10.0-0.rc0.29c73fc794c8
+
 * Tue May 21 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.8f6a15f095a6.10]
 - Drop kexec_load syscall support (Baoquan He)
 - Linux v6.10.0-0.rc0.8f6a15f095a6
