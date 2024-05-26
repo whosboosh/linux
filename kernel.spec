@@ -160,18 +160,18 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.8.10
-%define specversion 6.8.10
+%define specrpmversion 6.8.11
+%define specversion 6.8.11
 %define patchversion 6.8
 %define pkgrelease 300
 %define kversion 6
-%define tarfile_release 6.8.10
+%define tarfile_release 6.8.11
 # This is needed to do merge window version magic
 %define patchlevel 8
 # This allows pkg_release to have configurable %%{?dist} tag
 %define specrelease 300%{?buildid}%{?dist}
 # This defines the kabi tarball version
-%define kabiversion 6.8.10
+%define kabiversion 6.8.11
 
 # If this variable is set to 1, a bpf selftests build failure will cause a
 # fatal kernel package build error
@@ -3959,6 +3959,12 @@ fi\
 #
 #
 %changelog
+* Sun May 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.8.11-0]
+- redhat/configs: fedora: aarch64: Re-enable CUSE (Neal Gompa)
+- Remove f38 from release_targets (Justin M. Forbes)
+- Add more Bugs addressed by 6.8.10 to BugsFixed (Justin M. Forbes)
+- Linux v6.8.11
+
 * Fri May 17 2024 Augusto Caringi <acaringi@redhat.com> [6.8.10-0]
 - redhat/configs: Enable CONFIG_DEBUG_INFO_BTF_MODULES (Augusto Caringi)
 - Add bugs to BugsFixed for 6.8.10 (Justin M. Forbes)
