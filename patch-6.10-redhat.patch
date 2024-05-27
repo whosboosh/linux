@@ -138,7 +138,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 452913ce42c8..9cd3a2040b3f 100644
+index f975b6396328..c4506bcedfa1 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -192,10 +192,10 @@ index ee5115252aac..7f3796df8404 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 2f31376e85aa..9f6d8a1466a3 100644
+index 5d91259ee7b5..3a9f1962da72 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1326,7 +1326,7 @@ endchoice
+@@ -1368,7 +1368,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -819,7 +819,7 @@ index bbf7029e224b..cf7faa970dd6 100644
  		dmi_decode_ipmi((const struct dmi_header *) dev->device_data);
  
 diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index b0eedc4595b3..a9024c1dd68a 100644
+index e12b531f5c2f..082707f8dff8 100644
 --- a/drivers/char/ipmi/ipmi_msghandler.c
 +++ b/drivers/char/ipmi/ipmi_msghandler.c
 @@ -35,6 +35,7 @@
@@ -830,7 +830,7 @@ index b0eedc4595b3..a9024c1dd68a 100644
  #include <linux/delay.h>
  
  #define IPMI_DRIVER_VERSION "39.2"
-@@ -5511,8 +5512,21 @@ static int __init ipmi_init_msghandler_mod(void)
+@@ -5510,8 +5511,21 @@ static int __init ipmi_init_msghandler_mod(void)
  {
  	int rv;
  
@@ -1714,7 +1714,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index bf7615cb36ee..b5ac1fbc3c73 100644
+index 954f850f113a..35162a8dc97a 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -1735,15 +1735,18 @@ index bf7615cb36ee..b5ac1fbc3c73 100644
  	AUTHENTICATE,
  };
  
-@@ -386,15 +390,16 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
- 	if ((nvme_req(req)->status & 0x7ff) == NVME_SC_AUTH_REQUIRED)
- 		return AUTHENTICATE;
+@@ -383,7 +387,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+ 	if (likely(nvme_req(req)->status == 0))
+ 		return COMPLETE;
  
 -	if (blk_noretry_request(req) ||
 +	if ((req->cmd_flags & (REQ_FAILFAST_DEV | REQ_FAILFAST_DRIVER)) ||
  	    (nvme_req(req)->status & NVME_SC_DNR) ||
  	    nvme_req(req)->retries >= nvme_max_retries)
  		return COMPLETE;
+@@ -391,10 +395,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+ 	if ((nvme_req(req)->status & 0x7ff) == NVME_SC_AUTH_REQUIRED)
+ 		return AUTHENTICATE;
  
 -	if (req->cmd_flags & REQ_NVME_MPATH) {
 +	if (req->cmd_flags & (REQ_NVME_MPATH | REQ_FAILFAST_TRANSPORT)) {
@@ -1828,7 +1831,7 @@ index d16e976ae1a4..4dd28efacef0 100644
  
  	if (!ctrl->max_namespaces ||
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 05532c281177..a2138cba0ec3 100644
+index cacc56f4bbf4..486a80ddfc49 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
 @@ -946,6 +946,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
@@ -2230,10 +2233,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 348ef1660e50..a7d5fcf5452e 100644
+index c93bd24d2771..84f0c3a85d40 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -582,6 +582,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -580,6 +580,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2243,7 +2246,7 @@ index 348ef1660e50..a7d5fcf5452e 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -687,6 +690,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -685,6 +688,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);

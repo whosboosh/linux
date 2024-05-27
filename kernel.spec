@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc0.20240523gitc760b3725e52.12
+%define pkgrelease 0.rc1.17
 %define kversion 6
-%define tarfile_release 6.9-11952-gc760b3725e52
+%define tarfile_release 6.10-rc1
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240523gitc760b3725e52.12%{?buildid}%{?dist}
+%define specrelease 0.rc1.17%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -797,6 +797,14 @@ BuildRequires: systemd-boot-unsigned
 BuildRequires: systemd-udev >= 252-1
 # For TPM operations in UKI initramfs
 BuildRequires: tpm2-tools
+# For UKI sb cert
+%if 0%{?rhel}%{?centos} && !0%{?eln}
+%if 0%{?centos}
+BuildRequires: centos-sb-certs >= 9.0-23
+%else
+BuildRequires: redhat-sb-certs >= 9.4-0.1
+%endif
+%endif
 %endif
 
 # Because this is the kernel, it's hard to get a single upstream URL
@@ -2543,6 +2551,19 @@ BuildKernel() {
 %if %{with_efiuki}
         %{log_msg "Setup the EFI UKI kernel"}
 
+        # RHEL/CentOS specific .SBAT entries
+%if 0%{?centos}
+        SBATsuffix="centos"
+%else
+        SBATsuffix="rhel"
+%endif
+        SBAT=$(cat <<- EOF
+	linux,1,Red Hat,linux,$KernelVer,mailto:secalert@redhat.com
+	linux.$SBATsuffix,1,Red Hat,linux,$KernelVer,mailto:secalert@redhat.com
+	kernel-uki-virt.$SBATsuffix,1,Red Hat,kernel-uki-virt,$KernelVer,mailto:secalert@redhat.com
+	EOF
+	)
+
 	KernelUnifiedImageDir="$RPM_BUILD_ROOT/lib/modules/$KernelVer"
     	KernelUnifiedImage="$KernelUnifiedImageDir/$InstallName-virt.efi"
 
@@ -2555,19 +2576,32 @@ BuildKernel() {
            --kmoddir "$RPM_BUILD_ROOT/lib/modules/$KernelVer/" \
            --logfile=$(mktemp) \
            --uefi \
+%if 0%{?rhel} && !0%{?eln}
+           --sbat "$SBAT" \
+%endif
            --kernel-image $(realpath $KernelImage) \
            --kernel-cmdline 'console=tty0 console=ttyS0' \
 	   $KernelUnifiedImage
 
 %if %{signkernel}
 	%{log_msg "Sign the EFI UKI kernel"}
-	%pesign -s -i $KernelUnifiedImage -o $KernelUnifiedImage.signed -a %{secureboot_ca_0} -c %{secureboot_key_0} -n %{pesign_name_0}
+%if 0%{?fedora}%{?eln}
+        %pesign -s -i $KernelUnifiedImage -o $KernelUnifiedImage.signed -a %{secureboot_ca_0} -c %{secureboot_key_0} -n %{pesign_name_0}
+%else
+%if 0%{?centos}
+        UKI_secureboot_name=centossecureboot204
+%else
+        UKI_secureboot_name=redhatsecureboot504
+%endif
 
-    	if [ ! -s $KernelUnifiedImage.signed ]; then
-	   %{log_msg "pesigning failed"}
-      	   exit 1
-    	fi
-    	mv $KernelUnifiedImage.signed $KernelUnifiedImage
+        %pesign -s -i $KernelUnifiedImage -o $KernelUnifiedImage.signed -a %{secureboot_ca_0} -c $UKI_secureboot_cert -n $UKI_secureboot_name
+# 0%{?fedora}%{?eln}
+%endif
+        if [ ! -s $KernelUnifiedImage.signed ]; then
+            echo "pesigning failed"
+            exit 1
+        fi
+        mv $KernelUnifiedImage.signed $KernelUnifiedImage
 
 # signkernel
 %endif
@@ -2958,7 +2992,7 @@ pushd tools/testing/selftests
 %endif
 
 %{log_msg "main selftests compile"}
-%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf mm net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
+%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf mm net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding iommu" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
 
 %ifarch %{klptestarches}
 	# kernel livepatching selftest test_modules will build against
@@ -3322,6 +3356,12 @@ pushd tools/testing/selftests/memfd
 find -type d -exec install -d %{buildroot}%{_libexecdir}/kselftests/memfd/{} \;
 find -type f -executable -exec install -D -m755 {} %{buildroot}%{_libexecdir}/kselftests/memfd/{} \;
 find -type f ! -executable -exec install -D -m644 {} %{buildroot}%{_libexecdir}/kselftests/memfd/{} \;
+popd
+# install iommu selftests
+pushd tools/testing/selftests/iommu
+find -type d -exec install -d %{buildroot}%{_libexecdir}/kselftests/iommu/{} \;
+find -type f -executable -exec install -D -m755 {} %{buildroot}%{_libexecdir}/kselftests/iommu/{} \;
+find -type f ! -executable -exec install -D -m644 {} %{buildroot}%{_libexecdir}/kselftests/iommu/{} \;
 popd
 %endif
 
@@ -3961,6 +4001,24 @@ fi\
 #
 #
 %changelog
+* Mon May 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.17]
+- redhat: Switch UKI to using its own SecureBoot cert (from system-sb-certs) (Jan Stancek)
+- redhat: Add RHEL specifc .sbat section to UKI (Jan Stancek)
+- kernel.spec: add iommu selftests to kernel-selftests-internal (Eder Zulian) [RHEL-32895]
+- Linux v6.10.0-0.rc1
+
+* Sun May 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.c13320499ba0.16]
+- Linux v6.10.0-0.rc0.c13320499ba0
+
+* Sat May 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.56fb6f92854f.15]
+- Linux v6.10.0-0.rc0.56fb6f92854f
+
+* Fri May 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.6d69b6c12fce.14]
+- Linux v6.10.0-0.rc0.6d69b6c12fce
+
+* Fri May 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.c760b3725e52.13]
+- redhat/configs: fedora: aarch64: Re-enable CUSE (Neal Gompa)
+
 * Thu May 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc0.c760b3725e52.12]
 - Linux v6.10.0-0.rc0.c760b3725e52
 
