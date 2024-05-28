@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc1.17
+%define pkgrelease 0.rc1.20240528git2bfcfd584ff5.18
 %define kversion 6
-%define tarfile_release 6.10-rc1
+%define tarfile_release 6.10-rc1-13-g2bfcfd584ff5
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.17%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240528git2bfcfd584ff5.18%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4001,6 +4001,9 @@ fi\
 #
 #
 %changelog
+* Tue May 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.2bfcfd584ff5.18]
+- Linux v6.10.0-0.rc1.2bfcfd584ff5
+
 * Mon May 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.17]
 - redhat: Switch UKI to using its own SecureBoot cert (from system-sb-certs) (Jan Stancek)
 - redhat: Add RHEL specifc .sbat section to UKI (Jan Stancek)
