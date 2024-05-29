@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc1.20240528git2bfcfd584ff5.18
+%define pkgrelease 0.rc1.20240529gite0cce98fe279.19
 %define kversion 6
-%define tarfile_release 6.10-rc1-13-g2bfcfd584ff5
+%define tarfile_release 6.10-rc1-21-ge0cce98fe279
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240528git2bfcfd584ff5.18%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240529gite0cce98fe279.19%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4001,6 +4001,14 @@ fi\
 #
 #
 %changelog
+* Wed May 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.e0cce98fe279.19]
+- gitlab-ci: add kernel-automotive pipelines (Michael Hofmann)
+- Enable CEC support for TC358743 (Peter Robinson)
+- fedora: arm: Enable ARCH_R9A09G057 (Peter Robinson)
+- fedora: updates for the 6.10 kernel (Peter Robinson)
+- fedora: arm: Enable the MAX96706 GMSL module (Peter Robinson)
+- Linux v6.10.0-0.rc1.e0cce98fe279
+
 * Tue May 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.2bfcfd584ff5.18]
 - Linux v6.10.0-0.rc1.2bfcfd584ff5
 
