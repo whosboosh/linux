@@ -9,6 +9,8 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
+ block/blk-throttle.c                               |  24 +-
+ block/blk-throttle.h                               |   8 +-
  crypto/drbg.c                                      |  18 +-
  crypto/rng.c                                       | 149 +++++-
  drivers/acpi/apei/hest.c                           |   8 +
@@ -73,7 +75,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 75 files changed, 2518 insertions(+), 207 deletions(-)
+ 77 files changed, 2532 insertions(+), 225 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 500cfa776225..8de03fac88fc 100644
@@ -407,6 +409,77 @@ index 05c5aa951da7..09c1ad947f46 100644
  	unwind_init();
  }
  
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 0be180f9a789..c1bf73f8c75d 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1399,32 +1399,32 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
+ 	bps_dft = U64_MAX;
+ 	iops_dft = UINT_MAX;
+ 
+-	if (tg->bps_conf[READ] == bps_dft &&
+-	    tg->bps_conf[WRITE] == bps_dft &&
+-	    tg->iops_conf[READ] == iops_dft &&
+-	    tg->iops_conf[WRITE] == iops_dft)
++	if (tg->bps[READ] == bps_dft &&
++	    tg->bps[WRITE] == bps_dft &&
++	    tg->iops[READ] == iops_dft &&
++	    tg->iops[WRITE] == iops_dft)
+ 		return 0;
+ 
+ 	seq_printf(sf, "%s", dname);
+-	if (tg->bps_conf[READ] == U64_MAX)
++	if (tg->bps[READ] == U64_MAX)
+ 		seq_printf(sf, " rbps=max");
+ 	else
+-		seq_printf(sf, " rbps=%llu", tg->bps_conf[READ]);
++		seq_printf(sf, " rbps=%llu", tg->bps[READ]);
+ 
+-	if (tg->bps_conf[WRITE] == U64_MAX)
++	if (tg->bps[WRITE] == U64_MAX)
+ 		seq_printf(sf, " wbps=max");
+ 	else
+-		seq_printf(sf, " wbps=%llu", tg->bps_conf[WRITE]);
++		seq_printf(sf, " wbps=%llu", tg->bps[WRITE]);
+ 
+-	if (tg->iops_conf[READ] == UINT_MAX)
++	if (tg->iops[READ] == UINT_MAX)
+ 		seq_printf(sf, " riops=max");
+ 	else
+-		seq_printf(sf, " riops=%u", tg->iops_conf[READ]);
++		seq_printf(sf, " riops=%u", tg->iops[READ]);
+ 
+-	if (tg->iops_conf[WRITE] == UINT_MAX)
++	if (tg->iops[WRITE] == UINT_MAX)
+ 		seq_printf(sf, " wiops=max");
+ 	else
+-		seq_printf(sf, " wiops=%u", tg->iops_conf[WRITE]);
++		seq_printf(sf, " wiops=%u", tg->iops[WRITE]);
+ 
+ 	seq_printf(sf, "\n");
+ 	return 0;
+diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+index 393c3d134b96..4d9ef5abdf21 100644
+--- a/block/blk-throttle.h
++++ b/block/blk-throttle.h
+@@ -95,15 +95,11 @@ struct throtl_grp {
+ 	bool has_rules_bps[2];
+ 	bool has_rules_iops[2];
+ 
+-	/* internally used bytes per second rate limits */
++	/* bytes per second rate limits */
+ 	uint64_t bps[2];
+-	/* user configured bps limits */
+-	uint64_t bps_conf[2];
+ 
+-	/* internally used IOPS limits */
++	/* IOPS limits */
+ 	unsigned int iops[2];
+-	/* user configured IOPS limits */
+-	unsigned int iops_conf[2];
+ 
+ 	/* Number of bytes dispatched in current slice */
+ 	uint64_t bytes_disp[2];
 diff --git a/crypto/drbg.c b/crypto/drbg.c
 index 3addce90930c..730b03de596a 100644
 --- a/crypto/drbg.c

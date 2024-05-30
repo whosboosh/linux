@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc1.20240529gite0cce98fe279.19
+%define pkgrelease 0.rc1.20240530git4a4be1ad3a6e.20
 %define kversion 6
-%define tarfile_release 6.10-rc1-21-ge0cce98fe279
+%define tarfile_release 6.10-rc1-27-g4a4be1ad3a6e
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240529gite0cce98fe279.19%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240530git4a4be1ad3a6e.20%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4001,6 +4001,12 @@ fi\
 #
 #
 %changelog
+* Thu May 30 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc1.20240530git4a4be1ad3a6e.20]
+- blk-throttle: Fix incorrect display of io.max (Waiman Long)
+
+* Thu May 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.4a4be1ad3a6e.20]
+- Linux v6.10.0-0.rc1.4a4be1ad3a6e
+
 * Wed May 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.e0cce98fe279.19]
 - gitlab-ci: add kernel-automotive pipelines (Michael Hofmann)
 - Enable CEC support for TC358743 (Peter Robinson)
