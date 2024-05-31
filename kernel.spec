@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc1.20240530git4a4be1ad3a6e.20
+%define pkgrelease 0.rc1.20240531git4a4be1ad3a6e.21
 %define kversion 6
 %define tarfile_release 6.10-rc1-27-g4a4be1ad3a6e
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240530git4a4be1ad3a6e.20%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240531git4a4be1ad3a6e.21%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -929,6 +929,16 @@ Source102: nvidiagpuoot001.x509
 Source103: rhelimaca1.x509
 Source104: rhelima.x509
 Source105: rhelima_centos.x509
+Source106: fedoraimaca.x509
+
+%if 0%{?fedora}%{?eln}
+%define ima_ca_cert %{SOURCE106}
+%endif
+
+%if 0%{?rhel} && !0%{?eln}
+%define ima_ca_cert %{SOURCE103}
+# rhel && !eln
+%endif
 
 %if 0%{?centos}
 %define ima_signing_cert %{SOURCE105}
@@ -1905,25 +1915,31 @@ do
 done
 %endif
 
+%if %{signkernel}%{signmodules}
+
 # Add DUP and kpatch certificates to system trusted keys for RHEL
 %if 0%{?rhel}
 %{log_msg "Add DUP and kpatch certificates to system trusted keys for RHEL"}
-%if %{signkernel}%{signmodules}
 openssl x509 -inform der -in %{SOURCE100} -out rheldup3.pem
 openssl x509 -inform der -in %{SOURCE101} -out rhelkpatch1.pem
 openssl x509 -inform der -in %{SOURCE102} -out nvidiagpuoot001.pem
-openssl x509 -inform der -in %{SOURCE103} -out rhelimaca1.pem
-cat rheldup3.pem rhelkpatch1.pem nvidiagpuoot001.pem rhelimaca1.pem > ../certs/rhel.pem
+cat rheldup3.pem rhelkpatch1.pem nvidiagpuoot001.pem > ../certs/rhel.pem
 %if %{signkernel}
 %ifarch s390x ppc64le
 openssl x509 -inform der -in %{secureboot_ca_0} -out secureboot.pem
 cat secureboot.pem >> ../certs/rhel.pem
 %endif
 %endif
+
+# rhel
+%endif
+
+openssl x509 -inform der -in %{ima_ca_cert} -out imaca.pem
+cat imaca.pem >> ../certs/rhel.pem
+
 for i in *.config; do
   sed -i 's@CONFIG_SYSTEM_TRUSTED_KEYS=""@CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"@' $i
 done
-%endif
 %endif
 
 # Adjust FIPS module name for RHEL
@@ -4001,8 +4017,13 @@ fi\
 #
 #
 %changelog
-* Thu May 30 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc1.20240530git4a4be1ad3a6e.20]
+* Fri May 31 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc1.20240531git4a4be1ad3a6e.21]
 - blk-throttle: Fix incorrect display of io.max (Waiman Long)
+
+* Fri May 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.4a4be1ad3a6e.21]
+- redhat: Build IMA CA certificate into the Fedora kernel (Coiby Xu)
+- Move CONFIG_RAS_FMPM to the proper location (Aristeu Rozanski)
+- redhat/configs: Remove CONFIG_NET_ACT_IPT (Ivan Vecera)
 
 * Thu May 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.4a4be1ad3a6e.20]
 - Linux v6.10.0-0.rc1.4a4be1ad3a6e
