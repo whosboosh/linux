@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc1.20240531git4a4be1ad3a6e.21
+%define pkgrelease 0.rc2.24
 %define kversion 6
-%define tarfile_release 6.10-rc1-27-g4a4be1ad3a6e
+%define tarfile_release 6.10-rc2
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240531git4a4be1ad3a6e.21%{?buildid}%{?dist}
+%define specrelease 0.rc2.24%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4017,8 +4017,14 @@ fi\
 #
 #
 %changelog
-* Fri May 31 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc1.20240531git4a4be1ad3a6e.21]
-- blk-throttle: Fix incorrect display of io.max (Waiman Long)
+* Mon Jun 03 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.24]
+- Linux v6.10.0-0.rc2
+
+* Sun Jun 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.83814698cf48.23]
+- Linux v6.10.0-0.rc1.83814698cf48
+
+* Sat Jun 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.cc8ed4d0a848.22]
+- Linux v6.10.0-0.rc1.cc8ed4d0a848
 
 * Fri May 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc1.4a4be1ad3a6e.21]
 - redhat: Build IMA CA certificate into the Fedora kernel (Coiby Xu)

@@ -9,8 +9,6 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
- block/blk-throttle.c                               |  24 +-
- block/blk-throttle.h                               |   8 +-
  crypto/drbg.c                                      |  18 +-
  crypto/rng.c                                       | 149 +++++-
  drivers/acpi/apei/hest.c                           |   8 +
@@ -75,13 +73,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 77 files changed, 2532 insertions(+), 225 deletions(-)
+ 75 files changed, 2518 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 500cfa776225..8de03fac88fc 100644
+index b600df82669d..a22621a159d4 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6954,6 +6954,15 @@
+@@ -6976,6 +6976,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -140,7 +138,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index f975b6396328..c4506bcedfa1 100644
+index 7f921ae547f1..fef30ddf5c46 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -254,12 +252,12 @@ index 90c2c786bb35..ce2456f531f1 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2b170da84f97..deb6685fdd94 100644
+index d4e539d4e158..ed3a7b089b87 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1586,6 +1586,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		cpu_detect(c);
+@@ -1591,6 +1591,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		get_cpu_vendor(c);
+ 		intel_unlock_cpuid_leafs(c);
  		get_cpu_cap(c);
 +		get_model_name(c); /* RHEL: get model name for unsupported check */
  		setup_force_cpu_cap(X86_FEATURE_CPUID);
@@ -409,77 +407,6 @@ index 05c5aa951da7..09c1ad947f46 100644
  	unwind_init();
  }
  
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 0be180f9a789..c1bf73f8c75d 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -1399,32 +1399,32 @@ static u64 tg_prfill_limit(struct seq_file *sf, struct blkg_policy_data *pd,
- 	bps_dft = U64_MAX;
- 	iops_dft = UINT_MAX;
- 
--	if (tg->bps_conf[READ] == bps_dft &&
--	    tg->bps_conf[WRITE] == bps_dft &&
--	    tg->iops_conf[READ] == iops_dft &&
--	    tg->iops_conf[WRITE] == iops_dft)
-+	if (tg->bps[READ] == bps_dft &&
-+	    tg->bps[WRITE] == bps_dft &&
-+	    tg->iops[READ] == iops_dft &&
-+	    tg->iops[WRITE] == iops_dft)
- 		return 0;
- 
- 	seq_printf(sf, "%s", dname);
--	if (tg->bps_conf[READ] == U64_MAX)
-+	if (tg->bps[READ] == U64_MAX)
- 		seq_printf(sf, " rbps=max");
- 	else
--		seq_printf(sf, " rbps=%llu", tg->bps_conf[READ]);
-+		seq_printf(sf, " rbps=%llu", tg->bps[READ]);
- 
--	if (tg->bps_conf[WRITE] == U64_MAX)
-+	if (tg->bps[WRITE] == U64_MAX)
- 		seq_printf(sf, " wbps=max");
- 	else
--		seq_printf(sf, " wbps=%llu", tg->bps_conf[WRITE]);
-+		seq_printf(sf, " wbps=%llu", tg->bps[WRITE]);
- 
--	if (tg->iops_conf[READ] == UINT_MAX)
-+	if (tg->iops[READ] == UINT_MAX)
- 		seq_printf(sf, " riops=max");
- 	else
--		seq_printf(sf, " riops=%u", tg->iops_conf[READ]);
-+		seq_printf(sf, " riops=%u", tg->iops[READ]);
- 
--	if (tg->iops_conf[WRITE] == UINT_MAX)
-+	if (tg->iops[WRITE] == UINT_MAX)
- 		seq_printf(sf, " wiops=max");
- 	else
--		seq_printf(sf, " wiops=%u", tg->iops_conf[WRITE]);
-+		seq_printf(sf, " wiops=%u", tg->iops[WRITE]);
- 
- 	seq_printf(sf, "\n");
- 	return 0;
-diff --git a/block/blk-throttle.h b/block/blk-throttle.h
-index 393c3d134b96..4d9ef5abdf21 100644
---- a/block/blk-throttle.h
-+++ b/block/blk-throttle.h
-@@ -95,15 +95,11 @@ struct throtl_grp {
- 	bool has_rules_bps[2];
- 	bool has_rules_iops[2];
- 
--	/* internally used bytes per second rate limits */
-+	/* bytes per second rate limits */
- 	uint64_t bps[2];
--	/* user configured bps limits */
--	uint64_t bps_conf[2];
- 
--	/* internally used IOPS limits */
-+	/* IOPS limits */
- 	unsigned int iops[2];
--	/* user configured IOPS limits */
--	unsigned int iops_conf[2];
- 
- 	/* Number of bytes dispatched in current slice */
- 	uint64_t bytes_disp[2];
 diff --git a/crypto/drbg.c b/crypto/drbg.c
 index 3addce90930c..730b03de596a 100644
 --- a/crypto/drbg.c
@@ -1787,7 +1714,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 954f850f113a..35162a8dc97a 100644
+index f5d150c62955..e79f29406916 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -1831,7 +1758,7 @@ index 954f850f113a..35162a8dc97a 100644
  	} else {
  		if (blk_queue_dying(req->q))
  			return COMPLETE;
-@@ -431,6 +436,14 @@ static inline void nvme_end_req(struct request *req)
+@@ -436,6 +441,14 @@ void nvme_end_req(struct request *req)
  	blk_mq_end_request(req, status);
  }
  
@@ -1846,7 +1773,7 @@ index 954f850f113a..35162a8dc97a 100644
  void nvme_complete_rq(struct request *req)
  {
  	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -460,6 +473,9 @@ void nvme_complete_rq(struct request *req)
+@@ -465,6 +478,9 @@ void nvme_complete_rq(struct request *req)
  	case FAILOVER:
  		nvme_failover_req(req);
  		return;
@@ -1857,7 +1784,7 @@ index 954f850f113a..35162a8dc97a 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index d16e976ae1a4..4dd28efacef0 100644
+index d8b6b4648eaf..7965be5f6ff3 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -80,14 +80,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -1893,7 +1820,7 @@ index d16e976ae1a4..4dd28efacef0 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -915,8 +921,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -919,8 +925,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */
@@ -1904,7 +1831,7 @@ index d16e976ae1a4..4dd28efacef0 100644
  
  	if (!ctrl->max_namespaces ||
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index cacc56f4bbf4..486a80ddfc49 100644
+index f3a41133ac3f..9298d5f34925 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
 @@ -946,6 +946,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
@@ -2243,7 +2170,7 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 332eb9dac22d..85b23c0a836d 100644
+index f6c822c9cbd2..db17a2d5173b 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
@@ -2261,7 +2188,7 @@ index 332eb9dac22d..85b23c0a836d 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4240,6 +4248,11 @@ static int __init init_sd(void)
+@@ -4242,6 +4250,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
