@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc2.24
+%define pkgrelease 0.rc2.20240604git2ab795141095.25
 %define kversion 6
-%define tarfile_release 6.10-rc2
+%define tarfile_release 6.10-rc2-10-g2ab795141095
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.24%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240604git2ab795141095.25%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4017,6 +4017,11 @@ fi\
 #
 #
 %changelog
+* Tue Jun 04 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.2ab795141095.25]
+- redhat/configs: Move CONFIG_BLK_CGROUP_IOCOST=y to common/generic (Waiman Long)
+- Turn on CONFIG_MFD_QCOM_PM8008 for Fedora aarch64 (Justin M. Forbes)
+- Linux v6.10.0-0.rc2.2ab795141095
+
 * Mon Jun 03 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.24]
 - Linux v6.10.0-0.rc2
 
