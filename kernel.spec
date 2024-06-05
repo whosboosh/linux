@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc2.20240604git2ab795141095.25
+%define pkgrelease 0.rc2.20240605git32f88d65f01b.26
 %define kversion 6
-%define tarfile_release 6.10-rc2-10-g2ab795141095
+%define tarfile_release 6.10-rc2-22-g32f88d65f01b
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240604git2ab795141095.25%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240605git32f88d65f01b.26%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2711,7 +2711,7 @@ BuildKernel() {
         create_module_file_list "kernel" ../modules-core.list ../kernel${Variant:+-${Variant}}-modules-core.list 1
         create_module_file_list "kernel" ../modules.list ../kernel${Variant:+-${Variant}}-modules.list 0
         create_module_file_list "internal" ../modules-internal.list ../kernel${Variant:+-${Variant}}-modules-internal.list 0
-        create_module_file_list "extra" ../modules-extra.list ../kernel${Variant:+-${Variant}}-modules-extra.list 0
+        create_module_file_list "kernel" ../modules-extra.list ../kernel${Variant:+-${Variant}}-modules-extra.list 0
         if [[ "$Variant" == "rt" || "$Variant" == "rt-debug" ]]; then
             create_module_file_list "kvm" ../modules-rt-kvm.list ../kernel${Variant:+-${Variant}}-modules-rt-kvm.list 0
         fi
@@ -4017,6 +4017,10 @@ fi\
 #
 #
 %changelog
+* Wed Jun 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.32f88d65f01b.26]
+- redhat/kernel.spec: keep extra modules in original directories (Jan Stancek)
+- Linux v6.10.0-0.rc2.32f88d65f01b
+
 * Tue Jun 04 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.2ab795141095.25]
 - redhat/configs: Move CONFIG_BLK_CGROUP_IOCOST=y to common/generic (Waiman Long)
 - Turn on CONFIG_MFD_QCOM_PM8008 for Fedora aarch64 (Justin M. Forbes)
