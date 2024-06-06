@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc2.20240605git32f88d65f01b.26
+%define pkgrelease 0.rc2.20240606git2df0193e62cf.27
 %define kversion 6
-%define tarfile_release 6.10-rc2-22-g32f88d65f01b
+%define tarfile_release 6.10-rc2-97-g2df0193e62cf
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240605git32f88d65f01b.26%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240606git2df0193e62cf.27%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2609,6 +2609,7 @@ BuildKernel() {
 %else
         UKI_secureboot_name=redhatsecureboot504
 %endif
+        UKI_secureboot_cert=%{_datadir}/pki/sb-certs/secureboot-uki-virt-%{_arch}.cer
 
         %pesign -s -i $KernelUnifiedImage -o $KernelUnifiedImage.signed -a %{secureboot_ca_0} -c $UKI_secureboot_cert -n $UKI_secureboot_name
 # 0%{?fedora}%{?eln}
@@ -4017,6 +4018,10 @@ fi\
 #
 #
 %changelog
+* Thu Jun 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.2df0193e62cf.27]
+- redhat: add missing UKI_secureboot_cert hunk (Patrick Talbert)
+- Linux v6.10.0-0.rc2.2df0193e62cf
+
 * Wed Jun 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.32f88d65f01b.26]
 - redhat/kernel.spec: keep extra modules in original directories (Jan Stancek)
 - Linux v6.10.0-0.rc2.32f88d65f01b
