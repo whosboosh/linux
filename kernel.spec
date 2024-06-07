@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc2.20240606git2df0193e62cf.27
+%define pkgrelease 0.rc2.20240607git8a92980606e3.28
 %define kversion 6
-%define tarfile_release 6.10-rc2-97-g2df0193e62cf
+%define tarfile_release 6.10-rc2-235-g8a92980606e3
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240606git2df0193e62cf.27%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240607git8a92980606e3.28%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -639,7 +639,7 @@ Name: %{package_name}
 License: ((GPL-2.0-only WITH Linux-syscall-note) OR BSD-2-Clause) AND ((GPL-2.0-only WITH Linux-syscall-note) OR BSD-3-Clause) AND ((GPL-2.0-only WITH Linux-syscall-note) OR CDDL-1.0) AND ((GPL-2.0-only WITH Linux-syscall-note) OR Linux-OpenIB) AND ((GPL-2.0-only WITH Linux-syscall-note) OR MIT) AND ((GPL-2.0-or-later WITH Linux-syscall-note) OR BSD-3-Clause) AND ((GPL-2.0-or-later WITH Linux-syscall-note) OR MIT) AND BSD-2-Clause AND (BSD-2-Clause OR Apache-2.0) AND BSD-3-Clause AND BSD-3-Clause-Clear AND GFDL-1.1-no-invariants-or-later AND GPL-1.0-or-later AND (GPL-1.0-or-later OR BSD-3-Clause) AND (GPL-1.0-or-later WITH Linux-syscall-note) AND GPL-2.0-only AND (GPL-2.0-only OR Apache-2.0) AND (GPL-2.0-only OR BSD-2-Clause) AND (GPL-2.0-only OR BSD-3-Clause) AND (GPL-2.0-only OR CDDL-1.0) AND (GPL-2.0-only OR GFDL-1.1-no-invariants-or-later) AND (GPL-2.0-only OR GFDL-1.2-no-invariants-only) AND (GPL-2.0-only WITH Linux-syscall-note) AND GPL-2.0-or-later AND (GPL-2.0-or-later OR BSD-2-Clause) AND (GPL-2.0-or-later OR BSD-3-Clause) AND (GPL-2.0-or-later OR CC-BY-4.0) AND (GPL-2.0-or-later WITH GCC-exception-2.0) AND (GPL-2.0-or-later WITH Linux-syscall-note) AND ISC AND LGPL-2.0-or-later AND (LGPL-2.0-or-later OR BSD-2-Clause) AND (LGPL-2.0-or-later WITH Linux-syscall-note) AND LGPL-2.1-only AND (LGPL-2.1-only OR BSD-2-Clause) AND (LGPL-2.1-only WITH Linux-syscall-note) AND LGPL-2.1-or-later AND (LGPL-2.1-or-later WITH Linux-syscall-note) AND (Linux-OpenIB OR GPL-2.0-only) AND (Linux-OpenIB OR GPL-2.0-only OR BSD-2-Clause) AND Linux-man-pages-copyleft AND MIT AND (MIT OR Apache-2.0) AND (MIT OR GPL-2.0-only) AND (MIT OR GPL-2.0-or-later) AND (MIT OR LGPL-2.1-only) AND (MPL-1.1 OR GPL-2.0-only) AND (X11 OR GPL-2.0-only) AND (X11 OR GPL-2.0-or-later) AND Zlib AND (copyleft-next-0.3.1 OR GPL-2.0-or-later)
 URL: https://www.kernel.org/
 Version: %{specrpmversion}
-Release: %{pkg_release}.1
+Release: %{pkg_release}
 # DO NOT CHANGE THE 'ExclusiveArch' LINE TO TEMPORARILY EXCLUDE AN ARCHITECTURE BUILD.
 # SET %%nobuildarches (ABOVE) INSTEAD
 %if 0%{?fedora}
@@ -4018,8 +4018,8 @@ fi\
 #
 #
 %changelog
-* Fri Jun 07 2024 Python Maint <python-maint@redhat.com> - 6.10.0-0.rc2.20240606git2df0193e62cf.27.1
-- Rebuilt for Python 3.13
+* Fri Jun 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.8a92980606e3.28]
+- Linux v6.10.0-0.rc2.8a92980606e3
 
 * Thu Jun 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.2df0193e62cf.27]
 - redhat: add missing UKI_secureboot_cert hunk (Patrick Talbert)
