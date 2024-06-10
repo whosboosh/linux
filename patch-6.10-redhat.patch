@@ -138,7 +138,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 7f921ae547f1..fef30ddf5c46 100644
+index 925a75b8ba7d..2d4c5b9dde83 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -4163,7 +4163,7 @@ index 000000000000..5c44026c6c81
 +
 +#endif /* __RH_MESSAGES_H */
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 937294ff164f..eaccbb8639d3 100644
+index f48d72d22dc2..288e0dbe6463 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -22,6 +22,7 @@
@@ -4174,7 +4174,7 @@ index 937294ff164f..eaccbb8639d3 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1992,6 +1993,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1993,6 +1994,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4187,7 +4187,7 @@ index 937294ff164f..eaccbb8639d3 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -2052,6 +2059,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -2053,6 +2060,7 @@ static void write_mod_c_file(struct module *mod)
  	add_depends(&buf, mod);
  	add_moddevtable(&buf, mod);
  	add_srcversion(&buf, mod);

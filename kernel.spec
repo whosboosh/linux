@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc2.20240608gitdc772f8237f9.29
+%define pkgrelease 0.rc3.31
 %define kversion 6
-%define tarfile_release 6.10-rc2-315-gdc772f8237f9
+%define tarfile_release 6.10-rc3
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240608gitdc772f8237f9.29%{?buildid}%{?dist}
+%define specrelease 0.rc3.31%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,13 @@ fi\
 #
 #
 %changelog
+* Mon Jun 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.31]
+- Linux v6.10.0-0.rc3
+
+* Sun Jun 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.771ed66105de.30]
+- redhat/configs: fedora: Enable some drivers for IPU6 support (Hans de Goede)
+- Linux v6.10.0-0.rc2.771ed66105de
+
 * Sat Jun 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc2.dc772f8237f9.29]
 - Linux v6.10.0-0.rc2.dc772f8237f9
 
