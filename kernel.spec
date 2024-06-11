@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc3.31
+%define pkgrelease 0.rc3.32
 %define kversion 6
 %define tarfile_release 6.10-rc3
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.31%{?buildid}%{?dist}
+%define specrelease 0.rc3.32%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,14 @@ fi\
 #
 #
 %changelog
+* Tue Jun 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.32]
+- gitlab-ci: do not merge ark-latest for gating pipelines for Rawhide (Michael Hofmann)
+- disable CONFIG_KVM_INTEL_PROVE_VE (Paolo Bonzini)
+- redhat: remove the merge subtrees script (Derek Barbosa)
+- redhat: rhdocs: delete .get_maintainer.conf (Derek Barbosa)
+- redhat: rhdocs: Remove the rhdocs directory (Derek Barbosa)
+- redhat/configs: Disable CONFIG_QLA3XXX (Kamal Heib) [RHEL-36646]
+
 * Mon Jun 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.31]
 - Linux v6.10.0-0.rc3
 
