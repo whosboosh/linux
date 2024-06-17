@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc3.20240612git2ef5971ff345.33
+%define pkgrelease 0.rc4.38
 %define kversion 6
-%define tarfile_release 6.10-rc3-21-g2ef5971ff345
+%define tarfile_release 6.10-rc4
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240612git2ef5971ff345.33%{?buildid}%{?dist}
+%define specrelease 0.rc4.38%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,24 @@ fi\
 #
 #
 %changelog
+* Mon Jun 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.38]
+- Fix SERIAL_SC16IS7XX configs for Fedora (Justin M. Forbes)
+- Enable ALSA (CONFIG_SND) on aarch64 (Charles Mirabile) [RHEL-40411]
+- redhat: Remove DIST_BRANCH variable (Eder Zulian)
+- Linux v6.10.0-0.rc4
+
+* Sun Jun 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.a3e18a540541.37]
+- Linux v6.10.0-0.rc3.a3e18a540541
+
+* Sat Jun 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.44ef20baed8e.36]
+- Linux v6.10.0-0.rc3.44ef20baed8e
+
+* Fri Jun 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.d20f6b3d747c.35]
+- Linux v6.10.0-0.rc3.d20f6b3d747c
+
+* Thu Jun 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.2ccbdf43d5e7.34]
+- Linux v6.10.0-0.rc3.2ccbdf43d5e7
+
 * Wed Jun 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc3.2ef5971ff345.33]
 - gitlab-ci: merge ark-latest before tagging cki-gating (Michael Hofmann)
 - Linux v6.10.0-0.rc3.2ef5971ff345
