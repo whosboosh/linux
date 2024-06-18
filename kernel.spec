@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc4.38
+%define pkgrelease 0.rc4.20240618git14d7c92f8df9.39
 %define kversion 6
-%define tarfile_release 6.10-rc4
+%define tarfile_release 6.10-rc4-33-g14d7c92f8df9
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.38%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240618git14d7c92f8df9.39%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,11 @@ fi\
 #
 #
 %changelog
+* Tue Jun 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.14d7c92f8df9.39]
+- redhat/configs: Disable CONFIG_NFP (Kamal Heib) [RHEL-36647]
+- Enable CONFIG_PWRSEQ_{SIMPLIE,EMMC} on aarch64 (Charles Mirabile)
+- Linux v6.10.0-0.rc4.14d7c92f8df9
+
 * Mon Jun 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.38]
 - Fix SERIAL_SC16IS7XX configs for Fedora (Justin M. Forbes)
 - Enable ALSA (CONFIG_SND) on aarch64 (Charles Mirabile) [RHEL-40411]

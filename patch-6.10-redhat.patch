@@ -76,10 +76,10 @@
  75 files changed, 2518 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b600df82669d..a22621a159d4 100644
+index 11e57ba2985c..7daa07578cff 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6976,6 +6976,15 @@
+@@ -6970,6 +6970,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
