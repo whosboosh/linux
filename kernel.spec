@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc4.20240618git14d7c92f8df9.39
+%define pkgrelease 0.rc4.20240620gite5b3efbe1ab1.41
 %define kversion 6
-%define tarfile_release 6.10-rc4-33-g14d7c92f8df9
+%define tarfile_release 6.10-rc4-52-ge5b3efbe1ab1
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240618git14d7c92f8df9.39%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240620gite5b3efbe1ab1.41%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,13 @@ fi\
 #
 #
 %changelog
+* Thu Jun 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.e5b3efbe1ab1.41]
+- Linux v6.10.0-0.rc4.e5b3efbe1ab1
+
+* Wed Jun 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.92e5605a199e.40]
+- redhat: make bnx2xx drivers unmaintained in rhel-10 (John Meneghini) [RHEL-36646 RHEL-41231]
+- Linux v6.10.0-0.rc4.92e5605a199e
+
 * Tue Jun 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.14d7c92f8df9.39]
 - redhat/configs: Disable CONFIG_NFP (Kamal Heib) [RHEL-36647]
 - Enable CONFIG_PWRSEQ_{SIMPLIE,EMMC} on aarch64 (Charles Mirabile)

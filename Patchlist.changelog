@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/eb75341619677c7f8b6de39e4742a1bcf6569587
+ eb75341619677c7f8b6de39e4742a1bcf6569587 redhat: make bnx2xx drivers unmaintained in rhel-10
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/6b58b8c1db5679fc8f0bba7d494431cdde1ca696
  6b58b8c1db5679fc8f0bba7d494431cdde1ca696 rh_flags: Rename rh_features to rh_flags
 
