@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc4.20240620gite5b3efbe1ab1.41
+%define pkgrelease 0.rc4.20240621git50736169ecc8.42
 %define kversion 6
-%define tarfile_release 6.10-rc4-52-ge5b3efbe1ab1
+%define tarfile_release 6.10-rc4-148-g50736169ecc8
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240620gite5b3efbe1ab1.41%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240621git50736169ecc8.42%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4018,6 +4018,10 @@ fi\
 #
 #
 %changelog
+* Fri Jun 21 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.50736169ecc8.42]
+- fedora: arm: Enable basic support for S32G-VNP-RDB3 board (Enric Balletbo i Serra)
+- Linux v6.10.0-0.rc4.50736169ecc8
+
 * Thu Jun 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.e5b3efbe1ab1.41]
 - Linux v6.10.0-0.rc4.e5b3efbe1ab1
 
