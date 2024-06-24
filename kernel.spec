@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc4.20240621git50736169ecc8.42
+%define pkgrelease 0.rc5.43
 %define kversion 6
-%define tarfile_release 6.10-rc4-148-g50736169ecc8
+%define tarfile_release 6.10-rc5
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240621git50736169ecc8.42%{?buildid}%{?dist}
+%define specrelease 0.rc5.43%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -3889,7 +3889,7 @@ fi\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/symvers.%compext\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/config\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/modules.builtin*\
-%ghost %attr(0600, root, root) /boot/symvers-%{KVERREL}%{?3:+%{3}}.%compext\
+%ghost %attr(0644, root, root) /boot/symvers-%{KVERREL}%{?3:+%{3}}.%compext\
 %ghost %attr(0600, root, root) /boot/initramfs-%{KVERREL}%{?3:+%{3}}.img\
 %ghost %attr(0644, root, root) /boot/config-%{KVERREL}%{?3:+%{3}}\
 %{expand:%%files -f kernel-%{?3:%{3}-}modules-core.list %{?3:%{3}-}modules-core}\
@@ -4018,6 +4018,11 @@ fi\
 #
 #
 %changelog
+* Mon Jun 24 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc5.43]
+- redhat/kernel.spec: fix attributes of symvers file (Jan Stancek)
+- redhat: add filtermods rule for iommu tests (Jan Stancek)
+- Linux v6.10.0-0.rc5
+
 * Fri Jun 21 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc4.50736169ecc8.42]
 - fedora: arm: Enable basic support for S32G-VNP-RDB3 board (Enric Balletbo i Serra)
 - Linux v6.10.0-0.rc4.50736169ecc8

@@ -138,7 +138,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 14427547dc1e..b1f4e2e3d18e 100644
+index 4d36f943b3b1..16a0cc6567cc 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -2170,10 +2170,10 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 37dd6ead72a4..31d7f80cd2d7 100644
+index 6b64af7d4927..b48acd6689e3 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -119,6 +119,14 @@ static const char *sd_cache_types[] = {
+@@ -120,6 +120,14 @@ static const char *sd_cache_types[] = {
  	"write back, no read (daft)"
  };
  
@@ -2188,7 +2188,7 @@ index 37dd6ead72a4..31d7f80cd2d7 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4249,6 +4257,11 @@ static int __init init_sd(void)
+@@ -4253,6 +4261,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
