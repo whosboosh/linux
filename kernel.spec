@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc5.43
+%define pkgrelease 0.rc5.20240626git55027e689933.45
 %define kversion 6
-%define tarfile_release 6.10-rc5
+%define tarfile_release 6.10-rc5-18-g55027e689933
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.43%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240626git55027e689933.45%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2439,6 +2439,8 @@ BuildKernel() {
     cp -a --parents arch/arm/include/asm/opcodes.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
 %endif
     cp -a include $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/include
+    # Cross-reference from include/perf/events/sof.h
+    cp -a sound/soc/sof/sof-audio.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/sound/soc/sof
 %ifarch i686 x86_64
     # files for 'make prepare' to succeed with kernel-devel
     cp -a --parents arch/x86/entry/syscalls/syscall_32.tbl $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
@@ -4018,6 +4020,12 @@ fi\
 #
 #
 %changelog
+* Wed Jun 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc5.55027e689933.45]
+- Linux v6.10.0-0.rc5.55027e689933
+
+* Tue Jun 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.44]
+- redhat: kernel.spec: add missing sound/soc/sof/sof-audio.h to kernel-devel package (Jaroslav Kysela)
+
 * Mon Jun 24 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc5.43]
 - redhat/kernel.spec: fix attributes of symvers file (Jan Stancek)
 - redhat: add filtermods rule for iommu tests (Jan Stancek)
