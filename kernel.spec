@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc5.20240626git55027e689933.45
+%define pkgrelease 0.rc5.20240627gitafcd48134c58.46
 %define kversion 6
-%define tarfile_release 6.10-rc5-18-g55027e689933
+%define tarfile_release 6.10-rc5-35-gafcd48134c58
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240626git55027e689933.45%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240627gitafcd48134c58.46%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2662,25 +2662,28 @@ BuildKernel() {
         local absolute_file_list="$3"
         # if 1, this adds also all kmod directories to absolute_file_list
         local add_all_dirs="$4"
+        local run_mod_deny="$5"
 
-        if [ "$module_subdir" == "kernel" ]; then
-            # make kmod paths absolute
-            sed -e 's|^kernel/|/lib/modules/'$KernelVer'/kernel/|' %{?zipsed} $relative_kmod_list > $absolute_file_list
-        else
+        if [ "$module_subdir" != "kernel" ]; then
             # move kmods into subdirs if needed (internal, partner, extra,..)
             move_kmod_list $relative_kmod_list $module_subdir
-            # make kmod paths absolute
-            sed -e 's|^kernel/|/lib/modules/'$KernelVer'/'$module_subdir'/|' $relative_kmod_list > $absolute_file_list
+        fi
+
+        # make kmod paths absolute
+        sed -e 's|^kernel/|/lib/modules/'$KernelVer'/'$module_subdir'/|' $relative_kmod_list > $absolute_file_list
+
+	if [ "$run_mod_deny" -eq 1 ]; then
             # run deny-mod script, this adds blacklist-* files to absolute_file_list
             %{SOURCE20} "$RPM_BUILD_ROOT" lib/modules/$KernelVer $absolute_file_list
+	fi
+
 %if %{zipmodules}
-            # deny-mod script works with kmods as they are now (not compressed),
-            # but if they will be we need to add compext to all
-            sed -i %{?zipsed} $absolute_file_list
+        # deny-mod script works with kmods as they are now (not compressed),
+        # but if they will be we need to add compext to all
+        sed -i %{?zipsed} $absolute_file_list
 %endif
-            # add also dir for the case when there are no kmods
-            echo "%dir /lib/modules/$KernelVer/$module_subdir" >> $absolute_file_list
-        fi
+        # add also dir for the case when there are no kmods
+        echo "%dir /lib/modules/$KernelVer/$module_subdir" >> $absolute_file_list
 
         if [ "$add_all_dirs" -eq 1 ]; then
             (cd $RPM_BUILD_ROOT; find lib/modules/$KernelVer/kernel -mindepth 1 -type d | sort -n) > ../module-dirs.list
@@ -2699,8 +2702,9 @@ BuildKernel() {
         fi
         # this creates ../modules-*.list output, where each kmod path is as it
         # appears in modules.dep (relative to lib/modules/$KernelVer)
-        %{SOURCE22} -l "../filtermods-$KernelVer.log" sort -d $RPM_BUILD_ROOT/lib/modules/$KernelVer/modules.dep -c configs/def_variants.yaml $variants_param -o ..
-        if [ $? -ne 0 ]; then
+        ret=0
+        %{SOURCE22} -l "../filtermods-$KernelVer.log" sort -d $RPM_BUILD_ROOT/lib/modules/$KernelVer/modules.dep -c configs/def_variants.yaml $variants_param -o .. || ret=$?
+        if [ $ret -ne 0 ]; then
             echo "8< --- filtermods-$KernelVer.log ---"
             cat "../filtermods-$KernelVer.log"
             echo "--- filtermods-$KernelVer.log --- >8"
@@ -2711,15 +2715,15 @@ BuildKernel() {
             exit 1
         fi
 
-        create_module_file_list "kernel" ../modules-core.list ../kernel${Variant:+-${Variant}}-modules-core.list 1
-        create_module_file_list "kernel" ../modules.list ../kernel${Variant:+-${Variant}}-modules.list 0
-        create_module_file_list "internal" ../modules-internal.list ../kernel${Variant:+-${Variant}}-modules-internal.list 0
-        create_module_file_list "kernel" ../modules-extra.list ../kernel${Variant:+-${Variant}}-modules-extra.list 0
+        create_module_file_list "kernel" ../modules-core.list ../kernel${Variant:+-${Variant}}-modules-core.list 1 0
+        create_module_file_list "kernel" ../modules.list ../kernel${Variant:+-${Variant}}-modules.list 0 0
+        create_module_file_list "internal" ../modules-internal.list ../kernel${Variant:+-${Variant}}-modules-internal.list 0 1
+        create_module_file_list "kernel" ../modules-extra.list ../kernel${Variant:+-${Variant}}-modules-extra.list 0 1
         if [[ "$Variant" == "rt" || "$Variant" == "rt-debug" ]]; then
-            create_module_file_list "kvm" ../modules-rt-kvm.list ../kernel${Variant:+-${Variant}}-modules-rt-kvm.list 0
+            create_module_file_list "kvm" ../modules-rt-kvm.list ../kernel${Variant:+-${Variant}}-modules-rt-kvm.list 0 1
         fi
 %if 0%{!?fedora:1}
-        create_module_file_list "partner" ../modules-partner.list ../kernel${Variant:+-${Variant}}-modules-partner.list 1 0
+        create_module_file_list "partner" ../modules-partner.list ../kernel${Variant:+-${Variant}}-modules-partner.list 1 1
 %endif
     fi # $DoModules -eq 1
 
@@ -4020,8 +4024,30 @@ fi\
 #
 #
 %changelog
-* Wed Jun 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.10.0-0.rc5.55027e689933.45]
-- Linux v6.10.0-0.rc5.55027e689933
+* Thu Jun 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.afcd48134c58.46]
+- redhat/scripts/filtermods.py: show all parent/child kmods in report (Jan Stancek)
+- redhat/kernel.spec: capture filtermods.py return code (Jan Stancek)
+- redhat/kernel.spec: fix run of mod-denylist (Jan Stancek)
+- gitlab-ci: remove unused RHMAINTAINERS variable (Michael Hofmann)
+- gitlab-ci: use environments for jobs that need access to push/gitlab secrets (Michael Hofmann)
+- gitlab-ci: default to os-build for all maintenance jobs (Michael Hofmann)
+- gitlab-ci: use the common git repo setup cki-gating as well (Michael Hofmann)
+- gitlab-ci: help maintenance jobs to cope with missing private key (Michael Hofmann)
+- gitlab-ci: use a common git repo setup for all maintenance jobs (Michael Hofmann)
+- gitlab-ci: move repo setup script into script template holder (Michael Hofmann)
+- gitlab-ci: move maintenance job DIST variable into common template (Michael Hofmann)
+- gitlab-ci: move maintenance job rules into common template (Michael Hofmann)
+- gitlab-ci: move maintenance job retry field into common template (Michael Hofmann)
+- gitlab-ci: provide common non-secret schedule trigger variables (Michael Hofmann)
+- gitlab-ci: rename .scheduled_setup to .git_setup (Michael Hofmann)
+- gitlab-ci: move script snippets into separate template (Michael Hofmann)
+- gitlab-ci: rename maintenance jobs (Michael Hofmann)
+- gitlab-ci: introduce job template for maintenance jobs (Michael Hofmann)
+- Linux v6.10.0-0.rc5.afcd48134c58
+
+* Wed Jun 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.24ca36a562d6.45]
+- Turn on KASAN_HW_TAGS for Fedora aarch64 debug kernels (Justin M. Forbes)
+- Linux v6.10.0-0.rc5.24ca36a562d6
 
 * Tue Jun 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.44]
 - redhat: kernel.spec: add missing sound/soc/sof/sof-audio.h to kernel-devel package (Jaroslav Kysela)
