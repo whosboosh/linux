@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc5.20240627gitafcd48134c58.46
+%define pkgrelease 0.rc5.20240628git5bbd9b249880.47
 %define kversion 6
-%define tarfile_release 6.10-rc5-35-gafcd48134c58
+%define tarfile_release 6.10-rc5-200-g5bbd9b249880
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240627gitafcd48134c58.46%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240628git5bbd9b249880.47%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4024,6 +4024,9 @@ fi\
 #
 #
 %changelog
+* Fri Jun 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.5bbd9b249880.47]
+- Linux v6.10.0-0.rc5.5bbd9b249880
+
 * Thu Jun 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.afcd48134c58.46]
 - redhat/scripts/filtermods.py: show all parent/child kmods in report (Jan Stancek)
 - redhat/kernel.spec: capture filtermods.py return code (Jan Stancek)

@@ -2400,7 +2400,7 @@ index 44488b1ab9a9..f76c91083b0f 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index ffa1c603163c..efa06d882b54 100644
+index 330ffb59efe5..8a7c2ccbb4fa 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -418,6 +418,7 @@ struct module {
