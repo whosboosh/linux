@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc5.20240628git5bbd9b249880.47
+%define pkgrelease 0.rc6.50
 %define kversion 6
-%define tarfile_release 6.10-rc5-200-g5bbd9b249880
+%define tarfile_release 6.10-rc6
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240628git5bbd9b249880.47%{?buildid}%{?dist}
+%define specrelease 0.rc6.50%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -2147,6 +2147,19 @@ BuildKernel() {
     rm -f vmlinux.o .tmp_vmlinux.btf
 
     %{log_msg "Install files to RPM_BUILD_ROOT"}
+
+    # Comment out specific config settings that may use resources not available
+    # to the end user so that the packaged config file can be easily reused with
+    # upstream make targets
+    %if %{signkernel}%{signmodules}
+      sed -i -e '/^CONFIG_SYSTEM_TRUSTED_KEYS/{
+        i\# The kernel was built with
+        s/^/# /
+        a\# We are resetting this value to facilitate local builds
+        a\CONFIG_SYSTEM_TRUSTED_KEYS=""
+        }' .config
+    %endif
+
     # Start installing the results
     install -m 644 .config $RPM_BUILD_ROOT/boot/config-$KernelVer
     install -m 644 .config $RPM_BUILD_ROOT/lib/modules/$KernelVer/config
@@ -4024,6 +4037,22 @@ fi\
 #
 #
 %changelog
+* Mon Jul 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.50]
+- redhat/configs: Remove obsolete x86 CPU mitigations config files (Waiman Long)
+- redhat/configs: increase CONFIG_DEFAULT_MMAP_MIN_ADDR from 32K to 64K for aarch64 (Brian Masney)
+- redhat/configs: Re-enable CONFIG_KEXEC for Fedora (Philipp Rudo)
+- media: ipu-bridge: Add HIDs from out of tree IPU6 driver ipu-bridge copy (Hans de Goede)
+- media: ipu-bridge: Sort ipu_supported_sensors[] array by ACPI HID (Hans de Goede)
+- disable LR_WPAN for RHEL10 (Chris von Recklinghausen) [RHEL-40251]
+- Linux v6.10.0-0.rc6
+
+* Sun Jun 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.8282d5af7be8.49]
+- Linux v6.10.0-0.rc5.8282d5af7be8
+
+* Sat Jun 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.de0a9f448633.48]
+- Turn on USB_SERIAL_F81232 for Fedora (Justin M. Forbes)
+- Linux v6.10.0-0.rc5.de0a9f448633
+
 * Fri Jun 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc5.5bbd9b249880.47]
 - Linux v6.10.0-0.rc5.5bbd9b249880
 
