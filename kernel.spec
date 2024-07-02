@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc6.50
+%define pkgrelease 0.rc6.20240702git1dfe225e9af5.51
 %define kversion 6
-%define tarfile_release 6.10-rc6
+%define tarfile_release 6.10-rc6-51-g1dfe225e9af5
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.50%{?buildid}%{?dist}
+%define specrelease 0.rc6.20240702git1dfe225e9af5.51%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -3028,7 +3028,7 @@ pushd tools/testing/selftests
 %endif
 
 %{log_msg "main selftests compile"}
-%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf mm net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding iommu" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
+%{make} %{?_smp_mflags} ARCH=$Arch V=1 TARGETS="bpf cgroup mm net net/forwarding net/mptcp netfilter tc-testing memfd drivers/net/bonding iommu" SKIP_TARGETS="" $force_targets INSTALL_PATH=%{buildroot}%{_libexecdir}/kselftests VMLINUX_H="${RPM_VMLINUX_H}" install
 
 %ifarch %{klptestarches}
 	# kernel livepatching selftest test_modules will build against
@@ -3337,6 +3337,12 @@ pushd tools/testing/selftests/mm
 find -type d -exec install -d %{buildroot}%{_libexecdir}/kselftests/mm/{} \;
 find -type f -executable -exec install -D -m755 {} %{buildroot}%{_libexecdir}/kselftests/mm/{} \;
 find -type f ! -executable -exec install -D -m644 {} %{buildroot}%{_libexecdir}/kselftests/mm/{} \;
+popd
+# install cgroup selftests
+pushd tools/testing/selftests/cgroup
+find -type d -exec install -d %{buildroot}%{_libexecdir}/kselftests/cgroup/{} \;
+find -type f -executable -exec install -D -m755 {} %{buildroot}%{_libexecdir}/kselftests/cgroup/{} \;
+find -type f ! -executable -exec install -D -m644 {} %{buildroot}%{_libexecdir}/kselftests/cgroup/{} \;
 popd
 # install drivers/net/mlxsw selftests
 pushd tools/testing/selftests/drivers/net/mlxsw
@@ -4037,6 +4043,14 @@ fi\
 #
 #
 %changelog
+* Tue Jul 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.1dfe225e9af5.51]
+- redhat: Add cgroup kselftests to kernel-selftests-internal (Waiman Long) [RHEL-43556]
+- Revert "redhat/configs: Disable CONFIG_INFINIBAND_HFI1 and CONFIG_INFINIBAND_RDMAVT" (Kamal Heib)
+- Remove new for GITLAB_TOKEN (Don Zickus)
+- Set Fedora configs for 6.10 (Justin M. Forbes)
+- Fedora: minor driver updates (Peter Robinson)
+- Linux v6.10.0-0.rc6.1dfe225e9af5
+
 * Mon Jul 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.50]
 - redhat/configs: Remove obsolete x86 CPU mitigations config files (Waiman Long)
 - redhat/configs: increase CONFIG_DEFAULT_MMAP_MIN_ADDR from 32K to 64K for aarch64 (Brian Masney)
