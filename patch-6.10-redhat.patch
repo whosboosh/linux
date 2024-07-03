@@ -2296,7 +2296,7 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index c93bd24d2771..84f0c3a85d40 100644
+index 1b91d9513013..94e368c446f5 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
 @@ -580,6 +580,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
