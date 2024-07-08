@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc6.20240705git661e504db04c.55
+%define pkgrelease 0.rc7.58
 %define kversion 6
-%define tarfile_release 6.10-rc6-163-g661e504db04c
+%define tarfile_release 6.10-rc7
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.20240705git661e504db04c.55%{?buildid}%{?dist}
+%define specrelease 0.rc7.58%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4043,8 +4043,17 @@ fi\
 #
 #
 %changelog
-* Fri Jul 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.661e504db04c.55]
+* Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.58]
 - Add openssl-devel-engine as a buildrequirement. (Justin M. Forbes)
+
+* Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.57]
+- Linux v6.10.0-0.rc7
+
+* Sun Jul 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.c6653f49e4fd.56]
+- Linux v6.10.0-0.rc6.c6653f49e4fd
+
+* Sat Jul 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.1dd28064d416.55]
+- Linux v6.10.0-0.rc6.1dd28064d416
 
 * Fri Jul 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc6.661e504db04c.54]
 - Linux v6.10.0-0.rc6.661e504db04c
