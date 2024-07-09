@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/7091e7aae971eb3bb57cd05575b6d47b023d7b1b
+ 7091e7aae971eb3bb57cd05575b6d47b023d7b1b not upstream: drop openssl ENGINE API usage
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/eb75341619677c7f8b6de39e4742a1bcf6569587
  eb75341619677c7f8b6de39e4742a1bcf6569587 redhat: make bnx2xx drivers unmaintained in rhel-10
 

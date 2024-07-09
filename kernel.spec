@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc7.58
+%define pkgrelease 0.rc7.20240709git4376e966ecb7.59
 %define kversion 6
-%define tarfile_release 6.10-rc7
+%define tarfile_release 6.10-rc7-3-g4376e966ecb7
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.58%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240709git4376e966ecb7.59%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -711,7 +711,7 @@ BuildRequires: libnl3-devel
 %endif
 %endif
 %if %{with_tools} || %{signmodules} || %{signkernel}
-BuildRequires: openssl-devel openssl-devel-engine
+BuildRequires: openssl-devel
 %endif
 %if %{with_bpftool}
 BuildRequires: python3-docutils
@@ -4043,8 +4043,12 @@ fi\
 #
 #
 %changelog
-* Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.58]
-- Add openssl-devel-engine as a buildrequirement. (Justin M. Forbes)
+* Tue Jul 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4376e966ecb7.59]
+- not upstream: drop openssl ENGINE API usage (Jan Stancek)
+
+* Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4376e966ecb7.58]
+- Also remove the zfcpdump BASE_SMALL config (Justin M. Forbes)
+- Linux v6.10.0-0.rc7.4376e966ecb7
 
 * Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.57]
 - Linux v6.10.0-0.rc7
