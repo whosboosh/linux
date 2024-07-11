@@ -2278,7 +2278,7 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 6b64af7d4927..b48acd6689e3 100644
+index 1b7561abe05d..3490721d34d1 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -120,6 +120,14 @@ static const char *sd_cache_types[] = {
@@ -2296,7 +2296,7 @@ index 6b64af7d4927..b48acd6689e3 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp)
  {
  	bool wc = false, fua = false;
-@@ -4253,6 +4261,11 @@ static int __init init_sd(void)
+@@ -4252,6 +4260,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  

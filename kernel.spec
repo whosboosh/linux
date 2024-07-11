@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc7.20240709git4376e966ecb7.59
+%define pkgrelease 0.rc7.20240711git9d9a2f29aefd.61
 %define kversion 6
-%define tarfile_release 6.10-rc7-3-g4376e966ecb7
+%define tarfile_release 6.10-rc7-76-g9d9a2f29aefd
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240709git4376e966ecb7.59%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240711git9d9a2f29aefd.61%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4043,8 +4043,15 @@ fi\
 #
 #
 %changelog
-* Tue Jul 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4376e966ecb7.59]
+* Thu Jul 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.9d9a2f29aefd.61]
+- fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Thu Jul 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.9d9a2f29aefd.60]
+- Linux v6.10.0-0.rc7.9d9a2f29aefd
+
+* Wed Jul 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.34afb82a3c67.59]
 - not upstream: drop openssl ENGINE API usage (Jan Stancek)
+- Linux v6.10.0-0.rc7.34afb82a3c67
 
 * Mon Jul 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4376e966ecb7.58]
 - Also remove the zfcpdump BASE_SMALL config (Justin M. Forbes)
