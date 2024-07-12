@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc7.20240711git9d9a2f29aefd.61
+%define pkgrelease 0.rc7.20240712git43db1e03c086.62
 %define kversion 6
-%define tarfile_release 6.10-rc7-76-g9d9a2f29aefd
+%define tarfile_release 6.10-rc7-141-g43db1e03c086
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240711git9d9a2f29aefd.61%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240712git43db1e03c086.62%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4043,8 +4043,11 @@ fi\
 #
 #
 %changelog
-* Thu Jul 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.9d9a2f29aefd.61]
+* Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.62]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.61]
+- Linux v6.10.0-0.rc7.43db1e03c086
 
 * Thu Jul 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.9d9a2f29aefd.60]
 - Linux v6.10.0-0.rc7.9d9a2f29aefd
