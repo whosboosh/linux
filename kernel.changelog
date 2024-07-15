@@ -1,5 +1,18 @@
-* Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.62]
-- fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+* Mon Jul 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-64]
+- Linux v6.10.0
+Resolves: 
+
+* Sun Jul 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4d145e3f830b.63]
+- Consolidate configs to common for 6.10 (Justin M. Forbes)
+- Linux v6.10.0-0.rc7.4d145e3f830b
+Resolves: 
+
+* Sat Jul 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.528dd46d0fc3.62]
+- redhat/configs: Enable CONFIG_PTP_1588_CLOCK_MOCK in kernel-modules-internal (Davide Caratti)
+- fedora: enabled XE GPU drivers on all arches (Peter Robinson)
+- Flip SND_SOC_CS35L56_SPI from off to module for RHEL (Justin M. Forbes)
+- Flip DIMLIB from built-in to module for RHEL (Justin M. Forbes)
+- Linux v6.10.0-0.rc7.528dd46d0fc3
 Resolves: 
 
 * Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.61]

@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.10.0
 %define specversion 6.10.0
 %define patchversion 6.10
-%define pkgrelease 0.rc7.20240712git43db1e03c086.62
+%define pkgrelease 64
 %define kversion 6
-%define tarfile_release 6.10-rc7-141-g43db1e03c086
+%define tarfile_release 6.10
 # This is needed to do merge window version magic
 %define patchlevel 10
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240712git43db1e03c086.62%{?buildid}%{?dist}
+%define specrelease 64%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.10.0
 
@@ -4043,8 +4043,19 @@ fi\
 #
 #
 %changelog
-* Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.62]
-- fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+* Mon Jul 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-64]
+- Linux v6.10.0
+
+* Sun Jul 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.4d145e3f830b.63]
+- Consolidate configs to common for 6.10 (Justin M. Forbes)
+- Linux v6.10.0-0.rc7.4d145e3f830b
+
+* Sat Jul 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.528dd46d0fc3.62]
+- redhat/configs: Enable CONFIG_PTP_1588_CLOCK_MOCK in kernel-modules-internal (Davide Caratti)
+- fedora: enabled XE GPU drivers on all arches (Peter Robinson)
+- Flip SND_SOC_CS35L56_SPI from off to module for RHEL (Justin M. Forbes)
+- Flip DIMLIB from built-in to module for RHEL (Justin M. Forbes)
+- Linux v6.10.0-0.rc7.528dd46d0fc3
 
 * Fri Jul 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.10.0-0.rc7.43db1e03c086.61]
 - Linux v6.10.0-0.rc7.43db1e03c086
