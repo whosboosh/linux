@@ -79,10 +79,10 @@
  78 files changed, 2557 insertions(+), 268 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 27ec49af1bf2..ac87cc84acef 100644
+index 9d207d53f9b7..97cf833fb2e0 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6951,6 +6951,15 @@
+@@ -6965,6 +6965,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -179,10 +179,10 @@ index 3d10e3aadeda..3e9b956aca7c 100644
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ee5115252aac..7f3796df8404 100644
+index a867a7d967aa..7edebe10afd9 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1224,9 +1224,9 @@ config HIGHMEM
+@@ -1225,9 +1225,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -195,10 +195,10 @@ index ee5115252aac..7f3796df8404 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5d91259ee7b5..3a9f1962da72 100644
+index 79a656a62cbc..826a73eec3fa 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1368,7 +1368,7 @@ endchoice
+@@ -1355,7 +1355,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -267,7 +267,7 @@ index d4e539d4e158..ed3a7b089b87 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 05c5aa951da7..09c1ad947f46 100644
+index 728927e4ba51..537a001c58bf 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -286,7 +286,7 @@ index 05c5aa951da7..09c1ad947f46 100644
  
  /*
   * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
-@@ -669,6 +671,79 @@ static void __init early_reserve_memory(void)
+@@ -670,6 +672,79 @@ static void __init early_reserve_memory(void)
  	trim_snb_memory();
  }
  
@@ -366,7 +366,7 @@ index 05c5aa951da7..09c1ad947f46 100644
  /*
   * Dump out kernel offset information on panic.
   */
-@@ -902,6 +977,13 @@ void __init setup_arch(char **cmdline_p)
+@@ -904,6 +979,13 @@ void __init setup_arch(char **cmdline_p)
  	if (efi_enabled(EFI_BOOT))
  		efi_init();
  
@@ -380,7 +380,7 @@ index 05c5aa951da7..09c1ad947f46 100644
  	reserve_ibft_region();
  	x86_init.resources.dmi_setup();
  
-@@ -1064,19 +1146,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1066,19 +1148,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -401,7 +401,7 @@ index 05c5aa951da7..09c1ad947f46 100644
  
  	reserve_initrd();
  
-@@ -1186,6 +1256,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1188,6 +1258,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -790,10 +790,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 503773707e01..2fead21fcb07 100644
+index 0aa20623525a..6f10d9b16624 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1793,6 +1793,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1822,6 +1822,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1822,17 +1822,17 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 782090ce0bc1..989011902b13 100644
+index 19917253ba7b..e065384d8435 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
  
  static blk_status_t nvme_error_status(u16 status)
  {
-+	if (unlikely(status & NVME_SC_DNR))
++	if (unlikely(status & NVME_STATUS_DNR))
 +		return BLK_STS_TARGET;
 +
- 	switch (status & 0x7ff) {
+ 	switch (status & NVME_SCT_SC_MASK) {
  	case NVME_SC_SUCCESS:
  		return BLK_STS_OK;
 @@ -375,6 +378,7 @@ enum nvme_disposition {
@@ -1849,11 +1849,11 @@ index 782090ce0bc1..989011902b13 100644
  
 -	if (blk_noretry_request(req) ||
 +	if ((req->cmd_flags & (REQ_FAILFAST_DEV | REQ_FAILFAST_DRIVER)) ||
- 	    (nvme_req(req)->status & NVME_SC_DNR) ||
+ 	    (nvme_req(req)->status & NVME_STATUS_DNR) ||
  	    nvme_req(req)->retries >= nvme_max_retries)
  		return COMPLETE;
 @@ -391,10 +395,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
- 	if ((nvme_req(req)->status & 0x7ff) == NVME_SC_AUTH_REQUIRED)
+ 	if ((nvme_req(req)->status & NVME_SCT_SC_MASK) == NVME_SC_AUTH_REQUIRED)
  		return AUTHENTICATE;
  
 -	if (req->cmd_flags & REQ_NVME_MPATH) {
@@ -1892,10 +1892,10 @@ index 782090ce0bc1..989011902b13 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index d8b6b4648eaf..7965be5f6ff3 100644
+index 91d9eb3c22ef..d44cdba1ffea 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
-@@ -80,14 +80,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
+@@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
  			blk_freeze_queue_start(h->disk->queue);
  }
  
@@ -1903,7 +1903,7 @@ index d8b6b4648eaf..7965be5f6ff3 100644
 +void nvme_update_ana(struct request *req)
  {
  	struct nvme_ns *ns = req->q->queuedata;
- 	u16 status = nvme_req(req)->status & 0x7ff;
+ 	u16 status = nvme_req(req)->status & NVME_SCT_SC_MASK;
 -	unsigned long flags;
 -	struct bio *bio;
 -
@@ -1911,7 +1911,7 @@ index d8b6b4648eaf..7965be5f6ff3 100644
  
  	/*
  	 * If we got back an ANA error, we know the controller is alive but not
-@@ -98,6 +94,16 @@ void nvme_failover_req(struct request *req)
+@@ -101,6 +97,16 @@ void nvme_failover_req(struct request *req)
  		set_bit(NVME_NS_ANA_PENDING, &ns->flags);
  		queue_work(nvme_wq, &ns->ctrl->ana_work);
  	}
@@ -1928,7 +1928,7 @@ index d8b6b4648eaf..7965be5f6ff3 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -919,8 +925,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -998,8 +1004,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */
@@ -1937,12 +1937,12 @@ index d8b6b4648eaf..7965be5f6ff3 100644
 +	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
  		return 0;
  
- 	if (!ctrl->max_namespaces ||
+ 	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 68b400f9c42d..e397509b3244 100644
+index f900e44243ae..316f461e5867 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -946,6 +946,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -943,6 +943,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -1950,7 +1950,7 @@ index 68b400f9c42d..e397509b3244 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -988,6 +989,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -985,6 +986,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
@@ -2163,7 +2163,7 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 88acefbf9aea..bf57fd3b9263 100644
+index 6c79c350a4d5..27012eec4822 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
@@ -2195,10 +2195,10 @@ index 88acefbf9aea..bf57fd3b9263 100644
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 870ec2cb4af4..21af6aff16ee 100644
+index 97c2472cd434..fedba599ae00 100644
 --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -12575,6 +12575,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
+@@ -12569,6 +12569,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
   * The pci device ids are defined in mpi/mpi2_cnfg.h.
   */
  static const struct pci_device_id mpt3sas_pci_table[] = {
@@ -2206,7 +2206,7 @@ index 870ec2cb4af4..21af6aff16ee 100644
  	/* Spitfire ~ 2004 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2004,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12593,6 +12594,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12587,6 +12588,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2116_2,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2214,7 +2214,7 @@ index 870ec2cb4af4..21af6aff16ee 100644
  	/* Thunderbolt ~ 2208 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2208_1,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12617,9 +12619,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12611,9 +12613,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2278,10 +2278,10 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 1b7561abe05d..3490721d34d1 100644
+index 2e933fd1de70..5e58eadcca32 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -120,6 +120,14 @@ static const char *sd_cache_types[] = {
+@@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
  	"write back, no read (daft)"
  };
  
@@ -2293,10 +2293,10 @@ index 1b7561abe05d..3490721d34d1 100644
 +		 "device number assignments (sda, sdb, ...).");
 +#endif
 +
- static void sd_set_flush_flag(struct scsi_disk *sdkp)
+ static void sd_set_flush_flag(struct scsi_disk *sdkp,
+ 		struct queue_limits *lim)
  {
- 	bool wc = false, fua = false;
-@@ -4252,6 +4260,11 @@ static int __init init_sd(void)
+@@ -4337,6 +4345,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2368,10 +2368,10 @@ index 1b91d9513013..94e368c446f5 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c682fb927b64..66f747b698ba 100644
+index eb899628e121..7b91c5cb935c 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5581,6 +5581,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5565,6 +5565,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
