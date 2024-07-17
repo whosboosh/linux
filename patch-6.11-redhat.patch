@@ -79,10 +79,10 @@
  78 files changed, 2557 insertions(+), 268 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9d207d53f9b7..97cf833fb2e0 100644
+index 740ca2bc2822..0aabcbf3b5c4 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6965,6 +6965,15 @@
+@@ -6946,6 +6946,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -141,7 +141,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 3d10e3aadeda..3e9b956aca7c 100644
+index 67ce3b7d558e..ad826fc40228 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -267,7 +267,7 @@ index d4e539d4e158..ed3a7b089b87 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 728927e4ba51..537a001c58bf 100644
+index 5d34cad9b7b1..4145918a84ce 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -380,7 +380,7 @@ index 728927e4ba51..537a001c58bf 100644
  	reserve_ibft_region();
  	x86_init.resources.dmi_setup();
  
-@@ -1066,19 +1148,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1065,19 +1147,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -401,7 +401,7 @@ index 728927e4ba51..537a001c58bf 100644
  
  	reserve_initrd();
  
-@@ -1188,6 +1258,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1187,6 +1257,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -2402,7 +2402,7 @@ index b164da5e129e..59021b8609a7 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 418e555459da..fdd941287ae1 100644
+index 6bf3c4fe8511..67e5400f7644 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2414,7 +2414,7 @@ index 418e555459da..fdd941287ae1 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -872,6 +874,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+@@ -877,6 +879,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
  #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
  #define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
  #define EFI_PRESERVE_BS_REGIONS	12	/* Are EFI boot-services memory segments available? */
@@ -2429,7 +2429,7 @@ index 418e555459da..fdd941287ae1 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -883,6 +893,8 @@ static inline bool efi_enabled(int feature)
+@@ -888,6 +898,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2438,7 +2438,7 @@ index 418e555459da..fdd941287ae1 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -904,6 +916,8 @@ static inline bool efi_enabled(int feature)
+@@ -909,6 +921,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2447,7 +2447,7 @@ index 418e555459da..fdd941287ae1 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -918,6 +932,7 @@ static inline void efi_find_mirror(void) {}
+@@ -923,6 +937,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2455,7 +2455,7 @@ index 418e555459da..fdd941287ae1 100644
  
  /*
   * Variable Attributes
-@@ -1133,13 +1148,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1138,13 +1153,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -2495,10 +2495,10 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 44488b1ab9a9..f76c91083b0f 100644
+index 855db460e08b..7a8c28cd7510 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -437,6 +437,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
+@@ -438,6 +438,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
  #endif /* CONFIG_BPF_SYSCALL */
  
  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
@@ -2508,7 +2508,7 @@ index 44488b1ab9a9..f76c91083b0f 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 330ffb59efe5..8a7c2ccbb4fa 100644
+index 4213d8993cd8..64712f2ad077 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -418,6 +418,7 @@ struct module {
@@ -2519,7 +2519,7 @@ index 330ffb59efe5..8a7c2ccbb4fa 100644
  	struct kobject *holders_dir;
  
  	/* Exported symbols */
-@@ -999,4 +1000,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
+@@ -1001,4 +1002,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
  
  #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
  
@@ -3257,7 +3257,7 @@ index 3c13240dfc9f..61b2ac156a3e 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index f45ed6adc092..3ff4cb164ddd 100644
+index 869265852d51..f86989fdf707 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3292,7 +3292,7 @@ index f45ed6adc092..3ff4cb164ddd 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -6011,6 +6029,11 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
+@@ -6033,6 +6051,11 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;
@@ -3305,7 +3305,7 @@ index f45ed6adc092..3ff4cb164ddd 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index d18a94b973e1..ee713c33b736 100644
+index d9592195c5bb..ebddbe3ec4af 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3333,7 +3333,7 @@ index d18a94b973e1..ee713c33b736 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2825,6 +2829,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2828,6 +2832,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3345,7 +3345,7 @@ index d18a94b973e1..ee713c33b736 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3377,6 +3386,10 @@ void print_modules(void)
+@@ -3380,6 +3389,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
@@ -4437,10 +4437,10 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
  
  const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index e5ca08789f74..7032265d85ba 100644
+index 8cee5b6c6e6d..489e25946bf9 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5570,6 +5570,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5596,6 +5596,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  

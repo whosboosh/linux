@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240716gitd67978318827.2
+%define pkgrelease 0.rc0.20240717git51835949dda3.5
 %define kversion 6
-%define tarfile_release 6.10-1155-gd67978318827
+%define tarfile_release 6.10-4472-g51835949dda3
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240716gitd67978318827.2%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240717git51835949dda3.5%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4043,6 +4043,16 @@ fi\
 #
 #
 %changelog
+* Wed Jul 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.51835949dda3.5]
+- fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Wed Jul 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.51835949dda3.4]
+- Fix up mismatches in the 6.11 merge window. (Justin M. Forbes)
+- Linux v6.11.0-0.rc0.51835949dda3
+
+* Wed Jul 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.d67978318827.3]
+- Reset Changelog after rebase (Justin M. Forbes)
+
 * Tue Jul 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.d67978318827.2]
 - Reset RHEL_RELEASE for the 6.11 cycle (Justin M. Forbes)
 - redhat/configs: Enable CONFIG_VMWARE_VMCI/CONFIG_VMWARE_VMCI_VSOCKETS for RHEL (Vitaly Kuznetsov)
@@ -6484,3 +6494,10 @@ fi\
 - [initial commit] Add configs (Laura Abbott)
 - [initial commit] Add Makefiles (Laura Abbott)
 - Linux v6.11.0-0.rc0.d67978318827
+
+###
+# The following Emacs magic makes C-c C-e use UTC dates.
+# Local Variables:
+# rpm-change-log-uses-utc: t
+# End:
+###
