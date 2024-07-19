@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240718gitb1bc554e009e.6
+%define pkgrelease 0.rc0.20240719git720261cfc732.7
 %define kversion 6
-%define tarfile_release 6.10-5505-gb1bc554e009e
+%define tarfile_release 6.10-8676-g720261cfc732
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240718gitb1bc554e009e.6%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240719git720261cfc732.7%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4043,8 +4043,13 @@ fi\
 #
 #
 %changelog
-* Thu Jul 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.b1bc554e009e.6]
+* Fri Jul 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.7]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Jul 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.6]
+- redhat: rh_flags: declare proper static methods when !CONFIG_RHEL_DIFFERENCES (Rafael Aquini)
+- redhat: configs: enable CONFIG_TMPFS_QUOTA for both Fedora and RHEL (Rafael Aquini)
+- Linux v6.11.0-0.rc0.720261cfc732
 
 * Thu Jul 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.b1bc554e009e.5]
 - Linux v6.11.0-0.rc0.b1bc554e009e

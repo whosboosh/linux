@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/6fd960759f97a5d7638604bf050268d3019d079d
+ 6fd960759f97a5d7638604bf050268d3019d079d redhat: rh_flags: declare proper static methods when !CONFIG_RHEL_DIFFERENCES
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/e17bacfa75053db9c6d53889a7bbcacf2dc792fa
  e17bacfa75053db9c6d53889a7bbcacf2dc792fa not upstream: drop openssl ENGINE API usage
 
