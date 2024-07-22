@@ -78,10 +78,10 @@
  77 files changed, 2528 insertions(+), 257 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 2deccf57ecee..872fe57a9ba9 100644
+index c1134ad5f06d..11c615af1e11 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6899,6 +6899,15 @@
+@@ -6970,6 +6970,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -789,10 +789,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 0aa20623525a..6f10d9b16624 100644
+index 59771412686b..a9f8c59eca59 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1822,6 +1822,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1802,6 +1802,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1642,7 +1642,7 @@ index ef9ea295f9e0..0103334e8f32 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 9df7cc75c1bc..60d541ae39e8 100644
+index ed6c5cb60c5a..70cb770b78bb 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -1653,7 +1653,7 @@ index 9df7cc75c1bc..60d541ae39e8 100644
  #include <linux/kernel.h>
  #include <linux/bits.h>
  #include <linux/bug.h>
-@@ -2916,6 +2917,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
+@@ -2932,6 +2933,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
  }
  EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
  
@@ -1926,7 +1926,7 @@ index af2996d0d17f..e40e09d086b4 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 568410e64ce6..6afbaee83950 100644
+index a2ce4e08edf5..07dd75b1f580 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -4433,6 +4433,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
@@ -2164,10 +2164,10 @@ index 97c2472cd434..fedba599ae00 100644
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI25_MFGPAGE_DEVID_SAS3004,
  		PCI_ANY_ID, PCI_ANY_ID },
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index fcb06df2ce4e..26089872a42a 100644
+index bc3b2aea3f8b..8d47d61c9920 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -8123,6 +8123,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
+@@ -8114,6 +8114,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
  };
  
  static struct pci_device_id qla2xxx_pci_tbl[] = {
@@ -2175,7 +2175,7 @@ index fcb06df2ce4e..26089872a42a 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2100) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2200) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2300) },
-@@ -8135,13 +8136,18 @@ static struct pci_device_id qla2xxx_pci_tbl[] = {
+@@ -8126,13 +8127,18 @@ static struct pci_device_id qla2xxx_pci_tbl[] = {
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP8432) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5422) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5432) },
@@ -2466,7 +2466,7 @@ index 4213d8993cd8..64712f2ad077 100644
 +
  #endif /* _LINUX_MODULE_H */
 diff --git a/include/linux/panic.h b/include/linux/panic.h
-index 6717b15e798c..8e1d3eae1686 100644
+index 3130e0b5116b..2b51f6eefcd6 100644
 --- a/include/linux/panic.h
 +++ b/include/linux/panic.h
 @@ -73,7 +73,23 @@ static inline void set_arch_panic_timeout(int timeout, int arch_default_timeout)
@@ -2495,10 +2495,10 @@ index 6717b15e798c..8e1d3eae1686 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index cafc5ab1cbcb..632f4e84de19 100644
+index 9e36b6c1810e..2c355971056c 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1618,6 +1618,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1616,6 +1616,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -3194,7 +3194,7 @@ index 3c13240dfc9f..61b2ac156a3e 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 869265852d51..f86989fdf707 100644
+index 0719192a3482..25b20cad8e14 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3317,29 +3317,29 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 8bff183d6180..9c0597ff07f1 100644
+index f861bedc1925..3b474ad6a6a7 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -494,6 +494,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
- 	[ TAINT_AUX ]			= { 'X', ' ', true },
- 	[ TAINT_RANDSTRUCT ]		= { 'T', ' ', true },
- 	[ TAINT_TEST ]			= { 'N', ' ', true },
-+	[ TAINT_19 ]			= { '?', '-', false },
-+	[ TAINT_20 ]			= { '?', '-', false },
-+	[ TAINT_21 ]			= { '?', '-', false },
-+	[ TAINT_22 ]			= { '?', '-', false },
-+	[ TAINT_23 ]			= { '?', '-', false },
-+	[ TAINT_24 ]			= { '?', '-', false },
-+	[ TAINT_25 ]			= { '?', '-', false },
-+	[ TAINT_PARTNER_SUPPORTED ]	= { 'p', ' ', true },
-+	[ TAINT_SUPPORT_REMOVED ]	= { 'h', ' ', false },
-+	[ TAINT_RESERVED28 ]		= { '?', '-', false },
-+	[ TAINT_RESERVED29 ]		= { '?', '-', false },
-+	[ TAINT_RESERVED30 ]		= { '?', '-', false },
-+	[ TAINT_UNPRIVILEGED_BPF ]	= { 'u', ' ', false },
+@@ -502,6 +502,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+ 	TAINT_FLAG(AUX,				'X', ' ', true),
+ 	TAINT_FLAG(RANDSTRUCT,			'T', ' ', true),
+ 	TAINT_FLAG(TEST,			'N', ' ', true),
++	TAINT_FLAG(19,				'?', '-', false ),
++	TAINT_FLAG(20,				'?', '-', false ),
++	TAINT_FLAG(21,				'?', '-', false ),
++	TAINT_FLAG(22,				'?', '-', false ),
++	TAINT_FLAG(23,				'?', '-', false ),
++	TAINT_FLAG(24,				'?', '-', false ),
++	TAINT_FLAG(25,				'?', '-', false ),
++	TAINT_FLAG(PARTNER_SUPPORTED,		'p', ' ', true ),
++	TAINT_FLAG(SUPPORT_REMOVED,		'h', ' ', false ),
++	TAINT_FLAG(RESERVED28,			'?', '-', false ),
++	TAINT_FLAG(RESERVED29,			'?', '-', false ),
++	TAINT_FLAG(RESERVED30,			'?', '-', false ),
++	TAINT_FLAG(UNPRIVILEGED_BPF,		'u', ' ', false ),
  };
  
- /**
+ #undef TAINT_FLAG
 diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
 new file mode 100644
 index 000000000000..b98c81d917ca
@@ -4214,7 +4214,7 @@ index 000000000000..3ac7e00e0def
 +
 +#endif /* __RH_MESSAGES_H */
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index f48d72d22dc2..288e0dbe6463 100644
+index 4b1edb257618..1682422ae3c5 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -22,6 +22,7 @@
@@ -4225,7 +4225,7 @@ index f48d72d22dc2..288e0dbe6463 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1993,6 +1994,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1982,6 +1983,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4238,7 +4238,7 @@ index f48d72d22dc2..288e0dbe6463 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -2053,6 +2060,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -2042,6 +2049,7 @@ static void write_mod_c_file(struct module *mod)
  	add_depends(&buf, mod);
  	add_moddevtable(&buf, mod);
  	add_srcversion(&buf, mod);

@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240719git720261cfc732.7
+%define pkgrelease 0.rc0.20240722git933069701c1b.10
 %define kversion 6
-%define tarfile_release 6.10-8676-g720261cfc732
+%define tarfile_release 6.10-11840-g933069701c1b
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240719git720261cfc732.7%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240722git933069701c1b.10%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -586,7 +586,7 @@ Summary: The Linux kernel
 %endif
 
 # Architectures we build kernel livepatching selftests on
-%define klptestarches x86_64 ppc64le
+%define klptestarches x86_64 ppc64le s390x
 
 %if 0%{?use_vdso}
 %define _use_vdso 1
@@ -4043,8 +4043,23 @@ fi\
 #
 #
 %changelog
-* Fri Jul 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.7]
+* Mon Jul 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.933069701c1b.10]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Mon Jul 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.933069701c1b.9]
+- Fix up config mismatches in pending (Justin M. Forbes)
+- redhat/configs: Enable watchdog devices modelled by qemu (Richard W.M. Jones) [RHEL-40937]
+- Linux v6.11.0-0.rc0.933069701c1b
+
+* Mon Jul 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.8]
+- rhel: cleanup unused media tuner configs (Peter Robinson)
+- all: cleanup MEDIA_CONTROLLER options (Peter Robinson)
+- redhat: kernel.spec: add s390x to livepatching kselftest builds (Joe Lawrence)
+
+* Sat Jul 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.7]
+- Flip CONFIG_DIMLIB back to inline (Justin M. Forbes)
+- Add vfio/nvgrace-gpu driver CONFIG to RHEL-9.5 ARM64 (Donald Dutile)
+- Enable CONFIG_RTC_DRV_TEGRA for RHEL (Luiz Capitulino)
 
 * Fri Jul 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.720261cfc732.6]
 - redhat: rh_flags: declare proper static methods when !CONFIG_RHEL_DIFFERENCES (Rafael Aquini)
