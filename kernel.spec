@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240722git933069701c1b.10
+%define pkgrelease 0.rc0.20240723git66ebbdfdeb09.11
 %define kversion 6
-%define tarfile_release 6.10-11840-g933069701c1b
+%define tarfile_release 6.10-12030-g66ebbdfdeb09
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240722git933069701c1b.10%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240723git66ebbdfdeb09.11%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4043,8 +4043,14 @@ fi\
 #
 #
 %changelog
-* Mon Jul 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.933069701c1b.10]
+* Tue Jul 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.66ebbdfdeb09.11]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Tue Jul 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.66ebbdfdeb09.10]
+- redhat/configs: enable some RTCs for RHEL on aarch64 (Luiz Capitulino)
+- redhat/configs: enable some regulators for RHEL (Luiz Capitulino)
+- redhat/config: disable CXL and CXLFLASH drivers (Dan Horák)
+- Linux v6.11.0-0.rc0.66ebbdfdeb09
 
 * Mon Jul 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.933069701c1b.9]
 - Fix up config mismatches in pending (Justin M. Forbes)

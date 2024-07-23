@@ -2215,10 +2215,10 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 2e933fd1de70..5e58eadcca32 100644
+index adeaa8ab9951..6bdc4644a0f0 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
+@@ -122,6 +122,14 @@ static const char *sd_cache_types[] = {
  	"write back, no read (daft)"
  };
  
@@ -2233,7 +2233,7 @@ index 2e933fd1de70..5e58eadcca32 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp,
  		struct queue_limits *lim)
  {
-@@ -4337,6 +4345,11 @@ static int __init init_sd(void)
+@@ -4338,6 +4346,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
