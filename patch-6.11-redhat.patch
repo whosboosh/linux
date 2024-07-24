@@ -140,7 +140,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 67ce3b7d558e..ad826fc40228 100644
+index 11e74386d909..68674e4bc5aa 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -162,7 +162,7 @@ index 67ce3b7d558e..ad826fc40228 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -1256,7 +1268,13 @@ define filechk_version.h
+@@ -1242,7 +1254,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -178,7 +178,7 @@ index 67ce3b7d558e..ad826fc40228 100644
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a867a7d967aa..7edebe10afd9 100644
+index 954a1916a500..205966cc405a 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
 @@ -1225,9 +1225,9 @@ config HIGHMEM
@@ -194,7 +194,7 @@ index a867a7d967aa..7edebe10afd9 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 79a656a62cbc..826a73eec3fa 100644
+index 7fd70be0463f..417518904abc 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
 @@ -1355,7 +1355,7 @@ endchoice
@@ -2445,10 +2445,10 @@ index 855db460e08b..7a8c28cd7510 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 4213d8993cd8..64712f2ad077 100644
+index 88ecc5e9f523..bcc0377c716a 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
-@@ -418,6 +418,7 @@ struct module {
+@@ -424,6 +424,7 @@ struct module {
  	struct module_attribute *modinfo_attrs;
  	const char *version;
  	const char *srcversion;
@@ -2456,7 +2456,7 @@ index 4213d8993cd8..64712f2ad077 100644
  	struct kobject *holders_dir;
  
  	/* Exported symbols */
-@@ -1001,4 +1002,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
+@@ -1007,4 +1008,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
  
  #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
  
@@ -4214,18 +4214,18 @@ index 000000000000..3ac7e00e0def
 +
 +#endif /* __RH_MESSAGES_H */
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 4b1edb257618..1682422ae3c5 100644
+index d16d0ace2775..e0aab60d74c4 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
-@@ -22,6 +22,7 @@
- #include <errno.h>
+@@ -25,6 +25,7 @@
+ #include <list.h>
  #include "modpost.h"
  #include "../../include/linux/license.h"
 +#include "../../include/generated/uapi/linux/version.h"
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1982,6 +1983,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1931,6 +1932,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4238,7 +4238,7 @@ index 4b1edb257618..1682422ae3c5 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -2042,6 +2049,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -1991,6 +1998,7 @@ static void write_mod_c_file(struct module *mod)
  	add_depends(&buf, mod);
  	add_moddevtable(&buf, mod);
  	add_srcversion(&buf, mod);
