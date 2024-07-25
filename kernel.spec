@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240724git786c8248dbd3.12
+%define pkgrelease 0.rc0.20240725gitc33ffdb70cc6.13
 %define kversion 6
-%define tarfile_release 6.10-12246-g786c8248dbd3
+%define tarfile_release 6.10-12381-gc33ffdb70cc6
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240724git786c8248dbd3.12%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240725gitc33ffdb70cc6.13%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -715,7 +715,7 @@ BuildRequires: openssl-devel
 %endif
 %if %{with_bpftool}
 BuildRequires: python3-docutils
-BuildRequires: zlib-devel binutils-devel
+BuildRequires: zlib-devel binutils-devel llvm-devel
 %endif
 %if %{with_selftests}
 BuildRequires: clang llvm-devel fuse-devel
@@ -2775,7 +2775,7 @@ BuildKernel() {
         # Build the bootstrap bpftool to generate vmlinux.h
         export BPFBOOTSTRAP_CFLAGS=$(echo "%{__global_compiler_flags}" | sed -r "s/\-specs=[^\ ]+\/redhat-annobin-cc1//")
         export BPFBOOTSTRAP_LDFLAGS=$(echo "%{__global_ldflags}" | sed -r "s/\-specs=[^\ ]+\/redhat-annobin-cc1//")
-        CFLAGS="" LDFLAGS="" make EXTRA_CFLAGS="${BPFBOOTSTRAP_CFLAGS}" EXTRA_LDFLAGS="${BPFBOOTSTRAP_LDFLAGS}" %{?make_opts} %{?clang_make_opts} V=1 -C tools/bpf/bpftool bootstrap
+        CFLAGS="" LDFLAGS="" make EXTRA_CFLAGS="${BPFBOOTSTRAP_CFLAGS}" EXTRA_CXXFLAGS="${BPFBOOTSTRAP_CFLAGS}" EXTRA_LDFLAGS="${BPFBOOTSTRAP_LDFLAGS}" %{?make_opts} %{?clang_make_opts} V=1 -C tools/bpf/bpftool bootstrap
 
         tools/bpf/bpftool/bootstrap/bpftool btf dump file vmlinux format c > $RPM_BUILD_ROOT/$DevelDir/vmlinux.h
     fi
@@ -2987,7 +2987,7 @@ echo "${RPM_VMLINUX_H}" > ../vmlinux_h_path
 
 %if %{with_bpftool}
 %global bpftool_make \
-  %{__make} EXTRA_CFLAGS="${RPM_OPT_FLAGS}" EXTRA_LDFLAGS="%{__global_ldflags}" DESTDIR=$RPM_BUILD_ROOT %{?make_opts} VMLINUX_H="${RPM_VMLINUX_H}" V=1
+  %{__make} EXTRA_CFLAGS="${RPM_OPT_FLAGS}" EXTRA_CXXFLAGS="${RPM_OPT_FLAGS}" EXTRA_LDFLAGS="%{__global_ldflags}" DESTDIR=$RPM_BUILD_ROOT %{?make_opts} VMLINUX_H="${RPM_VMLINUX_H}" V=1
 %{log_msg "build bpftool"}
 pushd tools/bpf/bpftool
 %{bpftool_make}
@@ -4043,8 +4043,11 @@ fi\
 #
 #
 %changelog
-* Wed Jul 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.786c8248dbd3.12]
+* Thu Jul 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.c33ffdb70cc6.13]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Thu Jul 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.c33ffdb70cc6.12]
+- Linux v6.11.0-0.rc0.c33ffdb70cc6
 
 * Wed Jul 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.786c8248dbd3.11]
 - Linux v6.11.0-0.rc0.786c8248dbd3
