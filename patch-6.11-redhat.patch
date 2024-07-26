@@ -4396,3 +4396,33 @@ index 8cee5b6c6e6d..489e25946bf9 100644
  #ifdef CONFIG_PERF_EVENTS
  /**
   * security_perf_event_open() - Check if a perf event open is allowed
+From 38fda603cbe1d8e6158f027bcf5119813f4043b3 Mon Sep 17 00:00:00 2001
+From: Scott Weaver <scweaver@redhat.com>
+Date: Fri, 26 Jul 2024 08:51:44 -0400
+Subject: [PATCH] [redhat] rh_flags: constify the ctl_table argument of
+ proc_handler
+
+With 78eb4ea25cd5f ('sysctl: treewide: constify the ctl_table argument
+of proc_handlers') some RHEL only code will also need updated.
+
+Signed-off-by: Scott Weaver <scweaver@redhat.com>
+---
+ kernel/rh_flags.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
+index b98c81d917caa..cca2275bb58f1 100644
+--- a/kernel/rh_flags.c
++++ b/kernel/rh_flags.c
+@@ -68,7 +68,7 @@ void rh_print_flags(void)
+ EXPORT_SYMBOL(rh_print_flags);
+ 
+ #ifdef CONFIG_SYSCTL
+-static int rh_flags_show(struct ctl_table *ctl, int write,
++static int rh_flags_show(const struct ctl_table *ctl, int write,
+ 			    void __user *buffer, size_t *lenp,
+ 			    loff_t *ppos)
+ {
+-- 
+GitLab
+
