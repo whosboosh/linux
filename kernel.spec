@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240725gitc33ffdb70cc6.13
+%define pkgrelease 0.rc0.20240726git1722389b0d86.14
 %define kversion 6
-%define tarfile_release 6.10-12381-gc33ffdb70cc6
+%define tarfile_release 6.10-12562-g1722389b0d86
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240725gitc33ffdb70cc6.13%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240726git1722389b0d86.14%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -1554,7 +1554,7 @@ Requires: kernel-%{?1:%{1}-}-modules-core-uname-r = %{KVERREL}%{uname_variant %{
 %{expand:%%kernel_debuginfo_package %{?1:%{1}}}\
 %endif\
 %if "%{1}" == "rt" || "%{1}" == "rt-debug"\
-%{expand:%%kernel_kvm_package %{?1:%{1}}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}}}\
+%{expand:%%kernel_kvm_package %{?1:%{1}} %{!?{-n}:%{1}}%{?{-n}:%{-n*}}}\
 %else \
 %if %{with_efiuki}\
 %package %{?1:%{1}-}uki-virt\
@@ -4043,8 +4043,15 @@ fi\
 #
 #
 %changelog
-* Thu Jul 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.c33ffdb70cc6.13]
+* Fri Jul 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.1722389b0d86.14]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Jul 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.1722389b0d86.13]
+- gitlab-ci: restore bot pipeline behavior (Michael Hofmann)
+- redhat/kernel.spec: drop extra right curly bracket in kernel_kvm_package (Jan Stancek)
+- redhat/configs: enable gpio_keys driver for RHEL on aarch64 (Luiz Capitulino)
+- Move NET_VENDOR_MICROCHIP from common to rhel (Justin M. Forbes)
+- Linux v6.11.0-0.rc0.1722389b0d86
 
 * Thu Jul 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.c33ffdb70cc6.12]
 - Linux v6.11.0-0.rc0.c33ffdb70cc6

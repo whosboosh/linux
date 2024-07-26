@@ -899,7 +899,7 @@ index e12b531f5c2f..082707f8dff8 100644
  	rv = ipmi_register_driver();
  	mutex_unlock(&ipmi_interfaces_mutex);
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index b02a12436750..137c395b94da 100644
+index 87fe61295ea1..707f271e7728 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
 @@ -51,6 +51,7 @@
@@ -1450,7 +1450,7 @@ index bf01f01964cf..703896981e8a 100644
  	platform_driver_unregister(&etm4_platform_driver);
  	etm4_pm_clear();
 diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index ef9ea295f9e0..0103334e8f32 100644
+index 2168b6cd7167..5d7cda175a0c 100644
 --- a/drivers/input/rmi4/rmi_driver.c
 +++ b/drivers/input/rmi4/rmi_driver.c
 @@ -182,34 +182,47 @@ void rmi_set_attn_data(struct rmi_device *rmi_dev, unsigned long irq_status,
@@ -1898,7 +1898,7 @@ index f900e44243ae..316f461e5867 100644
  {
  }
 diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index af2996d0d17f..e40e09d086b4 100644
+index f412ef73a6e4..e1d9079483ea 100644
 --- a/drivers/pci/pci-driver.c
 +++ b/drivers/pci/pci-driver.c
 @@ -19,6 +19,7 @@
@@ -2495,10 +2495,10 @@ index 3130e0b5116b..2b51f6eefcd6 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 9e36b6c1810e..2c355971056c 100644
+index 4cf89a4b4cbc..5133f3570000 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1616,6 +1616,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1614,6 +1614,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -2506,7 +2506,7 @@ index 9e36b6c1810e..2c355971056c 100644
  int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
  		    int pass);
  
-@@ -2664,6 +2665,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+@@ -2662,6 +2663,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
  	return false;
  }
  
@@ -3145,7 +3145,7 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index de3af33e6ff5..0a37270070e4 100644
+index 1390f1efb4f0..b9a8ccb1dbdc 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -507,6 +507,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
@@ -3194,7 +3194,7 @@ index 3c13240dfc9f..61b2ac156a3e 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0719192a3482..25b20cad8e14 100644
+index bf6c5f685ea2..649f2fccaddd 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3229,7 +3229,7 @@ index 0719192a3482..25b20cad8e14 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -6033,6 +6051,11 @@ static int bpf_unpriv_handler(struct ctl_table *table, int write,
+@@ -6033,6 +6051,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;
