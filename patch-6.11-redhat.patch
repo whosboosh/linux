@@ -78,10 +78,10 @@
  77 files changed, 2528 insertions(+), 257 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c1134ad5f06d..11c615af1e11 100644
+index f1384c7b59c9..0f783e70d4c3 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6970,6 +6970,15 @@
+@@ -6967,6 +6967,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -140,7 +140,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 11e74386d909..68674e4bc5aa 100644
+index 8ad55d6e7b60..6f2aaa2c9efb 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -162,7 +162,7 @@ index 11e74386d909..68674e4bc5aa 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -1242,7 +1254,13 @@ define filechk_version.h
+@@ -1241,7 +1253,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -194,7 +194,7 @@ index 954a1916a500..205966cc405a 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7fd70be0463f..417518904abc 100644
+index b3fc891f1544..260e8329ba30 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
 @@ -1355,7 +1355,7 @@ endchoice
@@ -219,7 +219,7 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 3a7d6e172211..8163a2173247 100644
+index f17bb7bf9392..66e530380ee3 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
 @@ -2479,3 +2479,8 @@ int ipl_report_free(struct ipl_report *report)
@@ -232,7 +232,7 @@ index 3a7d6e172211..8163a2173247 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index 3993f4caf224..1d5e4e9ad0cb 100644
+index 4ec99f73fa27..26d0037de1dd 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -243,7 +243,7 @@ index 3993f4caf224..1d5e4e9ad0cb 100644
  #include <linux/hugetlb.h>
  #include <linux/kmemleak.h>
  
-@@ -891,6 +892,9 @@ void __init setup_arch(char **cmdline_p)
+@@ -894,6 +895,9 @@ void __init setup_arch(char **cmdline_p)
  
  	log_component_list();
  
@@ -1759,7 +1759,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 19917253ba7b..e065384d8435 100644
+index 053d5b4909cd..20f09734d6e0 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2278,10 +2278,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 35268263aaed..39abdda19809 100644
+index 32ce5b35e1df..eb0d6e5822fd 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -580,6 +580,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -595,6 +595,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2291,7 +2291,7 @@ index 35268263aaed..39abdda19809 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -685,6 +688,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -701,6 +704,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
@@ -3342,7 +3342,7 @@ index f861bedc1925..3b474ad6a6a7 100644
  #undef TAINT_FLAG
 diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
 new file mode 100644
-index 000000000000..b98c81d917ca
+index 000000000000..cca2275bb58f
 --- /dev/null
 +++ b/kernel/rh_flags.c
 @@ -0,0 +1,116 @@
@@ -3416,7 +3416,7 @@ index 000000000000..b98c81d917ca
 +EXPORT_SYMBOL(rh_print_flags);
 +
 +#ifdef CONFIG_SYSCTL
-+static int rh_flags_show(struct ctl_table *ctl, int write,
++static int rh_flags_show(const struct ctl_table *ctl, int write,
 +			    void __user *buffer, size_t *lenp,
 +			    loff_t *ppos)
 +{
@@ -4396,33 +4396,3 @@ index 8cee5b6c6e6d..489e25946bf9 100644
  #ifdef CONFIG_PERF_EVENTS
  /**
   * security_perf_event_open() - Check if a perf event open is allowed
-From 38fda603cbe1d8e6158f027bcf5119813f4043b3 Mon Sep 17 00:00:00 2001
-From: Scott Weaver <scweaver@redhat.com>
-Date: Fri, 26 Jul 2024 08:51:44 -0400
-Subject: [PATCH] [redhat] rh_flags: constify the ctl_table argument of
- proc_handler
-
-With 78eb4ea25cd5f ('sysctl: treewide: constify the ctl_table argument
-of proc_handlers') some RHEL only code will also need updated.
-
-Signed-off-by: Scott Weaver <scweaver@redhat.com>
----
- kernel/rh_flags.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
-index b98c81d917caa..cca2275bb58f1 100644
---- a/kernel/rh_flags.c
-+++ b/kernel/rh_flags.c
-@@ -68,7 +68,7 @@ void rh_print_flags(void)
- EXPORT_SYMBOL(rh_print_flags);
- 
- #ifdef CONFIG_SYSCTL
--static int rh_flags_show(struct ctl_table *ctl, int write,
-+static int rh_flags_show(const struct ctl_table *ctl, int write,
- 			    void __user *buffer, size_t *lenp,
- 			    loff_t *ppos)
- {
--- 
-GitLab
-

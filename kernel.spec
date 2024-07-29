@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc0.20240726git1722389b0d86.14
+%define pkgrelease 0.rc1.20240729gitdc1c8034e31b.16
 %define kversion 6
-%define tarfile_release 6.10-12562-g1722389b0d86
+%define tarfile_release 6.11-rc1-4-gdc1c8034e31b
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240726git1722389b0d86.14%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240729gitdc1c8034e31b.16%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4043,8 +4043,15 @@ fi\
 #
 #
 %changelog
-* Fri Jul 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.1722389b0d86.14]
+* Mon Jul 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.dc1c8034e31b.16]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Mon Jul 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.dc1c8034e31b.15]
+- fedora: set CONFIG_REGULATOR_RZG2L_VBCTRL as a module for arm64 (Patrick Talbert)
+- Linux v6.11.0-0.rc1.dc1c8034e31b
+
+* Sat Jul 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.3a7e02c040b1.14]
+- Linux v6.11.0-0.rc0.3a7e02c040b1
 
 * Fri Jul 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc0.1722389b0d86.13]
 - gitlab-ci: restore bot pipeline behavior (Michael Hofmann)

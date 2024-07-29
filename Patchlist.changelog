@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/38fda603cbe1d8e6158f027bcf5119813f4043b3
+ 38fda603cbe1d8e6158f027bcf5119813f4043b3 [redhat] rh_flags: constify the ctl_table argument of proc_handler
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/6fd960759f97a5d7638604bf050268d3019d079d
  6fd960759f97a5d7638604bf050268d3019d079d redhat: rh_flags: declare proper static methods when !CONFIG_RHEL_DIFFERENCES
 
