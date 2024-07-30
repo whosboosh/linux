@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc1.20240729gitdc1c8034e31b.16
+%define pkgrelease 0.rc1.20240730git94ede2a3e913.17
 %define kversion 6
-%define tarfile_release 6.11-rc1-4-gdc1c8034e31b
+%define tarfile_release 6.11-rc1-43-g94ede2a3e913
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240729gitdc1c8034e31b.16%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240730git94ede2a3e913.17%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4043,8 +4043,11 @@ fi\
 #
 #
 %changelog
-* Mon Jul 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.dc1c8034e31b.16]
+* Tue Jul 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.94ede2a3e913.17]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Tue Jul 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.94ede2a3e913.16]
+- Linux v6.11.0-0.rc1.94ede2a3e913
 
 * Mon Jul 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.dc1c8034e31b.15]
 - fedora: set CONFIG_REGULATOR_RZG2L_VBCTRL as a module for arm64 (Patrick Talbert)
