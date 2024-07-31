@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc1.20240730git94ede2a3e913.17
+%define pkgrelease 0.rc1.20240731gite4fc196f5ba3.18
 %define kversion 6
-%define tarfile_release 6.11-rc1-43-g94ede2a3e913
+%define tarfile_release 6.11-rc1-62-ge4fc196f5ba3
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240730git94ede2a3e913.17%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240731gite4fc196f5ba3.18%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -2696,7 +2696,10 @@ BuildKernel() {
         sed -i %{?zipsed} $absolute_file_list
 %endif
         # add also dir for the case when there are no kmods
-        echo "%dir /lib/modules/$KernelVer/$module_subdir" >> $absolute_file_list
+        # "kernel" subdir is covered in %files section, skip it here
+        if [ "$module_subdir" != "kernel" ]; then
+                echo "%dir /lib/modules/$KernelVer/$module_subdir" >> $absolute_file_list
+        fi
 
         if [ "$add_all_dirs" -eq 1 ]; then
             (cd $RPM_BUILD_ROOT; find lib/modules/$KernelVer/kernel -mindepth 1 -type d | sort -n) > ../module-dirs.list
@@ -4043,8 +4046,17 @@ fi\
 #
 #
 %changelog
-* Tue Jul 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.94ede2a3e913.17]
+* Wed Jul 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.e4fc196f5ba3.18]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Wed Jul 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.e4fc196f5ba3.17]
+- arm64: enable CRYPTO_DEV_TEGRA on RHEL (Peter Robinson)
+- redhat/kernel.spec: fix file listed twice warning for "kernel" subdir (Jan Stancek)
+- redhat/configs: Double MAX_LOCKDEP_ENTRIES for RT debug kernels (Waiman Long) [RHEL-43425]
+- Support the first day after a rebase (Don Zickus)
+- Support 2 digit versions properly (Don Zickus)
+- Automation cleanups for rebasing rt-devel and automotive-devel (Don Zickus)
+- Linux v6.11.0-0.rc1.e4fc196f5ba3
 
 * Tue Jul 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.94ede2a3e913.16]
 - Linux v6.11.0-0.rc1.94ede2a3e913
