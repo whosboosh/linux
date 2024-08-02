@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc1.20240731gite4fc196f5ba3.18
+%define pkgrelease 0.rc1.20240802gitc0ecd6388360.20
 %define kversion 6
-%define tarfile_release 6.11-rc1-62-ge4fc196f5ba3
+%define tarfile_release 6.11-rc1-154-gc0ecd6388360
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240731gite4fc196f5ba3.18%{?buildid}%{?dist}
+%define specrelease 0.rc1.20240802gitc0ecd6388360.20%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4046,8 +4046,22 @@ fi\
 #
 #
 %changelog
-* Wed Jul 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.e4fc196f5ba3.18]
+* Fri Aug 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.c0ecd6388360.20]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Aug 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.c0ecd6388360.19]
+- redhat/dracut-virt.conf: add systemd-veritysetup module (Emanuele Giuseppe Esposito)
+- Linux v6.11.0-0.rc1.c0ecd6388360
+
+* Thu Aug 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.21b136cc63d2.18]
+- redhat/configs: enable CONFIG_LOCK_STAT on the debug kernels for aarch64 (Brian Masney)
+- redhat/configs: enable CONFIG_KEYBOARD_GPIO_POLLED for RHEL on aarch64 (Luiz Capitulino)
+- redhat/configs: fedora: Enable new Qualcomm configs (Andrew Halaney)
+- redhat/configs: fedora: Disable CONFIG_QCOM_PD_MAPPER for non aarch64 (Andrew Halaney)
+- redhat/configs/fedora: set CONFIG_CRYPTO_CURVE25519_PPC64 (Dan Horák)
+- fedora: Updates for 6.11 merge (Peter Robinson)
+- fedora: enable new mipi sensors and devices (Peter Robinson)
+- Linux v6.11.0-0.rc1.21b136cc63d2
 
 * Wed Jul 31 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.e4fc196f5ba3.17]
 - arm64: enable CRYPTO_DEV_TEGRA on RHEL (Peter Robinson)
