@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc1.20240802gitc0ecd6388360.20
+%define pkgrelease 0.rc2.23
 %define kversion 6
-%define tarfile_release 6.11-rc1-154-gc0ecd6388360
+%define tarfile_release 6.11-rc2
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc1.20240802gitc0ecd6388360.20%{?buildid}%{?dist}
+%define specrelease 0.rc2.23%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4046,8 +4046,18 @@ fi\
 #
 #
 %changelog
-* Fri Aug 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.c0ecd6388360.20]
+* Mon Aug 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.23]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Mon Aug 05 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.22]
+- rh_flags: fix failed when register_sysctl_sz rh_flags_table to kernel (Ricardo Robaina) [RHEL-52629]
+- Linux v6.11.0-0.rc2
+
+* Sun Aug 04 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.defaf1a2113a.21]
+- Linux v6.11.0-0.rc1.defaf1a2113a
+
+* Sat Aug 03 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.17712b7ea075.20]
+- Linux v6.11.0-0.rc1.17712b7ea075
 
 * Fri Aug 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc1.c0ecd6388360.19]
 - redhat/dracut-virt.conf: add systemd-veritysetup module (Emanuele Giuseppe Esposito)

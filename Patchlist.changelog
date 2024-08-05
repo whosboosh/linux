@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/ea1b0021eef49f13c5a0ccf1e2e1e506a9992250
+ ea1b0021eef49f13c5a0ccf1e2e1e506a9992250 rh_flags: fix failed when register_sysctl_sz rh_flags_table to kernel
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/38fda603cbe1d8e6158f027bcf5119813f4043b3
  38fda603cbe1d8e6158f027bcf5119813f4043b3 [redhat] rh_flags: constify the ctl_table argument of proc_handler
 

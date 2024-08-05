@@ -65,7 +65,7 @@
  kernel/module/main.c                               |  13 +
  kernel/module/signing.c                            |   9 +-
  kernel/panic.c                                     |  13 +
- kernel/rh_flags.c                                  | 116 +++++
+ kernel/rh_flags.c                                  | 115 +++++
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 325 +++++++++++++
  scripts/mod/modpost.c                              |   8 +
@@ -75,13 +75,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 77 files changed, 2528 insertions(+), 257 deletions(-)
+ 77 files changed, 2527 insertions(+), 257 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1384c7b59c9..0f783e70d4c3 100644
+index 09126bb8cc9f..0a68fc52e2fb 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6967,6 +6967,15 @@
+@@ -6965,6 +6965,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -140,7 +140,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 8ad55d6e7b60..6f2aaa2c9efb 100644
+index 44c02a6f60a1..721338014e72 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -194,10 +194,10 @@ index 54b2bb817a7f..0415b853e1af 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b3fc891f1544..260e8329ba30 100644
+index a2f8ff354ca6..e185f3e75a5c 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1355,7 +1355,7 @@ endchoice
+@@ -1365,7 +1365,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -266,7 +266,7 @@ index d4e539d4e158..ed3a7b089b87 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5d34cad9b7b1..4145918a84ce 100644
+index 6129dc2ba784..070aa96cfadd 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -2215,7 +2215,7 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index adeaa8ab9951..6bdc4644a0f0 100644
+index 8bb3a3611851..d81d85c6c0de 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -122,6 +122,14 @@ static const char *sd_cache_types[] = {
@@ -2233,7 +2233,7 @@ index adeaa8ab9951..6bdc4644a0f0 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp,
  		struct queue_limits *lim)
  {
-@@ -4338,6 +4346,11 @@ static int __init init_sd(void)
+@@ -4339,6 +4347,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -3342,10 +3342,10 @@ index f861bedc1925..3b474ad6a6a7 100644
  #undef TAINT_FLAG
 diff --git a/kernel/rh_flags.c b/kernel/rh_flags.c
 new file mode 100644
-index 000000000000..cca2275bb58f
+index 000000000000..10d26958f840
 --- /dev/null
 +++ b/kernel/rh_flags.c
-@@ -0,0 +1,116 @@
+@@ -0,0 +1,115 @@
 +#include <linux/kernel.h>
 +#include <linux/list.h>
 +#include <linux/proc_fs.h>
@@ -3450,7 +3450,6 @@ index 000000000000..cca2275bb58f
 +		.mode = 0444,
 +		.proc_handler = rh_flags_show,
 +	},
-+	{ }
 +};
 +#endif
 +
