@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc2.20240806gitb446a2dae984.24
+%define pkgrelease 0.rc2.20240807gitd4560686726f.25
 %define kversion 6
-%define tarfile_release 6.11-rc2-4-gb446a2dae984
+%define tarfile_release 6.11-rc2-13-gd4560686726f
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240806gitb446a2dae984.24%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240807gitd4560686726f.25%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4087,8 +4087,11 @@ fi\
 #
 #
 %changelog
-* Tue Aug 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.b446a2dae984.24]
+* Wed Aug 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.d4560686726f.25]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Wed Aug 07 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.d4560686726f.24]
+- Linux v6.11.0-0.rc2.d4560686726f
 
 * Tue Aug 06 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.b446a2dae984.23]
 - redhat/configs: Disable gfs2 in rhel configs (Andrew Price)
