@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc2.20240808git6a0e38264012.26
+%define pkgrelease 0.rc2.20240809gitee9a43b7cfe2.27
 %define kversion 6
-%define tarfile_release 6.11-rc2-27-g6a0e38264012
+%define tarfile_release 6.11-rc2-111-gee9a43b7cfe2
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240808git6a0e38264012.26%{?buildid}%{?dist}
+%define specrelease 0.rc2.20240809gitee9a43b7cfe2.27%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -3959,6 +3959,8 @@ fi\
 %ghost %attr(0600, root, root) /boot/initramfs-%{KVERREL}%{?3:+%{3}}.img\
 %ghost %attr(0644, root, root) /boot/config-%{KVERREL}%{?3:+%{3}}\
 %{expand:%%files -f kernel-%{?3:%{3}-}modules-core.list %{?3:%{3}-}modules-core}\
+%dir /lib/modules\
+%dir /lib/modules/%{KVERREL}%{?3:+%{3}}\
 %dir /lib/modules/%{KVERREL}%{?3:+%{3}}/kernel\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/build\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/source\
@@ -4004,6 +4006,8 @@ fi\
 %else\
 %if %{with_efiuki}\
 %{expand:%%files %{?3:%{3}-}uki-virt}\
+%dir /lib/modules\
+%dir /lib/modules/%{KVERREL}%{?3:+%{3}}\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/System.map\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/symvers.%compext\
 /lib/modules/%{KVERREL}%{?3:+%{3}}/config\
@@ -4087,8 +4091,14 @@ fi\
 #
 #
 %changelog
-* Thu Aug 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.6a0e38264012.26]
+* Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.27]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.26]
+- redhat: Fix the ownership of /lib/modules/<kversion> directory (Vitaly Kuznetsov)
+- new configs in drivers/phy (Izabela Bakollari)
+- Add support to rh_waived cmdline boot parameter (Ricardo Robaina) [RHEL-26170]
+- Linux v6.11.0-0.rc2.ee9a43b7cfe2
 
 * Thu Aug 08 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.6a0e38264012.25]
 - Linux v6.11.0-0.rc2.6a0e38264012

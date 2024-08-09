@@ -1,4 +1,5 @@
- Documentation/admin-guide/kernel-parameters.txt    |   9 +
+ Documentation/admin-guide/kernel-parameters.txt    |  20 +
+ Documentation/admin-guide/rh-waived-features.rst   |  21 +
  Kconfig                                            |   2 +
  Kconfig.redhat                                     |  26 +
  Makefile                                           |  20 +-
@@ -57,6 +58,7 @@
  include/linux/random.h                             |  10 +
  include/linux/rh_flags.h                           |  34 ++
  include/linux/rh_kabi.h                            | 541 +++++++++++++++++++++
+ include/linux/rh_waived.h                          |  19 +
  include/linux/rmi.h                                |   1 +
  include/linux/security.h                           |   5 +
  init/main.c                                        |   3 +
@@ -68,6 +70,7 @@
  kernel/rh_flags.c                                  | 115 +++++
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 325 +++++++++++++
+ kernel/rh_waived.c                                 | 104 ++++
  scripts/mod/modpost.c                              |   8 +
  scripts/sign-file.c                                |  29 +-
  scripts/tags.sh                                    |   2 +
@@ -75,13 +78,31 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 77 files changed, 2527 insertions(+), 257 deletions(-)
+ 80 files changed, 2682 insertions(+), 257 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..0a68fc52e2fb 100644
+index 09126bb8cc9f..ee2984e46c06 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6965,6 +6965,15 @@
+@@ -5790,6 +5790,17 @@
+ 		2	The "airplane mode" button toggles between everything
+ 			blocked and everything unblocked.
+ 
++	rh_waived=
++			Enable waived features in RHEL.
++
++			Waived features are disabled by default in RHEL, this parameter
++			provides support to enable such features, as needed.
++
++			Format: <feat-1>,<feat-2>...<feat-n>
++
++			Use 'rh_waived' to enable all waived features listed at
++			Documentation/admin-guide/rh-waived-features.rst
++
+ 	ring3mwait=disable
+ 			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
+ 			CPUs.
+@@ -6965,6 +6976,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -97,6 +118,33 @@ index 09126bb8cc9f..0a68fc52e2fb 100644
  	unwind_debug	[X86-64,EARLY]
  			Enable unwinder debug output.  This can be
  			useful for debugging certain unwinder error
+diff --git a/Documentation/admin-guide/rh-waived-features.rst b/Documentation/admin-guide/rh-waived-features.rst
+new file mode 100644
+index 000000000000..45caec7fbae6
+--- /dev/null
++++ b/Documentation/admin-guide/rh-waived-features.rst
+@@ -0,0 +1,21 @@
++.. _rh_waived_features:
++
++=======================
++Red Hat Waived Features
++=======================
++
++Red Hat waived features are features considered unmaintained, insecure, rudimentary, or
++deprecated and are shipped in RHEL only for customer convenience. These features are disabled
++by default but can be enabled on demand via the ``rh_waived`` kernel boot parameter. To allow
++a set of waived features, append ``rh_waived=<feature name>,...,<feature name>`` to the kernel
++cmdline. Appending only ``rh_waived`` (with no arguments) will enable all waived features
++listed below.
++
++The waived features listed in the next session follow the pattern below:
++
++- feature name
++        feature description
++
++List of Red Hat Waived Features
++===============================
++
 diff --git a/Kconfig b/Kconfig
 index 745bc773f567..f57ff40109d7 100644
 --- a/Kconfig
@@ -3132,6 +3180,31 @@ index 000000000000..5139cb2cabdc
 +})
 +
 +#endif /* _LINUX_RH_KABI_H */
+diff --git a/include/linux/rh_waived.h b/include/linux/rh_waived.h
+new file mode 100644
+index 000000000000..945dd71cc082
+--- /dev/null
++++ b/include/linux/rh_waived.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * include/linux/rh_waived.h
++ *
++ * rh_waived cmdline parameter interface.
++ *
++ * Copyright (C) 2024, Red Hat, Inc.  Ricardo Robaina <rrobaina@redhat.com>
++ */
++#ifndef _RH_WAIVED_H
++#define _RH_WAIVED_H
++
++enum rh_waived_feat {
++	/* RH_WAIVED_FEAT_ITEMS must always be the last item in the enum */
++	RH_WAIVED_FEAT_ITEMS,
++};
++
++bool is_rh_waived(enum rh_waived_feat feat);
++
++#endif /* _RH_WAIVED_H */
 diff --git a/include/linux/rmi.h b/include/linux/rmi.h
 index ab7eea01ab42..fff7c5f737fc 100644
 --- a/include/linux/rmi.h
@@ -3182,14 +3255,14 @@ index 206acdde51f5..2296734522f7 100644
  		if (!strcmp(fn_name, entry->buf)) {
  			pr_debug("initcall %s blacklisted\n", fn_name);
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 3c13240dfc9f..61b2ac156a3e 100644
+index 3c13240dfc9f..dc6723d84302 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
 @@ -12,6 +12,7 @@ obj-y     = fork.o exec_domain.o panic.o \
  	    notifier.o ksysfs.o cred.o reboot.o \
  	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
  
-+obj-$(CONFIG_RHEL_DIFFERENCES) += rh_messages.o rh_flags.o
++obj-$(CONFIG_RHEL_DIFFERENCES) += rh_messages.o rh_flags.o rh_waived.o
  obj-$(CONFIG_USERMODE_DRIVER) += usermode_driver.o
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
@@ -3242,7 +3315,7 @@ index bf6c5f685ea2..649f2fccaddd 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index d9592195c5bb..ebddbe3ec4af 100644
+index 6f4ec857bdef..c8e66b448d1b 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3282,7 +3355,7 @@ index d9592195c5bb..ebddbe3ec4af 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3380,6 +3389,10 @@ void print_modules(void)
+@@ -3393,6 +3402,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
@@ -4212,6 +4285,116 @@ index 000000000000..3ac7e00e0def
 +};
 +
 +#endif /* __RH_MESSAGES_H */
+diff --git a/kernel/rh_waived.c b/kernel/rh_waived.c
+new file mode 100644
+index 000000000000..84e22b1730cc
+--- /dev/null
++++ b/kernel/rh_waived.c
+@@ -0,0 +1,104 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * kernel/rh_waived.c
++ *
++ * rh_waived cmdline parameter support.
++ *
++ * Copyright (C) 2024, Red Hat, Inc.  Ricardo Robaina <rrobaina@redhat.com>
++ */
++#include <linux/types.h>
++#include <linux/init.h>
++#include <linux/printk.h>
++#include <linux/string.h>
++#include <linux/panic.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/rh_flags.h>
++#include <linux/rh_waived.h>
++
++/*
++ * RH_INSERT_WAIVED_FEAT
++ *   This macro is intended to be used to insert items into the
++ *   rh_waived_feat_list array. It expects to get an item from
++ *   enum rh_waived_feat as its first argument, and a string
++ *   holding the feature name as its second argument.
++ *
++ *   The feature name is also utilized as the token for the
++ *   boot parameter parser.
++ *
++ *   Example usage:
++ *   struct rh_waived_feat_item foo[RH_WAIVED_FEAT_ITEMS] = {
++ *   	RH_INSERT_WAIVED_FEAT(FOO_FEAT, "foo_feat_short_str"),
++ *   };
++ */
++#define RH_INSERT_WAIVED_FEAT(enum_item, name) \
++	[(enum_item)] = {.feat_name = (name), .enabled = 0,}
++
++/* Indicates if the rh_flag 'rh_waived' should be added. */
++bool __initdata add_rh_flag = false;
++
++struct rh_waived_feat_item {
++	char *feat_name;
++	unsigned int enabled;
++};
++
++/* Always use the marco RH_INSERT_WAIVED_FEAT to insert items to this array. */
++struct rh_waived_feat_item rh_waived_feat_list[RH_WAIVED_FEAT_ITEMS] = {
++};
++
++/*
++ * is_rh_waived() - Checks if a given waived feature has been enabled.
++ *
++ * @feat: waived feature.
++ */
++__inline__ bool is_rh_waived(enum rh_waived_feat feat)
++{
++	return !!rh_waived_feat_list[feat].enabled;
++}
++EXPORT_SYMBOL(is_rh_waived);
++
++static int __init rh_waived_setup(char *s)
++{
++	int i;
++	char *token;
++
++	pr_info(KERN_CONT "rh_waived: ");
++
++	if (!s) {
++		for (i = 0; i < RH_WAIVED_FEAT_ITEMS; i++) {
++			rh_waived_feat_list[i].enabled = 1;
++			pr_info(KERN_CONT "%s%s", rh_waived_feat_list[i].feat_name,
++				i < RH_WAIVED_FEAT_ITEMS - 1 ? " " : "\n");
++		}
++	}
++
++	while ((token = strsep(&s, ",")) != NULL) {
++		for (i = 0; i < RH_WAIVED_FEAT_ITEMS; i++) {
++			if (!strcmp(token, rh_waived_feat_list[i].feat_name)) {
++				rh_waived_feat_list[i].enabled = 1;
++				pr_info(KERN_CONT "%s%s", rh_waived_feat_list[i].feat_name,
++					i < RH_WAIVED_FEAT_ITEMS - 1 ? " " : "\n");
++			}
++		}
++	}
++
++	add_rh_flag = true;
++
++	return 0;
++}
++early_param("rh_waived", rh_waived_setup);
++
++/*
++ * rh_flags is initialized at subsys_initcall, calling rh_add_flag()
++ * from rh_waived_setup() would result in a can't boot situation.
++ * Deffering the inclusion 'rh_waived' rh_flag to late_initcall to
++ * avoid this issue.
++ */
++static int __init __add_rh_flag(void)
++{
++	if (add_rh_flag)
++		rh_add_flag("rh_waived");
++
++	return 0;
++}
++late_initcall(__add_rh_flag);
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
 index d16d0ace2775..e0aab60d74c4 100644
 --- a/scripts/mod/modpost.c

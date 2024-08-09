@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/6ae23a2899f457adcbd4e081dec7a49a62b5ec87
+ 6ae23a2899f457adcbd4e081dec7a49a62b5ec87 Add support to rh_waived cmdline boot parameter
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/ea1b0021eef49f13c5a0ccf1e2e1e506a9992250
  ea1b0021eef49f13c5a0ccf1e2e1e506a9992250 rh_flags: fix failed when register_sysctl_sz rh_flags_table to kernel
 
