@@ -1,5 +1,19 @@
-* Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.27]
+* Mon Aug 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.30]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+Resolves: 
+
+* Mon Aug 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.29]
+- Linux v6.11.0-0.rc3
+Resolves: 
+
+* Sun Aug 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.5189dafa4cf9.28]
+- Linux v6.11.0-0.rc2.5189dafa4cf9
+Resolves: 
+
+* Sat Aug 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.34ac1e82e5a7.27]
+- kernel: config: enable erofs lzma compression (Ian Kent)
+- fedora: disable RTL8192CU in Fedora (Peter Robinson)
+- Linux v6.11.0-0.rc2.34ac1e82e5a7
 Resolves: 
 
 * Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.26]

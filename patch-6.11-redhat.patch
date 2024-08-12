@@ -188,7 +188,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 44c02a6f60a1..721338014e72 100644
+index 0a364e34f50b..f5b101e4c59f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -1807,10 +1807,10 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 053d5b4909cd..20f09734d6e0 100644
+index 33fa01c599ad..dddde9be7037 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -261,6 +261,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
+@@ -262,6 +262,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
  
  static blk_status_t nvme_error_status(u16 status)
  {
@@ -1820,7 +1820,7 @@ index 053d5b4909cd..20f09734d6e0 100644
  	switch (status & NVME_SCT_SC_MASK) {
  	case NVME_SC_SUCCESS:
  		return BLK_STS_OK;
-@@ -375,6 +378,7 @@ enum nvme_disposition {
+@@ -376,6 +379,7 @@ enum nvme_disposition {
  	COMPLETE,
  	RETRY,
  	FAILOVER,
@@ -1828,7 +1828,7 @@ index 053d5b4909cd..20f09734d6e0 100644
  	AUTHENTICATE,
  };
  
-@@ -383,7 +387,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -384,7 +388,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if (likely(nvme_req(req)->status == 0))
  		return COMPLETE;
  
@@ -1837,7 +1837,7 @@ index 053d5b4909cd..20f09734d6e0 100644
  	    (nvme_req(req)->status & NVME_STATUS_DNR) ||
  	    nvme_req(req)->retries >= nvme_max_retries)
  		return COMPLETE;
-@@ -391,10 +395,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -392,10 +396,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if ((nvme_req(req)->status & NVME_SCT_SC_MASK) == NVME_SC_AUTH_REQUIRED)
  		return AUTHENTICATE;
  
@@ -1851,7 +1851,7 @@ index 053d5b4909cd..20f09734d6e0 100644
  	} else {
  		if (blk_queue_dying(req->q))
  			return COMPLETE;
-@@ -436,6 +441,14 @@ void nvme_end_req(struct request *req)
+@@ -437,6 +442,14 @@ void nvme_end_req(struct request *req)
  	blk_mq_end_request(req, status);
  }
  
@@ -1866,7 +1866,7 @@ index 053d5b4909cd..20f09734d6e0 100644
  void nvme_complete_rq(struct request *req)
  {
  	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -465,6 +478,9 @@ void nvme_complete_rq(struct request *req)
+@@ -466,6 +479,9 @@ void nvme_complete_rq(struct request *req)
  	case FAILOVER:
  		nvme_failover_req(req);
  		return;
@@ -1924,10 +1924,10 @@ index 91d9eb3c22ef..d44cdba1ffea 100644
  
  	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index f900e44243ae..316f461e5867 100644
+index ae5314d32943..7a8e1178d379 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -943,6 +943,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -942,6 +942,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -1935,7 +1935,7 @@ index f900e44243ae..316f461e5867 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -985,6 +986,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -984,6 +985,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
@@ -2263,7 +2263,7 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 8bb3a3611851..d81d85c6c0de 100644
+index 699f4f9674d9..12c5593b9358 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -122,6 +122,14 @@ static const char *sd_cache_types[] = {
@@ -2281,7 +2281,7 @@ index 8bb3a3611851..d81d85c6c0de 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp,
  		struct queue_limits *lim)
  {
-@@ -4339,6 +4347,11 @@ static int __init init_sd(void)
+@@ -4344,6 +4352,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -3315,7 +3315,7 @@ index bf6c5f685ea2..649f2fccaddd 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 6f4ec857bdef..c8e66b448d1b 100644
+index 71396e297499..29e469418075 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3355,7 +3355,7 @@ index 6f4ec857bdef..c8e66b448d1b 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3393,6 +3402,10 @@ void print_modules(void)
+@@ -3403,6 +3412,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");

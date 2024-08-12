@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc2.20240809gitee9a43b7cfe2.27
+%define pkgrelease 0.rc3.30
 %define kversion 6
-%define tarfile_release 6.11-rc2-111-gee9a43b7cfe2
+%define tarfile_release 6.11-rc3
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc2.20240809gitee9a43b7cfe2.27%{?buildid}%{?dist}
+%define specrelease 0.rc3.30%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4091,8 +4091,19 @@ fi\
 #
 #
 %changelog
-* Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.27]
+* Mon Aug 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.30]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Mon Aug 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.29]
+- Linux v6.11.0-0.rc3
+
+* Sun Aug 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.5189dafa4cf9.28]
+- Linux v6.11.0-0.rc2.5189dafa4cf9
+
+* Sat Aug 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.34ac1e82e5a7.27]
+- kernel: config: enable erofs lzma compression (Ian Kent)
+- fedora: disable RTL8192CU in Fedora (Peter Robinson)
+- Linux v6.11.0-0.rc2.34ac1e82e5a7
 
 * Fri Aug 09 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc2.ee9a43b7cfe2.26]
 - redhat: Fix the ownership of /lib/modules/<kversion> directory (Vitaly Kuznetsov)
