@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/6425c2e128af3870617dd29da8110e7fa17b9ba9
+ 6425c2e128af3870617dd29da8110e7fa17b9ba9 not upstream: Disable vdso getrandom when FIPS is enabled
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/6ae23a2899f457adcbd4e081dec7a49a62b5ec87
  6ae23a2899f457adcbd4e081dec7a49a62b5ec87 Add support to rh_waived cmdline boot parameter
 
