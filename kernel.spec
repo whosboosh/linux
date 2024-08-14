@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc3.20240813gitd74da846046a.31
+%define pkgrelease 0.rc3.20240814git6b0f8db921ab.32
 %define kversion 6
-%define tarfile_release 6.11-rc3-7-gd74da846046a
+%define tarfile_release 6.11-rc3-13-g6b0f8db921ab
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240813gitd74da846046a.31%{?buildid}%{?dist}
+%define specrelease 0.rc3.20240814git6b0f8db921ab.32%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4097,8 +4097,12 @@ fi\
 #
 #
 %changelog
-* Tue Aug 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.d74da846046a.31]
+* Wed Aug 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.6b0f8db921ab.32]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Wed Aug 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.6b0f8db921ab.31]
+- fedora: Enable AF8133J Magnetometer driver (Peter Robinson)
+- Linux v6.11.0-0.rc3.6b0f8db921ab
 
 * Tue Aug 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.d74da846046a.30]
 - redhat: spec: add cachestat kselftest (Eric Chanudet)
