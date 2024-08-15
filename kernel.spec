@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc3.20240814git6b0f8db921ab.32
+%define pkgrelease 0.rc3.20240815git1fb918967b56.33
 %define kversion 6
-%define tarfile_release 6.11-rc3-13-g6b0f8db921ab
+%define tarfile_release 6.11-rc3-66-g1fb918967b56
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240814git6b0f8db921ab.32%{?buildid}%{?dist}
+%define specrelease 0.rc3.20240815git1fb918967b56.33%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4097,8 +4097,11 @@ fi\
 #
 #
 %changelog
-* Wed Aug 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.6b0f8db921ab.32]
+* Thu Aug 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.1fb918967b56.33]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Thu Aug 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.1fb918967b56.32]
+- Linux v6.11.0-0.rc3.1fb918967b56
 
 * Wed Aug 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.6b0f8db921ab.31]
 - fedora: Enable AF8133J Magnetometer driver (Peter Robinson)
