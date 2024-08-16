@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc3.20240815git1fb918967b56.33
+%define pkgrelease 0.rc3.20240816gitd7a5aa4b3c00.34
 %define kversion 6
-%define tarfile_release 6.11-rc3-66-g1fb918967b56
+%define tarfile_release 6.11-rc3-156-gd7a5aa4b3c00
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc3.20240815git1fb918967b56.33%{?buildid}%{?dist}
+%define specrelease 0.rc3.20240816gitd7a5aa4b3c00.34%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4097,8 +4097,13 @@ fi\
 #
 #
 %changelog
-* Thu Aug 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.1fb918967b56.33]
+* Fri Aug 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.d7a5aa4b3c00.34]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+
+* Fri Aug 16 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.d7a5aa4b3c00.33]
+- redhat/configs: Disable dlm in rhel configs (Andrew Price)
+- rhel: aarch64: enable required PSCI configs (Peter Robinson)
+- Linux v6.11.0-0.rc3.d7a5aa4b3c00
 
 * Thu Aug 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc3.1fb918967b56.32]
 - Linux v6.11.0-0.rc3.1fb918967b56
