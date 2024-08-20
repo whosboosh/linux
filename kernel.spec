@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc4.37
+%define pkgrelease 0.rc4.20240820git6e4436539ae1.38
 %define kversion 6
-%define tarfile_release 6.11-rc4
+%define tarfile_release 6.11-rc4-8-g6e4436539ae1
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.37%{?buildid}%{?dist}
+%define specrelease 0.rc4.20240820git6e4436539ae1.38%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -2793,7 +2793,7 @@ BuildKernel() {
             # in case below list needs to be extended, remember to add a
             # matching ghost entry in the files section as well
             rm -f modules.{alias,alias.bin,builtin.alias.bin,builtin.bin} \
-                  modules.{dep,dep.bin,devname,softdep,symbols,symbols.bin}
+                  modules.{dep,dep.bin,devname,softdep,symbols,symbols.bin,weakdep}
         popd
     }
 
@@ -3991,6 +3991,7 @@ fi\
 %ghost %attr(0644, root, root) /lib/modules/%{KVERREL}%{?3:+%{3}}/modules.softdep\
 %ghost %attr(0644, root, root) /lib/modules/%{KVERREL}%{?3:+%{3}}/modules.symbols\
 %ghost %attr(0644, root, root) /lib/modules/%{KVERREL}%{?3:+%{3}}/modules.symbols.bin\
+%ghost %attr(0644, root, root) /lib/modules/%{KVERREL}%{?3:+%{3}}/modules.weakdep\
 %{expand:%%files -f kernel-%{?3:%{3}-}modules.list %{?3:%{3}-}modules}\
 %{expand:%%files %{?3:%{3}-}devel}\
 %defverify(not mtime)\
@@ -4097,8 +4098,12 @@ fi\
 #
 #
 %changelog
-* Mon Aug 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.37]
+* Tue Aug 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.6e4436539ae1.38]
+- Add weakdep support to the kernel spec (Justin M. Forbes)
+
+* Tue Aug 20 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.6e4436539ae1.37]
 - fedora: disable CONFIG_DRM_WERROR (Patrick Talbert)
+- Linux v6.11.0-0.rc4.6e4436539ae1
 
 * Mon Aug 19 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.36]
 - Linux v6.11.0-0.rc4
