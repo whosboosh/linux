@@ -64,6 +64,7 @@
  init/main.c                                        |   3 +
  kernel/Makefile                                    |   1 +
  kernel/bpf/syscall.c                               |  23 +
+ kernel/fork.c                                      |  25 +-
  kernel/module/main.c                               |  13 +
  kernel/module/signing.c                            |   9 +-
  kernel/panic.c                                     |  13 +
@@ -78,7 +79,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 80 files changed, 2685 insertions(+), 258 deletions(-)
+ 81 files changed, 2688 insertions(+), 280 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 09126bb8cc9f..ee2984e46c06 100644
@@ -2340,10 +2341,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 32ce5b35e1df..eb0d6e5822fd 100644
+index 6cb5c8916174..34b899ab37bb 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -595,6 +595,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -581,6 +581,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2353,7 +2354,7 @@ index 32ce5b35e1df..eb0d6e5822fd 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -701,6 +704,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -687,6 +690,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
@@ -3328,6 +3329,50 @@ index bf6c5f685ea2..649f2fccaddd 100644
  		*(int *)table->data = unpriv_enable;
  	}
  
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 18bdc87209d0..cc760491f201 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2053,23 +2053,10 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
+  */
+ int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+ {
+-	if (!pid)
+-		return -EINVAL;
+-
+-	scoped_guard(rcu) {
+-		struct task_struct *tsk;
+-
+-		if (flags & PIDFD_THREAD)
+-			tsk = pid_task(pid, PIDTYPE_PID);
+-		else
+-			tsk = pid_task(pid, PIDTYPE_TGID);
+-		if (!tsk)
+-			return -EINVAL;
++	bool thread = flags & PIDFD_THREAD;
+ 
+-		/* Don't create pidfds for kernel threads for now. */
+-		if (tsk->flags & PF_KTHREAD)
+-			return -EINVAL;
+-	}
++	if (!pid || !pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
++		return -EINVAL;
+ 
+ 	return __pidfd_prepare(pid, flags, ret);
+ }
+@@ -2416,12 +2403,6 @@ __latent_entropy struct task_struct *copy_process(
+ 	if (clone_flags & CLONE_PIDFD) {
+ 		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
+ 
+-		/* Don't create pidfds for kernel threads for now. */
+-		if (args->kthread) {
+-			retval = -EINVAL;
+-			goto bad_fork_free_pid;
+-		}
+-
+ 		/* Note that no task has been attached to @pid yet. */
+ 		retval = __pidfd_prepare(pid, flags, &pidfile);
+ 		if (retval < 0)
 diff --git a/kernel/module/main.c b/kernel/module/main.c
 index 71396e297499..29e469418075 100644
 --- a/kernel/module/main.c
