@@ -1,5 +1,5 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/4f35b86f59c38ce52c3ce5f22437f60885755008
- 4f35b86f59c38ce52c3ce5f22437f60885755008 pidfd: prevent creation of pidfds for kthreads
+https://gitlab.com/cki-project/kernel-ark/-/commit/f0422a4f19781da4d37e9d95c8df8eae5db72d0c
+ f0422a4f19781da4d37e9d95c8df8eae5db72d0c Revert "pidfd: prevent creation of pidfds for kthreads"
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/6425c2e128af3870617dd29da8110e7fa17b9ba9
  6425c2e128af3870617dd29da8110e7fa17b9ba9 not upstream: Disable vdso getrandom when FIPS is enabled

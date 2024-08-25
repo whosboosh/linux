@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc4.20240822git872cf28b8df9.40
+%define pkgrelease 0.rc5.43
 %define kversion 6
-%define tarfile_release 6.11-rc4-33-g872cf28b8df9
+%define tarfile_release 6.11-rc5
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc4.20240822git872cf28b8df9.40%{?buildid}%{?dist}
+%define specrelease 0.rc5.43%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4098,11 +4098,18 @@ fi\
 #
 #
 %changelog
-* Thu Aug 22 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.11.0-0.rc4.20240822git872cf28b8df9.40]
-- pidfd: prevent creation of pidfds for kthreads (Christian Brauner)
-
-* Thu Aug 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.872cf28b8df9.40]
+* Sun Aug 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.43]
+- Revert "pidfd: prevent creation of pidfds for kthreads" (Christian Brauner)
 - Add weakdep support to the kernel spec (Justin M. Forbes)
+
+* Sun Aug 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.42]
+- Linux v6.11.0-0.rc5
+
+* Sat Aug 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.d2bafcf224f3.41]
+- Linux v6.11.0-0.rc4.d2bafcf224f3
+
+* Fri Aug 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.3d5f968a177d.40]
+- Linux v6.11.0-0.rc4.3d5f968a177d
 
 * Thu Aug 22 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc4.872cf28b8df9.39]
 - Linux v6.11.0-0.rc4.872cf28b8df9
