@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc5.43
+%define pkgrelease 0.rc5.20240827git3e9bff3bbe13.44
 %define kversion 6
-%define tarfile_release 6.11-rc5
+%define tarfile_release 6.11-rc5-15-g3e9bff3bbe13
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.43%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240827git3e9bff3bbe13.44%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4098,9 +4098,17 @@ fi\
 #
 #
 %changelog
-* Sun Aug 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.43]
-- Revert "pidfd: prevent creation of pidfds for kthreads" (Christian Brauner)
+* Tue Aug 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.3e9bff3bbe13.44]
+- Linux v6.11.0-0.rc5.3e9bff3bbe13
+
+* Mon Aug 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.43]
 - Add weakdep support to the kernel spec (Justin M. Forbes)
+- redhat: configs: disable PF_KEY in RHEL (Sabrina Dubroca)
+- crypto: akcipher - Disable signing and decryption (Vladis Dronov) [RHEL-54183] {CVE-2023-6240}
+- crypto: dh - implement FIPS PCT (Vladis Dronov) [RHEL-54183]
+- crypto: ecdh - disallow plain "ecdh" usage in FIPS mode (Vladis Dronov) [RHEL-54183]
+- crypto: seqiv - flag instantiations as FIPS compliant (Vladis Dronov) [RHEL-54183]
+- [kernel] bpf: set default value for bpf_jit_harden (Artem Savkov) [RHEL-51896]
 
 * Sun Aug 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.42]
 - Linux v6.11.0-0.rc5

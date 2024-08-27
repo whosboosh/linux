@@ -1,8 +1,20 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/f0422a4f19781da4d37e9d95c8df8eae5db72d0c
- f0422a4f19781da4d37e9d95c8df8eae5db72d0c Revert "pidfd: prevent creation of pidfds for kthreads"
+https://gitlab.com/cki-project/kernel-ark/-/commit/b0c8e7622950ce4bd430980be9a93e56bda43672
+ b0c8e7622950ce4bd430980be9a93e56bda43672 crypto: akcipher - Disable signing and decryption
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/a09122a7a65c8e9f1a0982f6a9c768bf040f6df9
+ a09122a7a65c8e9f1a0982f6a9c768bf040f6df9 crypto: dh - implement FIPS PCT
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/a9c9a82dfe33e40861d7d0a13ae9fe50a5b49c12
+ a9c9a82dfe33e40861d7d0a13ae9fe50a5b49c12 crypto: ecdh - disallow plain "ecdh" usage in FIPS mode
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/135f5f0257aaf5fc358eb35665b88f78cfa9882d
+ 135f5f0257aaf5fc358eb35665b88f78cfa9882d crypto: seqiv - flag instantiations as FIPS compliant
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/6425c2e128af3870617dd29da8110e7fa17b9ba9
  6425c2e128af3870617dd29da8110e7fa17b9ba9 not upstream: Disable vdso getrandom when FIPS is enabled
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/ecb1311a2f2e5baf8cd394850d03d33e18c8ba41
+ ecb1311a2f2e5baf8cd394850d03d33e18c8ba41 [kernel] bpf: set default value for bpf_jit_harden
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/6ae23a2899f457adcbd4e081dec7a49a62b5ec87
  6ae23a2899f457adcbd4e081dec7a49a62b5ec87 Add support to rh_waived cmdline boot parameter
