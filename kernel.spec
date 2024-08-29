@@ -56,7 +56,7 @@
 
 # Replace '-' with '_' where needed so that variants can use '-' in
 # their name.
-%define uname_suffix %{lua:
+%define uname_suffix() %{lua:
 	local flavour = rpm.expand('%{?1:+%{1}}')
 	flavour = flavour:gsub('-', '_')
 	if flavour ~= '' then
@@ -69,7 +69,7 @@
 # string. However, kernel-64k-debug is the debug version of kernel-64k,
 # in this case we need to return "64k", and so on. This is used in
 # macros below where we need this for some uname based requires.
-%define uname_variant %{lua:
+%define uname_variant() %{lua:
 	local flavour = rpm.expand('%{?1:%{1}}')
 	_, _, main, sub = flavour:find("(%w+)-(.*)")
 	if main then
@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc5.20240827git3e9bff3bbe13.44
+%define pkgrelease 0.rc5.20240829gitd5d547aa7b51.46
 %define kversion 6
-%define tarfile_release 6.11-rc5-15-g3e9bff3bbe13
+%define tarfile_release 6.11-rc5-81-gd5d547aa7b51
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240827git3e9bff3bbe13.44%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240829gitd5d547aa7b51.46%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -2430,12 +2430,12 @@ BuildKernel() {
     cp --parents tools/build/Build $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents tools/build/fixdep.c $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents tools/objtool/sync-check.sh $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
-    cp -a --parents tools/bpf/resolve_btfids/main.c $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
-    cp -a --parents tools/bpf/resolve_btfids/Build $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
+    cp -a --parents tools/bpf/resolve_btfids $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
 
     cp --parents security/selinux/include/policycap_names.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp --parents security/selinux/include/policycap.h $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
 
+    cp -a --parents tools/include/asm $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a --parents tools/include/asm-generic $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a --parents tools/include/linux $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     cp -a --parents tools/include/uapi/asm $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
@@ -2472,6 +2472,9 @@ BuildKernel() {
 %endif
     if [ -d arch/%{asmarch}/include ]; then
       cp -a --parents arch/%{asmarch}/include $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/
+    fi
+    if [ -d tools/arch/%{asmarch}/include ]; then
+      cp -a --parents tools/arch/%{asmarch}/include $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
     fi
 %ifarch aarch64
     # arch/arm64/include/asm/xen references arch/arm
@@ -2802,6 +2805,12 @@ BuildKernel() {
     rm -f $RPM_BUILD_ROOT/System.map
     %{log_msg "Remove depmod files"}
     remove_depmod_files
+
+%if %{with_cross}
+    make -C $RPM_BUILD_ROOT/lib/modules/$KernelVer/build M=scripts clean
+    make -C $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/tools/bpf/resolve_btfids clean
+    sed -i 's/REBUILD_SCRIPTS_FOR_CROSS:=0/REBUILD_SCRIPTS_FOR_CROSS:=1/' $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/Makefile
+%endif
 
     # Move the devel headers out of the root file system
     %{log_msg "Move the devel headers to RPM_BUILD_ROOT"}
@@ -3495,6 +3504,10 @@ then\
      /usr/bin/find /usr/src/kernels -type f -name '*.hardlink-temporary' -delete\
     )\
 fi\
+%if %{with_cross}\
+    echo "Building scripts and resolve_btfids"\
+    env --unset=ARCH make -C /usr/src/kernels/%{KVERREL}%{?1:+%{1}} prepare_after_cross\
+%endif\
 %{nil}
 
 #
@@ -4098,6 +4111,16 @@ fi\
 #
 #
 %changelog
+* Thu Aug 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.d5d547aa7b51.46]
+- redhat/configs: Microchip lan743x driver (Izabela Bakollari)
+- Linux v6.11.0-0.rc5.d5d547aa7b51
+
+* Wed Aug 28 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.86987d84b968.45]
+- redhat: include resolve_btfids in kernel-devel (Jan Stancek)
+- redhat: workaround CKI cross compilation for scripts (Jan Stancek)
+- spec: fix "unexpected argument to non-parametric macro" warnings (Jan Stancek)
+- Linux v6.11.0-0.rc5.86987d84b968
+
 * Tue Aug 27 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.3e9bff3bbe13.44]
 - Linux v6.11.0-0.rc5.3e9bff3bbe13
 

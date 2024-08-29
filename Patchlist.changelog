@@ -1,3 +1,9 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/3c3fe7f3d440e344ba33049fa99d14eb6172224b
+ 3c3fe7f3d440e344ba33049fa99d14eb6172224b redhat: include resolve_btfids in kernel-devel
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/8b553d8591d86f4a768f3b55f99f8480872cb823
+ 8b553d8591d86f4a768f3b55f99f8480872cb823 redhat: workaround CKI cross compilation for scripts
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/b0c8e7622950ce4bd430980be9a93e56bda43672
  b0c8e7622950ce4bd430980be9a93e56bda43672 crypto: akcipher - Disable signing and decryption
 
