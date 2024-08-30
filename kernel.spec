@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc5.20240829gitd5d547aa7b51.46
+%define pkgrelease 0.rc5.20240830git20371ba12063.47
 %define kversion 6
-%define tarfile_release 6.11-rc5-81-gd5d547aa7b51
+%define tarfile_release 6.11-rc5-176-g20371ba12063
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc5.20240829gitd5d547aa7b51.46%{?buildid}%{?dist}
+%define specrelease 0.rc5.20240830git20371ba12063.47%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4111,6 +4111,9 @@ fi\
 #
 #
 %changelog
+* Fri Aug 30 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.20371ba12063.47]
+- Linux v6.11.0-0.rc5.20371ba12063
+
 * Thu Aug 29 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc5.d5d547aa7b51.46]
 - redhat/configs: Microchip lan743x driver (Izabela Bakollari)
 - Linux v6.11.0-0.rc5.d5d547aa7b51
