@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc6.49
+%define pkgrelease 0.rc6.20240902git67784a74e258.50
 %define kversion 6
-%define tarfile_release 6.11-rc6
+%define tarfile_release 6.11-rc6-19-g67784a74e258
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc6.49%{?buildid}%{?dist}
+%define specrelease 0.rc6.20240902git67784a74e258.50%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4111,6 +4111,9 @@ fi\
 #
 #
 %changelog
+* Mon Sep 02 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc6.67784a74e258.50]
+- Linux v6.11.0-0.rc6.67784a74e258
+
 * Sun Sep 01 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc6.49]
 - Linux v6.11.0-0.rc6
 
