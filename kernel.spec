@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc7.20240910gitbc83b4d1f086.57
+%define pkgrelease 0.rc7.20240911git8d8d276ba2fb.58
 %define kversion 6
-%define tarfile_release 6.11-rc7-17-gbc83b4d1f086
+%define tarfile_release 6.11-rc7-20-g8d8d276ba2fb
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240910gitbc83b4d1f086.57%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240911git8d8d276ba2fb.58%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4123,8 +4123,10 @@ fi\
 #
 #
 %changelog
-* Tue Sep 10 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.11.0-0.rc7.20240910gitbc83b4d1f086.57]
+* Wed Sep 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.8d8d276ba2fb.58]
+- Cleanup some riscv CONFIG locations (Justin M. Forbes)
 - Fix up pending riscv Fedora configs post merge (Justin M. Forbes)
+- Linux v6.11.0-0.rc7.8d8d276ba2fb
 
 * Tue Sep 10 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.bc83b4d1f086.57]
 - fedora/configs: Enable SCMI configuration (Rupinderjit Singh)
