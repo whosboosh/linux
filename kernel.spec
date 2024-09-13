@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc7.20240911git8d8d276ba2fb.58
+%define pkgrelease 0.rc7.20240913git196145c606d0.60
 %define kversion 6
-%define tarfile_release 6.11-rc7-20-g8d8d276ba2fb
+%define tarfile_release 6.11-rc7-97-g196145c606d0
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240911git8d8d276ba2fb.58%{?buildid}%{?dist}
+%define specrelease 0.rc7.20240913git196145c606d0.60%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -449,6 +449,11 @@ Summary: The Linux kernel
 %define with_selftests 0
 %endif
 
+# bpftool needs debuginfo to work
+%if %{with_debuginfo} == 0
+%define with_bpftool 0
+%endif
+
 %ifnarch noarch
 %define with_kernel_abi_stablelists 0
 %endif
@@ -669,6 +674,9 @@ Provides: installonlypkg(kernel)
 BuildRequires: kmod, bash, coreutils, tar, git-core, which
 BuildRequires: bzip2, xz, findutils, m4, perl-interpreter, perl-Carp, perl-devel, perl-generators, make, diffutils, gawk, %compression
 BuildRequires: gcc, binutils, redhat-rpm-config, hmaccalc, bison, flex, gcc-c++
+%if 0%{?fedora}
+BuildRequires: rust, rust-src, bindgen
+%endif
 BuildRequires: net-tools, hostname, bc, elfutils-devel
 BuildRequires: dwarves
 BuildRequires: python3
@@ -2104,6 +2112,10 @@ InitBuildVars() {
     cp configs/x509.genkey certs/.
     %endif
 
+%if %{with_debuginfo} == 0
+    sed -i 's/^\(CONFIG_DEBUG_INFO.*\)=y/# \1 is not set/' .config
+%endif
+
     Arch=`head -1 .config | cut -b 3-`
     %{log_msg "InitBuildVars: USING ARCH=$Arch"}
 
@@ -2835,6 +2847,7 @@ BuildKernel() {
     # the F17 UsrMove feature.
     ln -sf $DevelDir $RPM_BUILD_ROOT/lib/modules/$KernelVer/build
 
+%if %{with_debuginfo}
     # Generate vmlinux.h and put it to kernel-devel path
     # zfcpdump build does not have btf anymore
     if [ "$Variant" != "zfcpdump" ]; then
@@ -2846,6 +2859,7 @@ BuildKernel() {
 
         tools/bpf/bpftool/bootstrap/bpftool btf dump file vmlinux format c > $RPM_BUILD_ROOT/$DevelDir/vmlinux.h
     fi
+%endif
 
     %{log_msg "Cleanup kernel-devel and kernel-debuginfo files"}
     # prune junk from kernel-devel
@@ -4123,6 +4137,24 @@ fi\
 #
 #
 %changelog
+* Fri Sep 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.196145c606d0.60]
+- uki-virt: add systemd-cryptsetup module (Vitaly Kuznetsov)
+- redhat/docs: fix command to install missing build dependencies (Davide Cavalca)
+- spec: Respect rpmbuild --without debuginfo (Orgad Shaneh)
+- fedora/configs: enable GPIO expander drivers (Rupinderjit Singh)
+- redhat/configs: Switch to the Rust implementation of AX88796B_PHY driver for Fedora (Neal Gompa)
+- redhat: Turn on support for Rust code in Fedora (Neal Gompa)
+- Turn off RUST for risc-v (Justin M. Forbes)
+- Linux v6.11.0-0.rc7.196145c606d0
+
+* Thu Sep 12 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.77f587896757.59]
+- gitlab-ci: allow failure of clang LTO pipelines (Michael Hofmann)
+- redhat/configs: Consolidate the CONFIG_KVM_BOOK3S_HV_P*_TIMING switches (Thomas Huth)
+- redhat/configs: Consolidate the CONFIG_KVM_SW_PROTECTED_VM switch (Thomas Huth)
+- redhat/configs: Consolidate the CONFIG_KVM_HYPERV switch (Thomas Huth)
+- redhat/configs: Consolidate the CONFIG_KVM_AMD_SEV switch (Thomas Huth)
+- Linux v6.11.0-0.rc7.77f587896757
+
 * Wed Sep 11 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.8d8d276ba2fb.58]
 - Cleanup some riscv CONFIG locations (Justin M. Forbes)
 - Fix up pending riscv Fedora configs post merge (Justin M. Forbes)
