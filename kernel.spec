@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.11.0
 %define specversion 6.11.0
 %define patchversion 6.11
-%define pkgrelease 0.rc7.20240913git196145c606d0.60
+%define pkgrelease 63
 %define kversion 6
-%define tarfile_release 6.11-rc7-97-g196145c606d0
+%define tarfile_release 6.11
 # This is needed to do merge window version magic
 %define patchlevel 11
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc7.20240913git196145c606d0.60%{?buildid}%{?dist}
+%define specrelease 63%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.11.0
 
@@ -4137,6 +4137,16 @@ fi\
 #
 #
 %changelog
+* Sun Sep 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-63]
+- Linux v6.11.0
+
+* Sun Sep 15 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.d42f7708e27c.62]
+- Linux v6.11.0-0.rc7.d42f7708e27c
+
+* Sat Sep 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.b7718454f937.61]
+- Consolidate configs into common for 6.11 kernels (Justin M. Forbes)
+- Linux v6.11.0-0.rc7.b7718454f937
+
 * Fri Sep 13 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.11.0-0.rc7.196145c606d0.60]
 - uki-virt: add systemd-cryptsetup module (Vitaly Kuznetsov)
 - redhat/docs: fix command to install missing build dependencies (Davide Cavalca)
