@@ -86,10 +86,10 @@
  85 files changed, 2762 insertions(+), 266 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..ee2984e46c06 100644
+index 0b400aa28482..0cc01152db9c 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5790,6 +5790,17 @@
+@@ -5812,6 +5812,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -107,7 +107,7 @@ index 09126bb8cc9f..ee2984e46c06 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -6965,6 +6976,15 @@
+@@ -6987,6 +6998,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -273,10 +273,10 @@ index 34bd1d5f9672..73b3389da4d0 100644
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 173159e93c99..5074a7e9f9b8 100644
+index 0ec034933cae..ae18f246df22 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1227,9 +1227,9 @@ config HIGHMEM
+@@ -1228,9 +1228,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -289,10 +289,10 @@ index 173159e93c99..5074a7e9f9b8 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca6..e185f3e75a5c 100644
+index ed15b876fa74..8e067978c1cb 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1365,7 +1365,7 @@ endchoice
+@@ -1366,7 +1366,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -349,7 +349,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index d4e539d4e158..ed3a7b089b87 100644
+index be307c9ef263..4631d7d0355b 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1591,6 +1591,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -569,7 +569,7 @@ index e0ff5f4dda6d..098a52ded759 100644
  		alg->set_priv_key = akcipher_default_set_key;
  
 diff --git a/crypto/dh.c b/crypto/dh.c
-index 68d11d66c0b5..6e3e515b2452 100644
+index afc0fd847761..e13258c3d1d1 100644
 --- a/crypto/dh.c
 +++ b/crypto/dh.c
 @@ -227,10 +227,35 @@ static int dh_compute_value(struct kpp_request *req)
@@ -916,10 +916,10 @@ index 17e11d51ddc3..9c136a3b6267 100644
  
  	inst->alg.base.cra_ctxsize = sizeof(struct aead_geniv_ctx);
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index f02cb075bd68..669e306f1cb2 100644
+index ee8da628e9da..b7df0a6442b6 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
-@@ -4216,7 +4216,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+@@ -4235,7 +4235,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
  	 * Don't invoke (decrypt or sign) test which require a private key
  	 * for vectors with only a public key.
  	 */
@@ -928,7 +928,7 @@ index f02cb075bd68..669e306f1cb2 100644
  		err = 0;
  		goto free_all;
  	}
-@@ -5093,14 +5093,12 @@ static const struct alg_test_desc alg_test_descs[] = {
+@@ -5114,14 +5114,12 @@ static const struct alg_test_desc alg_test_descs[] = {
  	}, {
  		.alg = "ecdh-nist-p256",
  		.test = alg_test_kpp,
@@ -1006,7 +1006,7 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 22ae7829a915..1329032ed09b 100644
+index 7ecc401fb97f..52917b177122 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
 @@ -1802,6 +1802,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
@@ -1990,10 +1990,10 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 983909a600ad..28e59054b7c6 100644
+index ca9959a8fb9e..95de34390bfa 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -262,6 +262,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
+@@ -263,6 +263,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
  
  static blk_status_t nvme_error_status(u16 status)
  {
@@ -2003,7 +2003,7 @@ index 983909a600ad..28e59054b7c6 100644
  	switch (status & NVME_SCT_SC_MASK) {
  	case NVME_SC_SUCCESS:
  		return BLK_STS_OK;
-@@ -376,6 +379,7 @@ enum nvme_disposition {
+@@ -377,6 +380,7 @@ enum nvme_disposition {
  	COMPLETE,
  	RETRY,
  	FAILOVER,
@@ -2011,7 +2011,7 @@ index 983909a600ad..28e59054b7c6 100644
  	AUTHENTICATE,
  };
  
-@@ -384,7 +388,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -385,7 +389,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if (likely(nvme_req(req)->status == 0))
  		return COMPLETE;
  
@@ -2020,7 +2020,7 @@ index 983909a600ad..28e59054b7c6 100644
  	    (nvme_req(req)->status & NVME_STATUS_DNR) ||
  	    nvme_req(req)->retries >= nvme_max_retries)
  		return COMPLETE;
-@@ -392,10 +396,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -393,10 +397,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if ((nvme_req(req)->status & NVME_SCT_SC_MASK) == NVME_SC_AUTH_REQUIRED)
  		return AUTHENTICATE;
  
@@ -2034,7 +2034,7 @@ index 983909a600ad..28e59054b7c6 100644
  	} else {
  		if (blk_queue_dying(req->q))
  			return COMPLETE;
-@@ -437,6 +442,14 @@ void nvme_end_req(struct request *req)
+@@ -438,6 +443,14 @@ void nvme_end_req(struct request *req)
  	blk_mq_end_request(req, status);
  }
  
@@ -2049,7 +2049,7 @@ index 983909a600ad..28e59054b7c6 100644
  void nvme_complete_rq(struct request *req)
  {
  	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -466,6 +479,9 @@ void nvme_complete_rq(struct request *req)
+@@ -467,6 +480,9 @@ void nvme_complete_rq(struct request *req)
  	case FAILOVER:
  		nvme_failover_req(req);
  		return;
@@ -2107,10 +2107,10 @@ index 518e22dd4f9b..af7d1591e9c6 100644
  
  	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index da57947130cc..beef00ccfb26 100644
+index 313a4f978a2c..53cbb5224f98 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -941,6 +941,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -946,6 +946,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -2118,7 +2118,7 @@ index da57947130cc..beef00ccfb26 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -983,6 +984,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -988,6 +989,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
@@ -2509,10 +2509,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 6cb5c8916174..34b899ab37bb 100644
+index 666873f745da..60e23ec59fa6 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -581,6 +581,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -587,6 +587,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2522,7 +2522,7 @@ index 6cb5c8916174..34b899ab37bb 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -687,6 +690,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -694,6 +697,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
@@ -2665,7 +2665,7 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 855db460e08b..7a8c28cd7510 100644
+index 1d59513bf230..ab2777d2ed63 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
 @@ -438,6 +438,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
@@ -3403,18 +3403,18 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 1390f1efb4f0..b9a8ccb1dbdc 100644
+index c37c32ebbdcd..b972f1273271 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -507,6 +507,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+@@ -522,6 +522,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
  int security_locked_down(enum lockdown_reason what);
 +int security_lock_kernel_down(const char *where, enum lockdown_reason level);
  int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
  		      void *val, size_t val_len, u64 id, u64 flags);
- #else /* CONFIG_SECURITY */
-@@ -1477,6 +1478,10 @@ static inline int security_locked_down(enum lockdown_reason what)
+ int security_bdev_alloc(struct block_device *bdev);
+@@ -1504,6 +1505,10 @@ static inline int security_locked_down(enum lockdown_reason what)
  {
  	return 0;
  }
@@ -3426,10 +3426,10 @@ index 1390f1efb4f0..b9a8ccb1dbdc 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index 206acdde51f5..2296734522f7 100644
+index c4778edae797..3c57bfac4b9c 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1182,6 +1182,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1184,6 +1184,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -3592,10 +3592,10 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 2a0449144f82..a8feef83d920 100644
+index 753d12f4dc8f..24ff3ddcd3e0 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -508,6 +508,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+@@ -511,6 +511,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
  	TAINT_FLAG(AUX,				'X', ' ', true),
  	TAINT_FLAG(RANDSTRUCT,			'T', ' ', true),
  	TAINT_FLAG(TEST,			'N', ' ', true),
@@ -4746,7 +4746,7 @@ index e84ddf484010..d0501353a4b9 100644
  	prompt "Kernel default lockdown mode"
  	default LOCK_DOWN_KERNEL_FORCE_NONE
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index cd84d8ea1dfb..e4c70a0312bc 100644
+index f2bdbd55aa2b..ddf496f7fca5 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
 @@ -74,6 +74,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
@@ -4756,12 +4756,12 @@ index cd84d8ea1dfb..e4c70a0312bc 100644
 +	LSM_HOOK_INIT(lock_kernel_down, lock_kernel_down),
  };
  
- const struct lsm_id lockdown_lsmid = {
+ static const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 8cee5b6c6e6d..489e25946bf9 100644
+index 4564a0a1e4ef..1144ceef694a 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5596,6 +5596,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5767,6 +5767,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
@@ -4777,6 +4777,6 @@ index 8cee5b6c6e6d..489e25946bf9 100644
 +}
 +EXPORT_SYMBOL(security_lock_kernel_down);
 +
- #ifdef CONFIG_PERF_EVENTS
  /**
-  * security_perf_event_open() - Check if a perf event open is allowed
+  * security_bdev_alloc() - Allocate a block device LSM blob
+  * @bdev: block device
