@@ -5,7 +5,7 @@
  Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
- arch/powerpc/include/asm/atomic.h                  |  10 +-
+ arch/powerpc/include/asm/atomic.h                  |   6 +
  arch/s390/include/asm/ipl.h                        |   1 +
  arch/s390/kernel/ipl.c                             |   5 +
  arch/s390/kernel/setup.c                           |   4 +
@@ -84,7 +84,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 86 files changed, 2770 insertions(+), 268 deletions(-)
+ 86 files changed, 2768 insertions(+), 266 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 8337d0fed311..b8d606698384 100644
@@ -274,7 +274,7 @@ index 34bd1d5f9672..73b3389da4d0 100644
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 0ec034933cae..ae18f246df22 100644
+index 749179a1d162..3382d64828e4 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
 @@ -1228,9 +1228,9 @@ config HIGHMEM
@@ -290,10 +290,10 @@ index 0ec034933cae..ae18f246df22 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 8f2df6ed745d..1723f982543f 100644
+index 690e90b62d92..27642fb1c1f3 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1367,7 +1367,7 @@ endchoice
+@@ -1368,7 +1368,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -303,10 +303,10 @@ index 8f2df6ed745d..1723f982543f 100644
  	  For systems with 52-bit userspace VAs enabled, the kernel will attempt
  	  to maintain compatibility with older software by providing 48-bit VAs
 diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-index 5bf6a4d49268..0e41c1da82dd 100644
+index d1ea554c33ed..883187ae4d02 100644
 --- a/arch/powerpc/include/asm/atomic.h
 +++ b/arch/powerpc/include/asm/atomic.h
-@@ -23,6 +23,12 @@
+@@ -24,6 +24,12 @@
  #define __atomic_release_fence()					\
  	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
  
@@ -319,24 +319,6 @@ index 5bf6a4d49268..0e41c1da82dd 100644
  static __inline__ int arch_atomic_read(const atomic_t *v)
  {
  	int t;
-@@ -197,7 +203,7 @@ static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
- 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
- 		__asm__ __volatile__("ld %0,0(%1)" : "=r"(t) : "b"(&v->counter));
- 	else
--		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m<>"(v->counter));
-+		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : DS_FORM_CONSTRAINT (v->counter));
- 
- 	return t;
- }
-@@ -208,7 +214,7 @@ static __inline__ void arch_atomic64_set(atomic64_t *v, s64 i)
- 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
- 		__asm__ __volatile__("std %1,0(%2)" : "=m"(v->counter) : "r"(i), "b"(&v->counter));
- 	else
--		__asm__ __volatile__("std%U0%X0 %1,%0" : "=m<>"(v->counter) : "r"(i));
-+		__asm__ __volatile__("std%U0%X0 %1,%0" : "=" DS_FORM_CONSTRAINT (v->counter) : "r"(i));
- }
- 
- #define ATOMIC64_OP(op, asm_op)						\
 diff --git a/arch/s390/include/asm/ipl.h b/arch/s390/include/asm/ipl.h
 index b0d00032479d..afb9544fb007 100644
 --- a/arch/s390/include/asm/ipl.h
@@ -2248,7 +2230,7 @@ index 68f4dbcfff49..90a6070a1332 100644
  	{ 0x9005, 0x028c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 63 }, /* Adaptec PMC Series 7 (Denali) */
  	{ 0x9005, 0x028d, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 64 }, /* Adaptec PMC Series 8 */
 diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 06acb5ff609e..a54ea7cf7d6e 100644
+index 76a1e373386e..e110b9e75aa2 100644
 --- a/drivers/scsi/be2iscsi/be_main.c
 +++ b/drivers/scsi/be2iscsi/be_main.c
 @@ -387,11 +387,13 @@ static int beiscsi_eh_device_reset(struct scsi_cmnd *sc)
@@ -2399,10 +2381,10 @@ index 6c79c350a4d5..27012eec4822 100644
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 97c2472cd434..fedba599ae00 100644
+index 728cced42b0e..bc968039be01 100644
 --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -12569,6 +12569,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
+@@ -12567,6 +12567,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
   * The pci device ids are defined in mpi/mpi2_cnfg.h.
   */
  static const struct pci_device_id mpt3sas_pci_table[] = {
@@ -2410,7 +2392,7 @@ index 97c2472cd434..fedba599ae00 100644
  	/* Spitfire ~ 2004 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2004,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12587,6 +12588,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12585,6 +12586,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2116_2,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2418,7 +2400,7 @@ index 97c2472cd434..fedba599ae00 100644
  	/* Thunderbolt ~ 2208 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2208_1,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12611,9 +12613,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12609,9 +12611,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2431,10 +2413,10 @@ index 97c2472cd434..fedba599ae00 100644
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI25_MFGPAGE_DEVID_SAS3004,
  		PCI_ANY_ID, PCI_ANY_ID },
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index bc3b2aea3f8b..8d47d61c9920 100644
+index 7f980e6141c2..4930fa5cd3d1 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -8114,6 +8114,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
+@@ -8116,6 +8116,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
  };
  
  static struct pci_device_id qla2xxx_pci_tbl[] = {
@@ -2442,7 +2424,7 @@ index bc3b2aea3f8b..8d47d61c9920 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2100) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2200) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2300) },
-@@ -8126,13 +8127,18 @@ static struct pci_device_id qla2xxx_pci_tbl[] = {
+@@ -8128,13 +8129,18 @@ static struct pci_device_id qla2xxx_pci_tbl[] = {
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP8432) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5422) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP5432) },
@@ -2462,7 +2444,7 @@ index bc3b2aea3f8b..8d47d61c9920 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2271) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2261) },
 diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 17cccd14765f..7f0cef737224 100644
+index d91f54a6e752..0b76e1bf20b7 100644
 --- a/drivers/scsi/qla4xxx/ql4_os.c
 +++ b/drivers/scsi/qla4xxx/ql4_os.c
 @@ -9865,6 +9865,7 @@ static struct pci_device_id qla4xxx_pci_tbl[] = {
@@ -2482,7 +2464,7 @@ index 17cccd14765f..7f0cef737224 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 9db86943d04c..515142544669 100644
+index 76f488ef6a7e..7fde8cd5d919 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -122,6 +122,14 @@ static const char *sd_cache_types[] = {
@@ -3628,7 +3610,7 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 753d12f4dc8f..24ff3ddcd3e0 100644
+index fbc59b3b64d0..5ec50bb8c1fc 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
 @@ -511,6 +511,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
