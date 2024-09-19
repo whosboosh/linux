@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.12.0
 %define specversion 6.12.0
 %define patchversion 6.12
-%define pkgrelease 0.rc0.20240917gita940d9a43e62.4
+%define pkgrelease 0.rc0.20240918git4a39ac5b7d62.6
 %define kversion 6
-%define tarfile_release 6.11-3917-ga940d9a43e62
+%define tarfile_release 6.11-5319-g4a39ac5b7d62
 # This is needed to do merge window version magic
 %define patchlevel 12
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240917gita940d9a43e62.4%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240918git4a39ac5b7d62.6%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.12.0
 
@@ -4137,6 +4137,14 @@ fi\
 #
 #
 %changelog
+* Wed Sep 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.4a39ac5b7d62.6]
+- powerpc: temporary assembler fix (Patrick Talbert)
+
+* Wed Sep 18 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.4a39ac5b7d62.5]
+- Add CONFIG_SND_SOC_RT1320_SDW to pending-rhel for mismatch (Justin M. Forbes)
+- Turn on CONFIG_SND_SOC_RT1320_SDW in pending rhel (Justin M. Forbes)
+- Linux v6.12.0-0.rc0.4a39ac5b7d62
+
 * Tue Sep 17 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.a940d9a43e62.4]
 - redhat: fix bad merge (Patrick Talbert)
 - Linux v6.12.0-0.rc0.a940d9a43e62

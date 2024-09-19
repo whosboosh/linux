@@ -5,6 +5,7 @@
  Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
+ arch/powerpc/include/asm/atomic.h                  |  10 +-
  arch/s390/include/asm/ipl.h                        |   1 +
  arch/s390/kernel/ipl.c                             |   5 +
  arch/s390/kernel/setup.c                           |   4 +
@@ -83,13 +84,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 85 files changed, 2762 insertions(+), 266 deletions(-)
+ 86 files changed, 2770 insertions(+), 268 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0b400aa28482..0cc01152db9c 100644
+index 8337d0fed311..b8d606698384 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5812,6 +5812,17 @@
+@@ -5831,6 +5831,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -107,7 +108,7 @@ index 0b400aa28482..0cc01152db9c 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -6987,6 +6998,15 @@
+@@ -7006,6 +7017,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -289,10 +290,10 @@ index 0ec034933cae..ae18f246df22 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ed15b876fa74..8e067978c1cb 100644
+index 8f2df6ed745d..1723f982543f 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1366,7 +1366,7 @@ endchoice
+@@ -1367,7 +1367,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -301,6 +302,41 @@ index ed15b876fa74..8e067978c1cb 100644
  	help
  	  For systems with 52-bit userspace VAs enabled, the kernel will attempt
  	  to maintain compatibility with older software by providing 48-bit VAs
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index 5bf6a4d49268..0e41c1da82dd 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -23,6 +23,12 @@
+ #define __atomic_release_fence()					\
+ 	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
+ 
++#ifdef CONFIG_CC_IS_CLANG
++#define DS_FORM_CONSTRAINT "Z<>"
++#else
++#define DS_FORM_CONSTRAINT "YZ<>"
++#endif
++
+ static __inline__ int arch_atomic_read(const atomic_t *v)
+ {
+ 	int t;
+@@ -197,7 +203,7 @@ static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
+ 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
+ 		__asm__ __volatile__("ld %0,0(%1)" : "=r"(t) : "b"(&v->counter));
+ 	else
+-		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m<>"(v->counter));
++		__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : DS_FORM_CONSTRAINT (v->counter));
+ 
+ 	return t;
+ }
+@@ -208,7 +214,7 @@ static __inline__ void arch_atomic64_set(atomic64_t *v, s64 i)
+ 	if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
+ 		__asm__ __volatile__("std %1,0(%2)" : "=m"(v->counter) : "r"(i), "b"(&v->counter));
+ 	else
+-		__asm__ __volatile__("std%U0%X0 %1,%0" : "=m<>"(v->counter) : "r"(i));
++		__asm__ __volatile__("std%U0%X0 %1,%0" : "=" DS_FORM_CONSTRAINT (v->counter) : "r"(i));
+ }
+ 
+ #define ATOMIC64_OP(op, asm_op)						\
 diff --git a/arch/s390/include/asm/ipl.h b/arch/s390/include/asm/ipl.h
 index b0d00032479d..afb9544fb007 100644
 --- a/arch/s390/include/asm/ipl.h
@@ -349,10 +385,10 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index be307c9ef263..4631d7d0355b 100644
+index 07a34d723505..74034beda43b 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1591,6 +1591,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1596,6 +1596,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		get_cpu_vendor(c);
  		intel_unlock_cpuid_leafs(c);
  		get_cpu_cap(c);
@@ -361,7 +397,7 @@ index be307c9ef263..4631d7d0355b 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 6129dc2ba784..070aa96cfadd 100644
+index f1fea506e20f..d5bc9aaa1131 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -474,7 +510,7 @@ index 6129dc2ba784..070aa96cfadd 100644
  	reserve_ibft_region();
  	x86_init.resources.dmi_setup();
  
-@@ -1065,19 +1147,7 @@ void __init setup_arch(char **cmdline_p)
+@@ -1070,19 +1152,7 @@ void __init setup_arch(char **cmdline_p)
  	/* Allocate bigger log buffer */
  	setup_log_buf(1);
  
@@ -495,7 +531,7 @@ index 6129dc2ba784..070aa96cfadd 100644
  
  	reserve_initrd();
  
-@@ -1187,6 +1257,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1192,6 +1262,8 @@ void __init setup_arch(char **cmdline_p)
  		efi_apply_memmap_quirks();
  #endif
  
@@ -1116,7 +1152,7 @@ index e12b531f5c2f..082707f8dff8 100644
  	rv = ipmi_register_driver();
  	mutex_unlock(&ipmi_interfaces_mutex);
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 87fe61295ea1..bc84784b9ecb 100644
+index 23ee76bbb4aa..ad0bb8bfd2b0 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
 @@ -51,9 +51,11 @@
@@ -1131,7 +1167,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  #include <crypto/chacha.h>
  #include <crypto/blake2s.h>
  #ifdef CONFIG_VDSO_GETRANDOM
-@@ -322,6 +324,11 @@ static void crng_fast_key_erasure(u8 key[CHACHA_KEY_SIZE],
+@@ -330,6 +332,11 @@ static void crng_fast_key_erasure(u8 key[CHACHA_KEY_SIZE],
  	memzero_explicit(first_block, sizeof(first_block));
  }
  
@@ -1143,17 +1179,17 @@ index 87fe61295ea1..bc84784b9ecb 100644
  /*
   * This function returns a ChaCha state that you may use for generating
   * random data. It also returns up to 32 bytes on its own of random data
-@@ -735,7 +742,8 @@ static void __cold _credit_init_bits(size_t bits)
+@@ -743,7 +750,8 @@ static void __cold _credit_init_bits(size_t bits)
  			queue_work(system_unbound_wq, &set_ready);
  		atomic_notifier_call_chain(&random_ready_notifier, 0, NULL);
  #ifdef CONFIG_VDSO_GETRANDOM
--		WRITE_ONCE(_vdso_rng_data.is_ready, true);
+-		WRITE_ONCE(__arch_get_k_vdso_rng_data()->is_ready, true);
 +		if (!fips_enabled)
-+			WRITE_ONCE(_vdso_rng_data.is_ready, true);
++			WRITE_ONCE(__arch_get_k_vdso_rng_data()->is_ready, true);
  #endif
  		wake_up_interruptible(&crng_init_wait);
  		kill_fasync(&fasync, SIGIO, POLL_IN);
-@@ -755,6 +763,9 @@ static void __cold _credit_init_bits(size_t bits)
+@@ -763,6 +771,9 @@ static void __cold _credit_init_bits(size_t bits)
  }
  
  
@@ -1163,7 +1199,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  /**********************************************************************
   *
   * Entropy collection routines.
-@@ -972,6 +983,19 @@ void __init add_bootloader_randomness(const void *buf, size_t len)
+@@ -980,6 +991,19 @@ void __init add_bootloader_randomness(const void *buf, size_t len)
  		credit_init_bits(len * 8);
  }
  
@@ -1183,7 +1219,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  #if IS_ENABLED(CONFIG_VMGENID)
  static BLOCKING_NOTIFIER_HEAD(vmfork_chain);
  
-@@ -1381,6 +1405,7 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
+@@ -1389,6 +1413,7 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
  {
  	struct iov_iter iter;
  	int ret;
@@ -1191,7 +1227,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  
  	if (flags & ~(GRND_NONBLOCK | GRND_RANDOM | GRND_INSECURE))
  		return -EINVAL;
-@@ -1392,6 +1417,21 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
+@@ -1400,6 +1425,21 @@ SYSCALL_DEFINE3(getrandom, char __user *, ubuf, size_t, len, unsigned int, flags
  	if ((flags & (GRND_INSECURE | GRND_RANDOM)) == (GRND_INSECURE | GRND_RANDOM))
  		return -EINVAL;
  
@@ -1213,7 +1249,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  	if (!crng_ready() && !(flags & GRND_INSECURE)) {
  		if (flags & GRND_NONBLOCK)
  			return -EAGAIN;
-@@ -1412,6 +1452,12 @@ static __poll_t random_poll(struct file *file, poll_table *wait)
+@@ -1420,6 +1460,12 @@ static __poll_t random_poll(struct file *file, poll_table *wait)
  	return crng_ready() ? EPOLLIN | EPOLLRDNORM : EPOLLOUT | EPOLLWRNORM;
  }
  
@@ -1226,7 +1262,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  static ssize_t write_pool_user(struct iov_iter *iter)
  {
  	u8 block[BLAKE2S_BLOCK_SIZE];
-@@ -1552,7 +1598,58 @@ static int random_fasync(int fd, struct file *filp, int on)
+@@ -1560,7 +1606,58 @@ static int random_fasync(int fd, struct file *filp, int on)
  	return fasync_helper(fd, filp, on, &fasync);
  }
  
@@ -1285,7 +1321,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  	.read_iter = random_read_iter,
  	.write_iter = random_write_iter,
  	.poll = random_poll,
-@@ -1565,6 +1662,7 @@ const struct file_operations random_fops = {
+@@ -1573,6 +1670,7 @@ const struct file_operations random_fops = {
  };
  
  const struct file_operations urandom_fops = {
@@ -1293,7 +1329,7 @@ index 87fe61295ea1..bc84784b9ecb 100644
  	.read_iter = urandom_read_iter,
  	.write_iter = random_write_iter,
  	.unlocked_ioctl = random_ioctl,
-@@ -1575,6 +1673,32 @@ const struct file_operations urandom_fops = {
+@@ -1583,6 +1681,32 @@ const struct file_operations urandom_fops = {
  	.splice_write = iter_file_splice_write,
  };
  
