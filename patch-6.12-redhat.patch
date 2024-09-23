@@ -86,10 +86,10 @@
  85 files changed, 2762 insertions(+), 266 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 8337d0fed311..b8d606698384 100644
+index bb48ae24ae69..1cb684b57e11 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5831,6 +5831,17 @@
+@@ -5846,6 +5846,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -107,7 +107,7 @@ index 8337d0fed311..b8d606698384 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7006,6 +7017,15 @@
+@@ -7075,6 +7086,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -289,10 +289,10 @@ index 749179a1d162..3382d64828e4 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index e430ff33c80d..c39758826ff4 100644
+index 49f054dcd4de..e3a767d91399 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1369,7 +1369,7 @@ endchoice
+@@ -1370,7 +1370,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -2536,10 +2536,10 @@ index 666873f745da..60e23ec59fa6 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..7522b976a836 100644
+index 16a4ce704460..c798176408e4 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5569,6 +5569,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5591,6 +5591,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -3440,7 +3440,7 @@ index c4778edae797..3c57bfac4b9c 100644
  		if (!strcmp(fn_name, entry->buf)) {
  			pr_debug("initcall %s blacklisted\n", fn_name);
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 3c13240dfc9f..dc6723d84302 100644
+index 87866b037fbe..2cec0dc5f15a 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
 @@ -12,6 +12,7 @@ obj-y     = fork.o exec_domain.o panic.o \
@@ -3452,7 +3452,7 @@ index 3c13240dfc9f..dc6723d84302 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 7ee62e38faf0..63817aceb71f 100644
+index 4e07cc057d6f..56bc91fcd142 100644
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
 @@ -566,7 +566,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
@@ -3469,7 +3469,7 @@ index 7ee62e38faf0..63817aceb71f 100644
  long bpf_jit_limit_max __read_mostly;
  
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index bf6c5f685ea2..649f2fccaddd 100644
+index 8a4117f6d761..f04c3aa0c1e8 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3504,7 +3504,7 @@ index bf6c5f685ea2..649f2fccaddd 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -6033,6 +6051,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
+@@ -6042,6 +6060,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;
