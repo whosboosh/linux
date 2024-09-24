@@ -2129,7 +2129,7 @@ index 313a4f978a2c..53cbb5224f98 100644
  {
  }
 diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index f412ef73a6e4..e1d9079483ea 100644
+index 35270172c833..60b0af30d2bf 100644
 --- a/drivers/pci/pci-driver.c
 +++ b/drivers/pci/pci-driver.c
 @@ -19,6 +19,7 @@
@@ -2157,10 +2157,10 @@ index f412ef73a6e4..e1d9079483ea 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index a2ce4e08edf5..07dd75b1f580 100644
+index dccb60c1d9cc..c7ec62f076c3 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
-@@ -4433,6 +4433,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
+@@ -4452,6 +4452,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9084,
  				quirk_bridge_cavm_thrx2_pcie_root);
  
@@ -2728,10 +2728,10 @@ index 54d90b6c5f47..cc5def6f2b2e 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 4cf89a4b4cbc..5133f3570000 100644
+index 573b4c4c2be6..f1073e59582d 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1614,6 +1614,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1618,6 +1618,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -2739,7 +2739,7 @@ index 4cf89a4b4cbc..5133f3570000 100644
  int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
  		    int pass);
  
-@@ -2662,6 +2663,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+@@ -2669,6 +2670,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
  	return false;
  }
  
@@ -3469,7 +3469,7 @@ index 4e07cc057d6f..56bc91fcd142 100644
  long bpf_jit_limit_max __read_mostly;
  
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 8a4117f6d761..f04c3aa0c1e8 100644
+index 8386f25bc532..5fe5f8cf0b53 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3517,7 +3517,7 @@ index 8a4117f6d761..f04c3aa0c1e8 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 71396e297499..29e469418075 100644
+index 49b9bca9de12..974e44d94629 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@

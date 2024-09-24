@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.12.0
 %define specversion 6.12.0
 %define patchversion 6.12
-%define pkgrelease 0.rc0.20240923gitde5cb0dcb74c.9
+%define pkgrelease 0.rc0.20240924gitabf2050f51fd.11
 %define kversion 6
-%define tarfile_release 6.11-8833-gde5cb0dcb74c
+%define tarfile_release 6.11-9959-gabf2050f51fd
 # This is needed to do merge window version magic
 %define patchlevel 12
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240923gitde5cb0dcb74c.9%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240924gitabf2050f51fd.11%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.12.0
 
@@ -4136,6 +4136,18 @@ fi\
 #
 #
 %changelog
+* Tue Sep 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.abf2050f51fd.11]
+- Linux v6.12.0-0.rc0.abf2050f51fd
+
+* Tue Sep 24 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.de5cb0dcb74c.10]
+- stop installing tools/build/Build, gone with ea974028a049f (Thorsten Leemhuis)
+- redhat/configs: Update LOCKDEP configs (Waiman Long)
+- uki-virt: Add i18n module (Vitaly Kuznetsov)
+- uki-virt: Drop DBUS support from initramfs (Vitaly Kuznetsov)
+- uki-virt: Drop redundant modules from dracut-virt.conf (Vitaly Kuznetsov)
+- uki-virt: Drop usrmount dracut module (Vitaly Kuznetsov)
+- redhat: new AMCC_QT2025_PHY config in drivers/net/phy (Patrick Talbert)
+
 * Mon Sep 23 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.de5cb0dcb74c.9]
 - Linux v6.12.0-0.rc0.de5cb0dcb74c
 
