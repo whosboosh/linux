@@ -191,7 +191,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index dfc7b0753e50..3bc8b562e6a7 100644
+index 265dd990a9b6..f3b881eee600 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -231,7 +231,7 @@ index dfc7b0753e50..3bc8b562e6a7 100644
  ifdef mixed-build
  # ===========================================================================
  # We're called with mixed targets (*config and build targets).
-@@ -1238,7 +1261,13 @@ define filechk_version.h
+@@ -1251,7 +1274,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -246,7 +246,7 @@ index dfc7b0753e50..3bc8b562e6a7 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1846,6 +1875,23 @@ endif
+@@ -1859,6 +1888,23 @@ endif
  
  ifdef CONFIG_MODULES
  
@@ -287,10 +287,10 @@ index 749179a1d162..3382d64828e4 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 49f054dcd4de..e3a767d91399 100644
+index 3e29b44d2d7b..094913c5059d 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1370,7 +1370,7 @@ endchoice
+@@ -1382,7 +1382,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -1945,7 +1945,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index ca9959a8fb9e..95de34390bfa 100644
+index ba6508455e18..8e88be5e6938 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -263,6 +263,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2015,7 +2015,7 @@ index ca9959a8fb9e..95de34390bfa 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 518e22dd4f9b..af7d1591e9c6 100644
+index 48e7a8906d01..e649b3d1e260 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -2051,7 +2051,7 @@ index 518e22dd4f9b..af7d1591e9c6 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -1000,8 +1006,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -1008,8 +1014,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */

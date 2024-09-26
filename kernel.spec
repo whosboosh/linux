@@ -163,13 +163,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.12.0
 %define specversion 6.12.0
 %define patchversion 6.12
-%define pkgrelease 0.rc0.20240925git684a64bf32b6.12
+%define pkgrelease 0.rc0.20240926git11a299a7933e.13
 %define kversion 6
-%define tarfile_release 6.11-10547-g684a64bf32b6
+%define tarfile_release 6.11-10669-g11a299a7933e
 # This is needed to do merge window version magic
 %define patchlevel 12
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20240925git684a64bf32b6.12%{?buildid}%{?dist}
+%define specrelease 0.rc0.20240926git11a299a7933e.13%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.12.0
 
@@ -4136,6 +4136,11 @@ fi\
 #
 #
 %changelog
+* Thu Sep 26 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.11a299a7933e.13]
+- [fedora] configs: add end of file newline to CONFIG_DMADEVICES_VDEBUG (Patrick Talbert)
+- unset CONFIG_DMADEVICES_VDEBUG (cmurf)
+- Linux v6.12.0-0.rc0.11a299a7933e
+
 * Wed Sep 25 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc0.684a64bf32b6.12]
 - Revert "Merge branch 'drop_engine_api' into 'os-build'" (Justin M. Forbes)
 - Linux v6.12.0-0.rc0.684a64bf32b6
