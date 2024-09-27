@@ -1294,7 +1294,7 @@ index a2d0009560d0..4f3486e6a84b 100644
  obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index fdf07dd6f459..cfd2b58a3494 100644
+index 70490bf2697b..2973cce74abd 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
 @@ -33,6 +33,7 @@
@@ -1585,7 +1585,7 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index bf01f01964cf..703896981e8a 100644
+index 66d44a404ad0..d4383c2d7d1a 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
 @@ -10,6 +10,7 @@
@@ -1596,7 +1596,7 @@ index bf01f01964cf..703896981e8a 100644
  #include <linux/io.h>
  #include <linux/err.h>
  #include <linux/fs.h>
-@@ -2344,6 +2345,16 @@ static const struct amba_id etm4_ids[] = {
+@@ -2345,6 +2346,16 @@ static const struct amba_id etm4_ids[] = {
  	{},
  };
  
@@ -1613,7 +1613,7 @@ index bf01f01964cf..703896981e8a 100644
  MODULE_DEVICE_TABLE(amba, etm4_ids);
  
  static struct amba_driver etm4x_amba_driver = {
-@@ -2412,6 +2423,11 @@ static int __init etm4x_init(void)
+@@ -2413,6 +2424,11 @@ static int __init etm4x_init(void)
  {
  	int ret;
  
@@ -1625,7 +1625,7 @@ index bf01f01964cf..703896981e8a 100644
  	ret = etm4_pm_setup();
  
  	/* etm4_pm_setup() does its own cleanup - exit on error */
-@@ -2438,6 +2454,9 @@ static int __init etm4x_init(void)
+@@ -2439,6 +2455,9 @@ static int __init etm4x_init(void)
  
  static void __exit etm4x_exit(void)
  {
@@ -2527,7 +2527,7 @@ index b164da5e129e..cd78d16ee5d6 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 6bf3c4fe8511..67e5400f7644 100644
+index e28d88066033..860227e20797 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2539,7 +2539,7 @@ index 6bf3c4fe8511..67e5400f7644 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -877,6 +879,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+@@ -875,6 +877,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
  #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
  #define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
  #define EFI_PRESERVE_BS_REGIONS	12	/* Are EFI boot-services memory segments available? */
@@ -2554,7 +2554,7 @@ index 6bf3c4fe8511..67e5400f7644 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -888,6 +898,8 @@ static inline bool efi_enabled(int feature)
+@@ -886,6 +896,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2563,7 +2563,7 @@ index 6bf3c4fe8511..67e5400f7644 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -909,6 +921,8 @@ static inline bool efi_enabled(int feature)
+@@ -907,6 +919,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2572,7 +2572,7 @@ index 6bf3c4fe8511..67e5400f7644 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -923,6 +937,7 @@ static inline void efi_find_mirror(void) {}
+@@ -921,6 +935,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2580,7 +2580,7 @@ index 6bf3c4fe8511..67e5400f7644 100644
  
  /*
   * Variable Attributes
-@@ -1138,13 +1153,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1136,13 +1151,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
