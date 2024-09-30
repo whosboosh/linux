@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/c8fbb331060c5fca78fdc6e574a82671aee93885
+ c8fbb331060c5fca78fdc6e574a82671aee93885 bcachefs: rename version -> bversion for big endian builds
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/77e6d045cb6220934aef9b192b291466fd205d21
  77e6d045cb6220934aef9b192b291466fd205d21 Revert "Merge branch 'drop_engine_api' into 'os-build'"
 

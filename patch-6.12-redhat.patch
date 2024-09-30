@@ -49,6 +49,7 @@
  drivers/scsi/sd.c                                  |  13 +
  drivers/usb/core/hub.c                             |   7 +
  fs/afs/main.c                                      |   3 +
+ fs/bcachefs/bcachefs_format.h                      |   2 +-
  fs/erofs/super.c                                   |   9 +
  fs/ext4/super.c                                    |  11 +
  include/linux/crypto.h                             |   3 +
@@ -81,13 +82,13 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 83 files changed, 2758 insertions(+), 216 deletions(-)
+ 84 files changed, 2759 insertions(+), 217 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bb48ae24ae69..1cb684b57e11 100644
+index 1518343bbe22..c720321317ea 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5846,6 +5846,17 @@
+@@ -5863,6 +5863,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -105,7 +106,7 @@ index bb48ae24ae69..1cb684b57e11 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7075,6 +7086,15 @@
+@@ -7092,6 +7103,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -191,7 +192,7 @@ index 000000000000..7465c78a90e6
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 265dd990a9b6..f3b881eee600 100644
+index 187a4ce2728e..401f0ebe6f90 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -2286,7 +2287,7 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 6c79c350a4d5..27012eec4822 100644
+index 4ecf5284c0fc..40fdd84542a8 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
@@ -2401,10 +2402,10 @@ index d91f54a6e752..0b76e1bf20b7 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 76f488ef6a7e..7fde8cd5d919 100644
+index 41e2dfa2d67d..23f8c65755f8 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -122,6 +122,14 @@ static const char *sd_cache_types[] = {
+@@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
  	"write back, no read (daft)"
  };
  
@@ -2419,7 +2420,7 @@ index 76f488ef6a7e..7fde8cd5d919 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp,
  		struct queue_limits *lim)
  {
-@@ -4349,6 +4357,11 @@ static int __init init_sd(void)
+@@ -4377,6 +4385,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2463,6 +2464,19 @@ index a14f6013e316..6c20453fdf76 100644
  	return ret;
  
  error_proc:
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index 203ee627cab5..84832c2d4df9 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -223,7 +223,7 @@ struct bkey {
+ #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+ 	struct bpos	p;
+ 	__u32		size;		/* extent size, in sectors */
+-	struct bversion	version;
++	struct bversion	bversion;
+ 
+ 	__u8		pad[1];
+ #endif
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
 index 666873f745da..60e23ec59fa6 100644
 --- a/fs/erofs/super.c
