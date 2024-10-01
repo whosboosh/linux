@@ -49,7 +49,6 @@
  drivers/scsi/sd.c                                  |  13 +
  drivers/usb/core/hub.c                             |   7 +
  fs/afs/main.c                                      |   3 +
- fs/bcachefs/bcachefs_format.h                      |   2 +-
  fs/erofs/super.c                                   |   9 +
  fs/ext4/super.c                                    |  11 +
  include/linux/crypto.h                             |   3 +
@@ -82,7 +81,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 84 files changed, 2759 insertions(+), 217 deletions(-)
+ 83 files changed, 2758 insertions(+), 216 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 1518343bbe22..c720321317ea 100644
@@ -2464,19 +2463,6 @@ index a14f6013e316..6c20453fdf76 100644
  	return ret;
  
  error_proc:
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index 203ee627cab5..84832c2d4df9 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -223,7 +223,7 @@ struct bkey {
- #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
- 	struct bpos	p;
- 	__u32		size;		/* extent size, in sectors */
--	struct bversion	version;
-+	struct bversion	bversion;
- 
- 	__u8		pad[1];
- #endif
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
 index 666873f745da..60e23ec59fa6 100644
 --- a/fs/erofs/super.c
