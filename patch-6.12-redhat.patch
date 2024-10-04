@@ -1945,7 +1945,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index ba6508455e18..8e88be5e6938 100644
+index 43d73d31c66f..e0ff0b221f62 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -263,6 +263,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2185,7 +2185,7 @@ index 76a1e373386e..e110b9e75aa2 100644
  	{ 0 }
  };
 diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index e044ed09d7e0..aa5f9c19d222 100644
+index 0c49414c1f35..14e6d2c11f84 100644
 --- a/drivers/scsi/hpsa.c
 +++ b/drivers/scsi/hpsa.c
 @@ -82,7 +82,9 @@ MODULE_DESCRIPTION("Driver for HP Smart Array Controller version " \
@@ -2286,7 +2286,7 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 4ecf5284c0fc..40fdd84542a8 100644
+index 8e75e2e279a4..90866366148b 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
 @@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
@@ -2318,7 +2318,7 @@ index 4ecf5284c0fc..40fdd84542a8 100644
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 728cced42b0e..bc968039be01 100644
+index f2a55aa5fe65..8f4a054ae99f 100644
 --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 @@ -12567,6 +12567,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
@@ -2401,7 +2401,7 @@ index d91f54a6e752..0b76e1bf20b7 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 41e2dfa2d67d..23f8c65755f8 100644
+index ca4bc0ac76ad..4442ff2a5e19 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
@@ -3407,7 +3407,7 @@ index 87866b037fbe..2cec0dc5f15a 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 4e07cc057d6f..56bc91fcd142 100644
+index 5e77c58e0601..4de8774458ac 100644
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
 @@ -566,7 +566,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
