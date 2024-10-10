@@ -3358,7 +3358,7 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index b86ec2afc691..3a794a730bb2 100644
+index 2ec8f3014757..7273b2b8b23b 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -522,6 +522,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
@@ -4659,10 +4659,10 @@ index f2bdbd55aa2b..ddf496f7fca5 100644
  
  static const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..fa246e76d54d 100644
+index c5981e558bc2..431202cd09c1 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5767,6 +5767,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5769,6 +5769,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
