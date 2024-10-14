@@ -4136,6 +4136,10 @@ fi\
 #
 #
 %changelog
+* Mon Oct 14 2024 Justin M. Forbes <jforbes@fedoraproject.org> [6.12.0-0.rc3.20241014git6485cf5ea253.31]
+- tools/rtla: fix collision with glibc sched_attr/sched_set_attr (Jan Stancek)
+- tools/rtla: drop __NR_sched_getattr (Jan Stancek)
+
 * Mon Oct 14 2024 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.12.0-0.rc3.6485cf5ea253.31]
 - Linux v6.12.0-0.rc3.6485cf5ea253
 

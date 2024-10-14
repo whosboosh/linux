@@ -81,7 +81,9 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 83 files changed, 2758 insertions(+), 216 deletions(-)
+ tools/tracing/rtla/src/utils.c                     |  36 +-
+ tools/tracing/rtla/src/utils.h                     |   2 +
+ 85 files changed, 2776 insertions(+), 236 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 1518343bbe22..c720321317ea 100644
@@ -4681,3 +4683,81 @@ index c5981e558bc2..431202cd09c1 100644
  /**
   * security_bdev_alloc() - Allocate a block device LSM blob
   * @bdev: block device
+diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
+index 9ac71a66840c..c62044215a48 100644
+--- a/tools/tracing/rtla/src/utils.c
++++ b/tools/tracing/rtla/src/utils.c
+@@ -211,29 +211,25 @@ long parse_ns_duration(char *val)
+ /*
+  * This is a set of helper functions to use SCHED_DEADLINE.
+  */
+-#ifdef __x86_64__
+-# define __NR_sched_setattr	314
+-# define __NR_sched_getattr	315
+-#elif __i386__
+-# define __NR_sched_setattr	351
+-# define __NR_sched_getattr	352
+-#elif __arm__
+-# define __NR_sched_setattr	380
+-# define __NR_sched_getattr	381
+-#elif __aarch64__ || __riscv
+-# define __NR_sched_setattr	274
+-# define __NR_sched_getattr	275
+-#elif __powerpc__
+-# define __NR_sched_setattr	355
+-# define __NR_sched_getattr	356
+-#elif __s390x__
+-# define __NR_sched_setattr	345
+-# define __NR_sched_getattr	346
++#ifndef __NR_sched_setattr
++# ifdef __x86_64__
++#  define __NR_sched_setattr	314
++# elif __i386__
++#  define __NR_sched_setattr	351
++# elif __arm__
++#  define __NR_sched_setattr	380
++# elif __aarch64__ || __riscv
++#  define __NR_sched_setattr	274
++# elif __powerpc__
++#  define __NR_sched_setattr	355
++# elif __s390x__
++#  define __NR_sched_setattr	345
++# endif
+ #endif
+ 
+ #define SCHED_DEADLINE		6
+ 
+-static inline int sched_setattr(pid_t pid, const struct sched_attr *attr,
++static inline int rtla_sched_setattr(pid_t pid, const struct sched_attr *attr,
+ 				unsigned int flags) {
+ 	return syscall(__NR_sched_setattr, pid, attr, flags);
+ }
+@@ -243,7 +239,7 @@ int __set_sched_attr(int pid, struct sched_attr *attr)
+ 	int flags = 0;
+ 	int retval;
+ 
+-	retval = sched_setattr(pid, attr, flags);
++	retval = rtla_sched_setattr(pid, attr, flags);
+ 	if (retval < 0) {
+ 		err_msg("Failed to set sched attributes to the pid %d: %s\n",
+ 			pid, strerror(errno));
+diff --git a/tools/tracing/rtla/src/utils.h b/tools/tracing/rtla/src/utils.h
+index d44513e6c66a..99c9cf81bcd0 100644
+--- a/tools/tracing/rtla/src/utils.h
++++ b/tools/tracing/rtla/src/utils.h
+@@ -46,6 +46,7 @@ update_sum(unsigned long long *a, unsigned long long *b)
+ 	*a += *b;
+ }
+ 
++#ifndef SCHED_ATTR_SIZE_VER0
+ struct sched_attr {
+ 	uint32_t size;
+ 	uint32_t sched_policy;
+@@ -56,6 +57,7 @@ struct sched_attr {
+ 	uint64_t sched_deadline;
+ 	uint64_t sched_period;
+ };
++#endif /* SCHED_ATTR_SIZE_VER0 */
+ 
+ int parse_prio(char *arg, struct sched_attr *sched_param);
+ int parse_cpu_set(char *cpu_list, cpu_set_t *set);
