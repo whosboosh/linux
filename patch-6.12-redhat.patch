@@ -2466,10 +2466,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 666873f745da..60e23ec59fa6 100644
+index 320d586c3896..48a4b16def33 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -587,6 +587,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -591,6 +591,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2479,7 +2479,7 @@ index 666873f745da..60e23ec59fa6 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -694,6 +697,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -698,6 +701,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
