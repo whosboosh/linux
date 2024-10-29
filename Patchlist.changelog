@@ -1,8 +1,8 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/0abe3aa5d169760d48cb467ae2db7d3f13a9e91a
- 0abe3aa5d169760d48cb467ae2db7d3f13a9e91a tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+https://gitlab.com/cki-project/kernel-ark/-/commit/e85f363e7671d47ae62509af738fb62386cf4300
+ e85f363e7671d47ae62509af738fb62386cf4300 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/864c24b0348362f81682037a1cfe7e9999221a7d
- 864c24b0348362f81682037a1cfe7e9999221a7d tools/rtla: drop __NR_sched_getattr
+https://gitlab.com/cki-project/kernel-ark/-/commit/e922ed0e32055c5061c9660acebd510bde5163bc
+ e922ed0e32055c5061c9660acebd510bde5163bc tools/rtla: drop __NR_sched_getattr
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/77e6d045cb6220934aef9b192b291466fd205d21
  77e6d045cb6220934aef9b192b291466fd205d21 Revert "Merge branch 'drop_engine_api' into 'os-build'"
