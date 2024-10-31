@@ -1,7 +1,7 @@
  Documentation/admin-guide/kernel-parameters.txt    |  20 +
  Documentation/admin-guide/rh-waived-features.rst   |  21 +
  Kconfig                                            |   2 +
- Kconfig.redhat                                     |  26 +
+ Kconfig.redhat                                     |  23 +
  Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
@@ -83,7 +83,7 @@
  security/security.c                                |  12 +
  tools/tracing/rtla/src/utils.c                     |  36 +-
  tools/tracing/rtla/src/utils.h                     |   2 +
- 85 files changed, 2776 insertions(+), 236 deletions(-)
+ 85 files changed, 2773 insertions(+), 236 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 1518343bbe22..c720321317ea 100644
@@ -162,10 +162,10 @@ index 745bc773f567..f57ff40109d7 100644
 +source "Kconfig.redhat"
 diff --git a/Kconfig.redhat b/Kconfig.redhat
 new file mode 100644
-index 000000000000..7465c78a90e6
+index 000000000000..fd77bd5c97e2
 --- /dev/null
 +++ b/Kconfig.redhat
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,23 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
 +# Red Hat specific options
@@ -174,13 +174,10 @@ index 000000000000..7465c78a90e6
 +menu "Red Hat options"
 +
 +config RHEL_DIFFERENCES
-+	bool "Remove support for deprecated features"
++	bool "Enable RHEL-only code"
 +	help
-+	  Red Hat may choose to deprecate certain features in its kernels.
-+	  Enable this option to remove support for hardware that is no
-+	  longer supported.
-+
-+	  Unless you want a restricted kernel, say N here.
++	  This option controls whether rhel-only changes are enabled during
++	  the build. Unless you want to enable rhel-only changes, say N here.
 +
 +config RH_KABI_SIZE_ALIGN_CHECKS
 +	bool "Enables more stringent kabi checks in the macros"
