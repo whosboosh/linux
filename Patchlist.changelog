@@ -1,8 +1,8 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/196be8e5e1ea07defefc3de7415fb3823ac7b04a
- 196be8e5e1ea07defefc3de7415fb3823ac7b04a tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+https://gitlab.com/cki-project/kernel-ark/-/commit/ae3292a75c733087a32a5bff4ac794976485b228
+ ae3292a75c733087a32a5bff4ac794976485b228 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/8451b49eb5c113f122847b8d0463326b0eb9d031
- 8451b49eb5c113f122847b8d0463326b0eb9d031 tools/rtla: drop __NR_sched_getattr
+https://gitlab.com/cki-project/kernel-ark/-/commit/75fdb6d6835c67fc3db236011b3117573fc134cd
+ 75fdb6d6835c67fc3db236011b3117573fc134cd tools/rtla: drop __NR_sched_getattr
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/0756902dd6b52af5d02b221e5ea50565d31a50e7
  0756902dd6b52af5d02b221e5ea50565d31a50e7 Update the RHEL_DIFFERENCES help string
