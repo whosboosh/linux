@@ -1,8 +1,8 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/b6b05c64afa98fd656e0f3107c7fedd75ac4b16e
- b6b05c64afa98fd656e0f3107c7fedd75ac4b16e tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+https://gitlab.com/cki-project/kernel-ark/-/commit/3e5b9d72cd9c75262d969e6e521ad25146357a96
+ 3e5b9d72cd9c75262d969e6e521ad25146357a96 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/c92c75a211700d213f24e48ebe8263a921ca1868
- c92c75a211700d213f24e48ebe8263a921ca1868 tools/rtla: drop __NR_sched_getattr
+https://gitlab.com/cki-project/kernel-ark/-/commit/af6318237eefbe7f973e470640c7dd21717a4a81
+ af6318237eefbe7f973e470640c7dd21717a4a81 tools/rtla: drop __NR_sched_getattr
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/09dd929d10260f56dc7cca7435a8b76347423d52
  09dd929d10260f56dc7cca7435a8b76347423d52 [redhat] rh_messages.h: Mark BlueField-4 as disabled

@@ -86,7 +86,7 @@
  85 files changed, 2774 insertions(+), 236 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1666576acc0e..d2b0bd7889fe 100644
+index d401577b5a6a..e2ee121064bd 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -5863,6 +5863,17 @@
@@ -107,7 +107,7 @@ index 1666576acc0e..d2b0bd7889fe 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7092,6 +7103,15 @@
+@@ -7101,6 +7112,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
