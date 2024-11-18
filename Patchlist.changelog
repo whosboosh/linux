@@ -1,8 +1,11 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/3e5b9d72cd9c75262d969e6e521ad25146357a96
- 3e5b9d72cd9c75262d969e6e521ad25146357a96 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+https://gitlab.com/cki-project/kernel-ark/-/commit/e1b38cf4bc8735dd32cd0e67e965a47ee6a1ee39
+ e1b38cf4bc8735dd32cd0e67e965a47ee6a1ee39 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/af6318237eefbe7f973e470640c7dd21717a4a81
- af6318237eefbe7f973e470640c7dd21717a4a81 tools/rtla: drop __NR_sched_getattr
+https://gitlab.com/cki-project/kernel-ark/-/commit/5396e27b719cedbf6b5ebec2183a45f276ff1377
+ 5396e27b719cedbf6b5ebec2183a45f276ff1377 tools/rtla: drop __NR_sched_getattr
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/83faa882e229e477e16e50c57785048e79af82c2
+ 83faa882e229e477e16e50c57785048e79af82c2 crypto: rng - Ensure stdrng is tested before user-space starts
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/09dd929d10260f56dc7cca7435a8b76347423d52
  09dd929d10260f56dc7cca7435a8b76347423d52 [redhat] rh_messages.h: Mark BlueField-4 as disabled

@@ -13,7 +13,7 @@
  crypto/akcipher.c                                  |   6 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
- crypto/rng.c                                       | 149 +++++-
+ crypto/rng.c                                       | 156 +++++-
  crypto/seqiv.c                                     |  15 +-
  crypto/testmgr.c                                   |   4 +-
  drivers/acpi/apei/hest.c                           |   8 +
@@ -83,7 +83,7 @@
  security/security.c                                |  12 +
  tools/tracing/rtla/src/utils.c                     |  36 +-
  tools/tracing/rtla/src/utils.h                     |   2 +
- 85 files changed, 2774 insertions(+), 236 deletions(-)
+ 85 files changed, 2781 insertions(+), 236 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index d401577b5a6a..e2ee121064bd 100644
@@ -190,7 +190,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 79192a3024bf..636e4b73c5c2 100644
+index 68a8faff2543..a8e9ff0e7a2f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -270,7 +270,7 @@ index 79192a3024bf..636e4b73c5c2 100644
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 749179a1d162..3382d64828e4 100644
+index 202397be76d8..3d4ba33d4305 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
 @@ -1228,9 +1228,9 @@ config HIGHMEM
@@ -286,7 +286,7 @@ index 749179a1d162..3382d64828e4 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 70d7f4f20225..471d96b9f27e 100644
+index 22f8a7bca6d2..a9e2b0c90cc7 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
 @@ -1383,7 +1383,7 @@ endchoice
@@ -346,7 +346,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a5f221ea5688..338ef0645a0d 100644
+index f43bb974fc66..95446199771e 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1600,6 +1600,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -618,7 +618,7 @@ index 3addce90930c..730b03de596a 100644
  
  /*
 diff --git a/crypto/rng.c b/crypto/rng.c
-index 9d8804e46422..5ccb0485ff4b 100644
+index 9d8804e46422..2121db692c4d 100644
 --- a/crypto/rng.c
 +++ b/crypto/rng.c
 @@ -12,10 +12,13 @@
@@ -680,12 +680,12 @@ index 9d8804e46422..5ccb0485ff4b 100644
 -	err = 0;
 +	return 0;
 +}
-+
+ 
+-unlock:
 +int crypto_get_default_rng(void)
 +{
 +	int err;
- 
--unlock:
++
 +	mutex_lock(&crypto_default_rng_lock);
 +	err = crypto_get_rng(&crypto_default_rng);
 +	if (!err)
@@ -733,7 +733,7 @@ index 9d8804e46422..5ccb0485ff4b 100644
  EXPORT_SYMBOL_GPL(crypto_del_default_rng);
  #endif
  
-@@ -217,5 +237,102 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
+@@ -217,5 +237,109 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
  }
  EXPORT_SYMBOL_GPL(crypto_unregister_rngs);
  
@@ -821,8 +821,15 @@ index 9d8804e46422..5ccb0485ff4b 100644
 +
 +static int __init crypto_rng_init(void)
 +{
-+	if (fips_enabled)
++	int err;
++
++	if (fips_enabled) {
++		err = crypto_get_default_rng();
++		if (err)
++			return err;
++		crypto_put_default_rng();
 +		random_register_extrng(&crypto_devrandom_rng);
++	}
 +	return 0;
 +}
 +
