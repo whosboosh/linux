@@ -86,10 +86,10 @@
  85 files changed, 2781 insertions(+), 236 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d401577b5a6a..e2ee121064bd 100644
+index f2875484795a..643cf10bed4a 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5863,6 +5863,17 @@
+@@ -5866,6 +5866,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -107,7 +107,7 @@ index d401577b5a6a..e2ee121064bd 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7101,6 +7112,15 @@
+@@ -7104,6 +7115,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -286,10 +286,10 @@ index 202397be76d8..3d4ba33d4305 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 22f8a7bca6d2..a9e2b0c90cc7 100644
+index d743737bf9ce..216aa1980146 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1383,7 +1383,7 @@ endchoice
+@@ -1387,7 +1387,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -311,10 +311,10 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index f17bb7bf9392..66e530380ee3 100644
+index edbb52ce3f1e..479cf8a4a576 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
-@@ -2479,3 +2479,8 @@ int ipl_report_free(struct ipl_report *report)
+@@ -2497,3 +2497,8 @@ int ipl_report_free(struct ipl_report *report)
  }
  
  #endif
@@ -1951,10 +1951,10 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 855b42c92284..76af591a1435 100644
+index 1a8d32a4a5c3..822bab66d10a 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -274,6 +274,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
+@@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
  
  static blk_status_t nvme_error_status(u16 status)
  {
@@ -1964,7 +1964,7 @@ index 855b42c92284..76af591a1435 100644
  	switch (status & NVME_SCT_SC_MASK) {
  	case NVME_SC_SUCCESS:
  		return BLK_STS_OK;
-@@ -388,6 +391,7 @@ enum nvme_disposition {
+@@ -390,6 +393,7 @@ enum nvme_disposition {
  	COMPLETE,
  	RETRY,
  	FAILOVER,
@@ -1972,7 +1972,7 @@ index 855b42c92284..76af591a1435 100644
  	AUTHENTICATE,
  };
  
-@@ -396,7 +400,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -398,7 +402,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if (likely(nvme_req(req)->status == 0))
  		return COMPLETE;
  
@@ -1981,7 +1981,7 @@ index 855b42c92284..76af591a1435 100644
  	    (nvme_req(req)->status & NVME_STATUS_DNR) ||
  	    nvme_req(req)->retries >= nvme_max_retries)
  		return COMPLETE;
-@@ -404,10 +408,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
+@@ -406,10 +410,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
  	if ((nvme_req(req)->status & NVME_SCT_SC_MASK) == NVME_SC_AUTH_REQUIRED)
  		return AUTHENTICATE;
  
@@ -1995,7 +1995,7 @@ index 855b42c92284..76af591a1435 100644
  	} else {
  		if (blk_queue_dying(req->q))
  			return COMPLETE;
-@@ -449,6 +454,14 @@ void nvme_end_req(struct request *req)
+@@ -451,6 +456,14 @@ void nvme_end_req(struct request *req)
  	blk_mq_end_request(req, status);
  }
  
@@ -2010,7 +2010,7 @@ index 855b42c92284..76af591a1435 100644
  void nvme_complete_rq(struct request *req)
  {
  	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -478,6 +491,9 @@ void nvme_complete_rq(struct request *req)
+@@ -480,6 +493,9 @@ void nvme_complete_rq(struct request *req)
  	case FAILOVER:
  		nvme_failover_req(req);
  		return;
@@ -2021,7 +2021,7 @@ index 855b42c92284..76af591a1435 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 6a15873055b9..59d389b13dac 100644
+index f04cfe3fb936..a0ae2094f378 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -2057,7 +2057,7 @@ index 6a15873055b9..59d389b13dac 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -1034,8 +1040,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -1032,8 +1038,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */
@@ -2068,10 +2068,10 @@ index 6a15873055b9..59d389b13dac 100644
  
  	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 093cb423f536..6a9fcd5b7f79 100644
+index 900719c4c70c..ccdcedfb458b 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
-@@ -947,6 +947,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
+@@ -948,6 +948,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
  void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
  void nvme_failover_req(struct request *req);
@@ -2079,7 +2079,7 @@ index 093cb423f536..6a9fcd5b7f79 100644
  void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
  int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
  void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -989,6 +990,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+@@ -990,6 +991,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
  static inline void nvme_failover_req(struct request *req)
  {
  }
@@ -2407,7 +2407,7 @@ index d91f54a6e752..0b76e1bf20b7 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index ca4bc0ac76ad..4442ff2a5e19 100644
+index 8947dab132d7..dbf6d414fd4e 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
@@ -2497,10 +2497,10 @@ index bed3dbe5b7cb..6be03e096da8 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 16a4ce704460..c798176408e4 100644
+index 785809f33ff4..bbb10ab8e7af 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5591,6 +5591,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5638,6 +5638,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -2626,10 +2626,10 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 9eca013aa5e1..6f25ce6867a2 100644
+index eb2937599cb0..7860721ef2f6 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -438,6 +438,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
+@@ -444,6 +444,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
  #endif /* CONFIG_BPF_SYSCALL */
  
  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
@@ -3364,10 +3364,10 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 2ec8f3014757..7273b2b8b23b 100644
+index cbdba435b798..c5c300c4f90b 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -522,6 +522,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+@@ -562,6 +562,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
  int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
  int security_locked_down(enum lockdown_reason what);
@@ -3375,7 +3375,7 @@ index 2ec8f3014757..7273b2b8b23b 100644
  int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
  		      void *val, size_t val_len, u64 id, u64 flags);
  int security_bdev_alloc(struct block_device *bdev);
-@@ -1504,6 +1505,10 @@ static inline int security_locked_down(enum lockdown_reason what)
+@@ -1569,6 +1570,10 @@ static inline int security_locked_down(enum lockdown_reason what)
  {
  	return 0;
  }
@@ -3478,7 +3478,7 @@ index c5aa127ed4cc..2c901fc67570 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 49b9bca9de12..974e44d94629 100644
+index 4490924fe24e..13248f3466f7 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3518,7 +3518,7 @@ index 49b9bca9de12..974e44d94629 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3403,6 +3412,10 @@ void print_modules(void)
+@@ -3400,6 +3409,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
@@ -4666,10 +4666,10 @@ index f2bdbd55aa2b..ddf496f7fca5 100644
  
  static const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index c5981e558bc2..431202cd09c1 100644
+index e2d47dd4087a..74784f4df2ac 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5769,6 +5769,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5805,6 +5805,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
