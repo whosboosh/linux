@@ -10,7 +10,7 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
- crypto/akcipher.c                                  |   6 +-
+ crypto/akcipher.c                                  |   3 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
  crypto/rng.c                                       | 156 +++++-
@@ -83,13 +83,13 @@
  security/security.c                                |  12 +
  tools/tracing/rtla/src/utils.c                     |  36 +-
  tools/tracing/rtla/src/utils.h                     |   2 +
- 85 files changed, 2781 insertions(+), 236 deletions(-)
+ 85 files changed, 2780 insertions(+), 234 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f2875484795a..643cf10bed4a 100644
+index 9cd9cd06538b..f0b0059b58fa 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5866,6 +5866,17 @@
+@@ -5874,6 +5874,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -107,7 +107,7 @@ index f2875484795a..643cf10bed4a 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7104,6 +7115,15 @@
+@@ -7118,6 +7129,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -346,7 +346,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f43bb974fc66..95446199771e 100644
+index 02637365d1a9..1f73b0a3d5e1 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1600,6 +1600,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -502,18 +502,11 @@ index f1fea506e20f..d5bc9aaa1131 100644
  }
  
 diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index e0ff5f4dda6d..098a52ded759 100644
+index 72c82d9aa077..da1ac5de8252 100644
 --- a/crypto/akcipher.c
 +++ b/crypto/akcipher.c
-@@ -126,14 +126,12 @@ int crypto_register_akcipher(struct akcipher_alg *alg)
- {
- 	struct crypto_alg *base = &alg->base;
+@@ -141,8 +141,7 @@ int crypto_register_akcipher(struct akcipher_alg *alg)
  
--	if (!alg->sign)
--		alg->sign = akcipher_default_op;
-+	alg->sign = akcipher_default_op;
- 	if (!alg->verify)
- 		alg->verify = akcipher_default_op;
  	if (!alg->encrypt)
  		alg->encrypt = akcipher_default_op;
 -	if (!alg->decrypt)
@@ -563,10 +556,10 @@ index afc0fd847761..e13258c3d1d1 100644
  	}
  
 diff --git a/crypto/drbg.c b/crypto/drbg.c
-index 3addce90930c..730b03de596a 100644
+index c323f40bed4f..ce40287abe40 100644
 --- a/crypto/drbg.c
 +++ b/crypto/drbg.c
-@@ -1494,13 +1494,14 @@ static int drbg_generate(struct drbg_state *drbg,
+@@ -1495,13 +1495,14 @@ static int drbg_generate(struct drbg_state *drbg,
   * Wrapper around drbg_generate which can pull arbitrary long strings
   * from the DRBG without hitting the maximum request limitation.
   *
@@ -583,7 +576,7 @@ index 3addce90930c..730b03de596a 100644
  {
  	unsigned int len = 0;
  	unsigned int slice = 0;
-@@ -1510,6 +1511,8 @@ static int drbg_generate_long(struct drbg_state *drbg,
+@@ -1511,6 +1512,8 @@ static int drbg_generate_long(struct drbg_state *drbg,
  		slice = ((buflen - len) / drbg_max_request_bytes(drbg));
  		chunk = slice ? drbg_max_request_bytes(drbg) : (buflen - len);
  		mutex_lock(&drbg->drbg_mutex);
@@ -592,7 +585,7 @@ index 3addce90930c..730b03de596a 100644
  		err = drbg_generate(drbg, buf + len, chunk, addtl);
  		mutex_unlock(&drbg->drbg_mutex);
  		if (0 > err)
-@@ -1936,6 +1939,7 @@ static int drbg_kcapi_random(struct crypto_rng *tfm,
+@@ -1937,6 +1940,7 @@ static int drbg_kcapi_random(struct crypto_rng *tfm,
  	struct drbg_state *drbg = crypto_rng_ctx(tfm);
  	struct drbg_string *addtl = NULL;
  	struct drbg_string string;
@@ -600,7 +593,7 @@ index 3addce90930c..730b03de596a 100644
  
  	if (slen) {
  		/* linked list variable is now local to allow modification */
-@@ -1943,7 +1947,15 @@ static int drbg_kcapi_random(struct crypto_rng *tfm,
+@@ -1944,7 +1948,15 @@ static int drbg_kcapi_random(struct crypto_rng *tfm,
  		addtl = &string;
  	}
  
@@ -877,11 +870,11 @@ index 17e11d51ddc3..9c136a3b6267 100644
  
  	inst->alg.base.cra_ctxsize = sizeof(struct aead_geniv_ctx);
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 2f5f6b52b2d4..51acb3cb64fb 100644
+index 3fc908bac21a..c0a81a27bd1b 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
-@@ -4234,7 +4234,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	 * Don't invoke (decrypt or sign) test which require a private key
+@@ -4200,7 +4200,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+ 	 * Don't invoke decrypt test which requires a private key
  	 * for vectors with only a public key.
  	 */
 -	if (vecs->public_key_vec) {
@@ -889,7 +882,7 @@ index 2f5f6b52b2d4..51acb3cb64fb 100644
  		err = 0;
  		goto free_all;
  	}
-@@ -5113,14 +5113,12 @@ static const struct alg_test_desc alg_test_descs[] = {
+@@ -5180,14 +5180,12 @@ static const struct alg_test_desc alg_test_descs[] = {
  	}, {
  		.alg = "ecdh-nist-p256",
  		.test = alg_test_kpp,
@@ -967,7 +960,7 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 7ecc401fb97f..52917b177122 100644
+index 74dcccdc6482..d6265ddc87ef 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
 @@ -1802,6 +1802,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
@@ -1300,7 +1293,7 @@ index a2d0009560d0..4f3486e6a84b 100644
  obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 70490bf2697b..2973cce74abd 100644
+index 60c64b81d2c3..19cb19cf67d4 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
 @@ -33,6 +33,7 @@
@@ -1311,7 +1304,7 @@ index 70490bf2697b..2973cce74abd 100644
  
  #include <asm/early_ioremap.h>
  
-@@ -993,40 +994,101 @@ int efi_mem_type(unsigned long phys_addr)
+@@ -1008,40 +1009,101 @@ int efi_mem_type(unsigned long phys_addr)
  	return -EINVAL;
  }
  
@@ -2118,7 +2111,7 @@ index 35270172c833..60b0af30d2bf 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index dccb60c1d9cc..c7ec62f076c3 100644
+index 41dec625ed7b..ec52aab4f4d2 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -4452,6 +4452,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
@@ -2533,7 +2526,7 @@ index b164da5e129e..cd78d16ee5d6 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index e28d88066033..860227e20797 100644
+index e5815867aba9..b17440aaf863 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2545,11 +2538,11 @@ index e28d88066033..860227e20797 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -875,6 +877,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
- #define EFI_MEM_ATTR		10	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
- #define EFI_MEM_NO_SOFT_RESERVE	11	/* Is the kernel configured to ignore soft reservations? */
- #define EFI_PRESERVE_BS_REGIONS	12	/* Are EFI boot-services memory segments available? */
-+#define EFI_SECURE_BOOT		13	/* Are we in Secure Boot mode? */
+@@ -864,6 +866,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+ #define EFI_MEM_ATTR		9	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
+ #define EFI_MEM_NO_SOFT_RESERVE	10	/* Is the kernel configured to ignore soft reservations? */
+ #define EFI_PRESERVE_BS_REGIONS	11	/* Are EFI boot-services memory segments available? */
++#define EFI_SECURE_BOOT		12	/* Are we in Secure Boot mode? */
 +
 +enum efi_secureboot_mode {
 +	efi_secureboot_mode_unset,
@@ -2560,7 +2553,7 @@ index e28d88066033..860227e20797 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -886,6 +896,8 @@ static inline bool efi_enabled(int feature)
+@@ -875,6 +885,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2569,7 +2562,7 @@ index e28d88066033..860227e20797 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -907,6 +919,8 @@ static inline bool efi_enabled(int feature)
+@@ -896,6 +908,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2578,7 +2571,7 @@ index e28d88066033..860227e20797 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -921,6 +935,7 @@ static inline void efi_find_mirror(void) {}
+@@ -910,6 +924,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2586,7 +2579,7 @@ index e28d88066033..860227e20797 100644
  
  /*
   * Variable Attributes
-@@ -1136,13 +1151,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1125,13 +1140,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -2689,7 +2682,7 @@ index 54d90b6c5f47..cc5def6f2b2e 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 573b4c4c2be6..f1073e59582d 100644
+index 733ff6570e2d..9e04dff98134 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
 @@ -1618,6 +1618,7 @@ int pci_add_dynid(struct pci_driver *drv,
@@ -2712,7 +2705,7 @@ index 573b4c4c2be6..f1073e59582d 100644
  void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
  #endif
 diff --git a/include/linux/random.h b/include/linux/random.h
-index b0a940af4fff..8a52424fd0d5 100644
+index 333cecfca93f..6421bf2415a5 100644
 --- a/include/linux/random.h
 +++ b/include/linux/random.h
 @@ -9,6 +9,13 @@
@@ -2729,7 +2722,7 @@ index b0a940af4fff..8a52424fd0d5 100644
  struct notifier_block;
  
  void add_device_randomness(const void *buf, size_t len);
-@@ -157,6 +164,9 @@ int random_prepare_cpu(unsigned int cpu);
+@@ -150,6 +157,9 @@ int random_prepare_cpu(unsigned int cpu);
  int random_online_cpu(unsigned int cpu);
  #endif
  
@@ -3387,10 +3380,10 @@ index cbdba435b798..c5c300c4f90b 100644
  				    u32 *uctx_len, void *val, size_t val_len,
  				    u64 id, u64 flags)
 diff --git a/init/main.c b/init/main.c
-index c4778edae797..3c57bfac4b9c 100644
+index 00fac1170294..17ff0814a8d1 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1184,6 +1184,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1181,6 +1181,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -3413,10 +3406,10 @@ index 87866b037fbe..2cec0dc5f15a 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 5e77c58e0601..4de8774458ac 100644
+index a2327c4fdc8b..f28832644e0a 100644
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
-@@ -566,7 +566,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
+@@ -567,7 +567,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
  /* All BPF JIT sysctl knobs here. */
  int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_DEFAULT_ON);
  int bpf_jit_kallsyms __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_DEFAULT_ON);
@@ -3430,7 +3423,7 @@ index 5e77c58e0601..4de8774458ac 100644
  long bpf_jit_limit_max __read_mostly;
  
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index c5aa127ed4cc..2c901fc67570 100644
+index 58190ca724a2..36e0200f7929 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3465,7 +3458,7 @@ index c5aa127ed4cc..2c901fc67570 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -5978,6 +5996,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
+@@ -6084,6 +6102,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;
