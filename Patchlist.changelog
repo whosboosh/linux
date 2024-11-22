@@ -1,8 +1,8 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/81df3fd5885704aa07fc2d438890c514e7ed6af4
- 81df3fd5885704aa07fc2d438890c514e7ed6af4 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+https://gitlab.com/cki-project/kernel-ark/-/commit/3e4984c668d272bb4ea251276e348c7c1f97e703
+ 3e4984c668d272bb4ea251276e348c7c1f97e703 tools/rtla: fix collision with glibc sched_attr/sched_set_attr
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/8ed761c62468c7443790ed634cee439b1628a18e
- 8ed761c62468c7443790ed634cee439b1628a18e tools/rtla: drop __NR_sched_getattr
+https://gitlab.com/cki-project/kernel-ark/-/commit/db27902afd62d22745d51b134a01c7c54e5bca03
+ db27902afd62d22745d51b134a01c7c54e5bca03 tools/rtla: drop __NR_sched_getattr
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/07024e08378d900be3f9799a4a334350abc89f02
  07024e08378d900be3f9799a4a334350abc89f02 crypto: rng - Ensure stdrng is tested before user-space starts
