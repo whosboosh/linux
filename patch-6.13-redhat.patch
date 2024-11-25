@@ -10,7 +10,6 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
- crypto/akcipher.c                                  |   3 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
  crypto/rng.c                                       | 156 +++++-
@@ -81,10 +80,10 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 83 files changed, 2762 insertions(+), 214 deletions(-)
+ 82 files changed, 2761 insertions(+), 212 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9cd9cd06538b..f0b0059b58fa 100644
+index a4736ee87b1a..d9ae82629d28 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -5874,6 +5874,17 @@
@@ -105,7 +104,7 @@ index 9cd9cd06538b..f0b0059b58fa 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7118,6 +7129,15 @@
+@@ -7135,6 +7146,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -498,20 +497,6 @@ index f1fea506e20f..d5bc9aaa1131 100644
 +
  	unwind_init();
  }
- 
-diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index 72c82d9aa077..da1ac5de8252 100644
---- a/crypto/akcipher.c
-+++ b/crypto/akcipher.c
-@@ -141,8 +141,7 @@ int crypto_register_akcipher(struct akcipher_alg *alg)
- 
- 	if (!alg->encrypt)
- 		alg->encrypt = akcipher_default_op;
--	if (!alg->decrypt)
--		alg->decrypt = akcipher_default_op;
-+	alg->decrypt = akcipher_default_op;
- 	if (!alg->set_priv_key)
- 		alg->set_priv_key = akcipher_default_set_key;
  
 diff --git a/crypto/dh.c b/crypto/dh.c
 index afc0fd847761..e13258c3d1d1 100644
@@ -2630,10 +2615,10 @@ index eb2937599cb0..7860721ef2f6 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 88ecc5e9f523..bcc0377c716a 100644
+index 2a9386cbdf85..6483b6961f7f 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
-@@ -424,6 +424,7 @@ struct module {
+@@ -426,6 +426,7 @@ struct module {
  	struct module_attribute *modinfo_attrs;
  	const char *version;
  	const char *srcversion;
@@ -2641,7 +2626,7 @@ index 88ecc5e9f523..bcc0377c716a 100644
  	struct kobject *holders_dir;
  
  	/* Exported symbols */
-@@ -1007,4 +1008,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
+@@ -1023,4 +1024,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
  
  #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
  
@@ -3469,7 +3454,7 @@ index 5684e8ce132d..51b903d023a4 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 4490924fe24e..13248f3466f7 100644
+index d2e1b8976c7b..1acef27c43dc 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3497,7 +3482,7 @@ index 4490924fe24e..13248f3466f7 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2828,6 +2832,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -2920,6 +2924,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3509,7 +3494,7 @@ index 4490924fe24e..13248f3466f7 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3400,6 +3409,10 @@ void print_modules(void)
+@@ -3492,6 +3501,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
