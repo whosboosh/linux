@@ -83,7 +83,7 @@
  82 files changed, 2761 insertions(+), 212 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a4736ee87b1a..d9ae82629d28 100644
+index 062ea4adb51d..3b0f61e02a91 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -5874,6 +5874,17 @@
@@ -104,7 +104,7 @@ index a4736ee87b1a..d9ae82629d28 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7135,6 +7146,15 @@
+@@ -7145,6 +7156,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -343,7 +343,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 06a516f6795b..3388908ab170 100644
+index ca327cfa42ae..131e1feb42f4 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1597,6 +1597,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -1850,10 +1850,10 @@ index 7618e9c65d3f..57d6fbeb9345 100644
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
 diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-index a0bcb0864ecd..d5f52a1283f3 100644
+index a798e26c6402..6855c3e7e5b3 100644
 --- a/drivers/message/fusion/mptsas.c
 +++ b/drivers/message/fusion/mptsas.c
-@@ -5380,6 +5380,10 @@ static void mptsas_remove(struct pci_dev *pdev)
+@@ -5378,6 +5378,10 @@ static void mptsas_remove(struct pci_dev *pdev)
  }
  
  static struct pci_device_id mptsas_pci_table[] = {
@@ -1864,7 +1864,7 @@ index a0bcb0864ecd..d5f52a1283f3 100644
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1064,
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068,
-@@ -5392,6 +5396,7 @@ static struct pci_device_id mptsas_pci_table[] = {
+@@ -5390,6 +5394,7 @@ static struct pci_device_id mptsas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1068_820XELP,
  		PCI_ANY_ID, PCI_ANY_ID },
