@@ -1,5 +1,5 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/79abeb16e1e454771e63d274a690d44aecd88b28
- 79abeb16e1e454771e63d274a690d44aecd88b28 Partially revert "crypto: akcipher - Disable signing and decryption"
+https://gitlab.com/cki-project/kernel-ark/-/commit/c936f739740d0101989227b70e318452d0e6ddab
+ c936f739740d0101989227b70e318452d0e6ddab Partially revert "crypto: akcipher - Disable signing and decryption"
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/07024e08378d900be3f9799a4a334350abc89f02
  07024e08378d900be3f9799a4a334350abc89f02 crypto: rng - Ensure stdrng is tested before user-space starts
