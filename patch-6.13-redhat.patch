@@ -10,11 +10,13 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
+ crypto/akcipher.c                                  |   3 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
  crypto/rng.c                                       | 156 +++++-
  crypto/seqiv.c                                     |  15 +-
- crypto/testmgr.c                                   |   4 +-
+ crypto/sig.c                                       |   3 +-
+ crypto/testmgr.c                                   |   6 +-
  drivers/acpi/apei/hest.c                           |   8 +
  drivers/acpi/irq.c                                 |  17 +-
  drivers/acpi/scan.c                                |   9 +
@@ -80,10 +82,10 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 82 files changed, 2761 insertions(+), 212 deletions(-)
+ 84 files changed, 2764 insertions(+), 217 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 14ebd1f4b45e..68125dad22cb 100644
+index dc663c0ca670..9f805c864d30 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -5878,6 +5878,17 @@
@@ -104,7 +106,7 @@ index 14ebd1f4b45e..68125dad22cb 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7149,6 +7160,15 @@
+@@ -7153,6 +7164,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -187,7 +189,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 3be2bda148a9..49cf8ee31eeb 100644
+index 8129de0b214f..ab740bd12c3b 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -242,7 +244,7 @@ index 3be2bda148a9..49cf8ee31eeb 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1867,6 +1896,23 @@ endif
+@@ -1866,6 +1895,23 @@ endif
  
  ifdef CONFIG_MODULES
  
@@ -497,6 +499,20 @@ index f1fea506e20f..d5bc9aaa1131 100644
 +
  	unwind_init();
  }
+ 
+diff --git a/crypto/akcipher.c b/crypto/akcipher.c
+index 72c82d9aa077..da1ac5de8252 100644
+--- a/crypto/akcipher.c
++++ b/crypto/akcipher.c
+@@ -141,8 +141,7 @@ int crypto_register_akcipher(struct akcipher_alg *alg)
+ 
+ 	if (!alg->encrypt)
+ 		alg->encrypt = akcipher_default_op;
+-	if (!alg->decrypt)
+-		alg->decrypt = akcipher_default_op;
++	alg->decrypt = akcipher_default_op;
+ 	if (!alg->set_priv_key)
+ 		alg->set_priv_key = akcipher_default_set_key;
  
 diff --git a/crypto/dh.c b/crypto/dh.c
 index afc0fd847761..e13258c3d1d1 100644
@@ -852,8 +868,22 @@ index 17e11d51ddc3..9c136a3b6267 100644
  	inst->alg.exit = aead_exit_geniv;
  
  	inst->alg.base.cra_ctxsize = sizeof(struct aead_geniv_ctx);
+diff --git a/crypto/sig.c b/crypto/sig.c
+index 5e1f1f739da2..3fc9fffa718e 100644
+--- a/crypto/sig.c
++++ b/crypto/sig.c
+@@ -108,8 +108,7 @@ static int sig_prepare_alg(struct sig_alg *alg)
+ {
+ 	struct crypto_alg *base = &alg->base;
+ 
+-	if (!alg->sign)
+-		alg->sign = sig_default_sign;
++	alg->sign = sig_default_sign;
+ 	if (!alg->verify)
+ 		alg->verify = sig_default_verify;
+ 	if (!alg->set_priv_key)
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 3fc908bac21a..c0a81a27bd1b 100644
+index 3fc908bac21a..84baaeba1623 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
 @@ -4200,7 +4200,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
@@ -865,6 +895,15 @@ index 3fc908bac21a..c0a81a27bd1b 100644
  		err = 0;
  		goto free_all;
  	}
+@@ -4336,7 +4336,7 @@ static int test_sig_one(struct crypto_sig *tfm, const struct sig_testvec *vecs)
+ 	 * Don't invoke sign test (which requires a private key)
+ 	 * for vectors with only a public key.
+ 	 */
+-	if (vecs->public_key_vec)
++	if (1 || vecs->public_key_vec)
+ 		return 0;
+ 
+ 	sig_size = crypto_sig_keysize(tfm);
 @@ -5180,14 +5180,12 @@ static const struct alg_test_desc alg_test_descs[] = {
  	}, {
  		.alg = "ecdh-nist-p256",
@@ -1810,7 +1849,7 @@ index 2168b6cd7167..5d7cda175a0c 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 7618e9c65d3f..57d6fbeb9345 100644
+index 9bc0c74cca3c..c0700ba9f826 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -3454,7 +3493,7 @@ index 5684e8ce132d..51b903d023a4 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index d2e1b8976c7b..1acef27c43dc 100644
+index 5399c182b3cb..c49742fe108d 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3466,7 +3505,7 @@ index d2e1b8976c7b..1acef27c43dc 100644
  /*
   * Mutex protects:
   * 1) List of modules (also safely readable with preempt_disable),
-@@ -530,6 +532,7 @@ static struct module_attribute modinfo_##field = {                    \
+@@ -562,6 +564,7 @@ static struct module_attribute modinfo_##field = {                    \
  
  MODINFO_ATTR(version);
  MODINFO_ATTR(srcversion);
@@ -3474,7 +3513,7 @@ index d2e1b8976c7b..1acef27c43dc 100644
  
  static struct {
  	char name[MODULE_NAME_LEN + 1];
-@@ -982,6 +985,7 @@ struct module_attribute *modinfo_attrs[] = {
+@@ -1014,6 +1017,7 @@ struct module_attribute *modinfo_attrs[] = {
  	&module_uevent,
  	&modinfo_version,
  	&modinfo_srcversion,
@@ -3482,7 +3521,7 @@ index d2e1b8976c7b..1acef27c43dc 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -2920,6 +2924,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -3195,6 +3199,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3494,7 +3533,7 @@ index d2e1b8976c7b..1acef27c43dc 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3492,6 +3501,10 @@ void print_modules(void)
+@@ -3767,6 +3776,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
