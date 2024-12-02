@@ -189,7 +189,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 8129de0b214f..ab740bd12c3b 100644
+index 93ab62cef244..2b641eb228b0 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -211,7 +211,7 @@ index 8129de0b214f..ab740bd12c3b 100644
  # We are using a recursive build, so we need to do a little thinking
  # to get the ordering right.
  #
-@@ -333,6 +345,17 @@ ifneq ($(filter install,$(MAKECMDGOALS)),)
+@@ -358,6 +370,17 @@ ifneq ($(filter install,$(MAKECMDGOALS)),)
      endif
  endif
  
@@ -229,7 +229,7 @@ index 8129de0b214f..ab740bd12c3b 100644
  ifdef mixed-build
  # ===========================================================================
  # We're called with mixed targets (*config and build targets).
-@@ -1259,7 +1282,13 @@ define filechk_version.h
+@@ -1311,7 +1334,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -244,7 +244,7 @@ index 8129de0b214f..ab740bd12c3b 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1866,6 +1895,23 @@ endif
+@@ -1910,6 +1939,23 @@ endif
  
  ifdef CONFIG_MODULES
  
@@ -265,7 +265,7 @@ index 8129de0b214f..ab740bd12c3b 100644
 +
 +PHONY += prepare_after_cross scripts_build
 +
- $(MODORDER): $(build-dir)
+ modules.order: $(build-dir)
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
@@ -285,10 +285,10 @@ index 202397be76d8..3d4ba33d4305 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index d743737bf9ce..216aa1980146 100644
+index 100570a048c5..0a5bf6abb927 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1387,7 +1387,7 @@ endchoice
+@@ -1397,7 +1397,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -345,7 +345,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index ca327cfa42ae..131e1feb42f4 100644
+index a5c28975c608..93ca6c869b90 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1597,6 +1597,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -1606,7 +1606,7 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 66d44a404ad0..d4383c2d7d1a 100644
+index dd8c74f893db..f2d1fb1b7645 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
 @@ -10,6 +10,7 @@
@@ -1966,7 +1966,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 1a8d32a4a5c3..822bab66d10a 100644
+index 40e7be3b0339..a1a6d9e45056 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2036,7 +2036,7 @@ index 1a8d32a4a5c3..822bab66d10a 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index f04cfe3fb936..a0ae2094f378 100644
+index a85d190942bd..b974ea81b62c 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -2072,7 +2072,7 @@ index f04cfe3fb936..a0ae2094f378 100644
  
  	spin_lock_irqsave(&ns->head->requeue_lock, flags);
  	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -1032,8 +1038,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+@@ -1039,8 +1045,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  	int error = 0;
  
  	/* check if multipath is enabled and we have the capability */
@@ -2083,7 +2083,7 @@ index f04cfe3fb936..a0ae2094f378 100644
  
  	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 900719c4c70c..ccdcedfb458b 100644
+index 611b02c8a8b3..bd165f2afd7d 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
 @@ -948,6 +948,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
@@ -2654,7 +2654,7 @@ index eb2937599cb0..7860721ef2f6 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 2a9386cbdf85..6483b6961f7f 100644
+index c60ee39cb9b1..5309daef5dcf 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -426,6 +426,7 @@ struct module {
@@ -4575,10 +4575,10 @@ index 000000000000..84e22b1730cc
 +}
 +late_initcall(__add_rh_flag);
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 107393a8c48a..5e413a017b9a 100644
+index 0584cbcdbd2d..c1bbb30303e3 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
-@@ -26,6 +26,7 @@
+@@ -27,6 +27,7 @@
  #include <xalloc.h>
  #include "modpost.h"
  #include "../../include/linux/license.h"
@@ -4586,7 +4586,7 @@ index 107393a8c48a..5e413a017b9a 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1915,6 +1916,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1902,6 +1903,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4599,16 +4599,16 @@ index 107393a8c48a..5e413a017b9a 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -1975,6 +1982,7 @@ static void write_mod_c_file(struct module *mod)
- 	add_depends(&buf, mod);
- 	add_moddevtable(&buf, mod);
+@@ -1970,6 +1977,7 @@ static void write_mod_c_file(struct module *mod)
+ 	}
+ 
  	add_srcversion(&buf, mod);
 +	add_rhelversion(&buf, mod);
  
  	ret = snprintf(fname, sizeof(fname), "%s.mod.c", mod->name);
  	if (ret >= sizeof(fname)) {
 diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 0d01c1cafb70..8b8b52bdb841 100755
+index b21236377998..f2f257bc1bfd 100755
 --- a/scripts/tags.sh
 +++ b/scripts/tags.sh
 @@ -16,6 +16,8 @@ fi
