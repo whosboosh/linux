@@ -10,6 +10,7 @@
  arch/s390/kernel/setup.c                           |   4 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
+ arch/x86/tools/insn_decoder_test.c                 |   2 +-
  crypto/akcipher.c                                  |   3 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
@@ -82,7 +83,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 84 files changed, 2764 insertions(+), 217 deletions(-)
+ 85 files changed, 2765 insertions(+), 218 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index dc663c0ca670..9f805c864d30 100644
@@ -500,6 +501,19 @@ index f1fea506e20f..d5bc9aaa1131 100644
  	unwind_init();
  }
  
+diff --git a/arch/x86/tools/insn_decoder_test.c b/arch/x86/tools/insn_decoder_test.c
+index 472540aeabc2..366e07546344 100644
+--- a/arch/x86/tools/insn_decoder_test.c
++++ b/arch/x86/tools/insn_decoder_test.c
+@@ -106,7 +106,7 @@ static void parse_args(int argc, char **argv)
+ 	}
+ }
+ 
+-#define BUFSIZE 256
++#define BUFSIZE 4096
+ 
+ int main(int argc, char **argv)
+ {
 diff --git a/crypto/akcipher.c b/crypto/akcipher.c
 index 72c82d9aa077..da1ac5de8252 100644
 --- a/crypto/akcipher.c
