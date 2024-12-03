@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/60ca890555955158a61ad24839b8b7abac1babd0
+ 60ca890555955158a61ad24839b8b7abac1babd0 x86/insn_decoder_test: allow longer symbol-names
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/c4589d81040a97b7adb381203b68b893f5df7b1c
  c4589d81040a97b7adb381203b68b893f5df7b1c crypto: sig - Disable signing
 

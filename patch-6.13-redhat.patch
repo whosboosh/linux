@@ -569,7 +569,7 @@ index afc0fd847761..e13258c3d1d1 100644
  	}
  
 diff --git a/crypto/drbg.c b/crypto/drbg.c
-index c323f40bed4f..ce40287abe40 100644
+index f28dfc2511a2..7ddda2ab4d7b 100644
 --- a/crypto/drbg.c
 +++ b/crypto/drbg.c
 @@ -1495,13 +1495,14 @@ static int drbg_generate(struct drbg_state *drbg,
@@ -897,7 +897,7 @@ index 5e1f1f739da2..3fc9fffa718e 100644
  		alg->verify = sig_default_verify;
  	if (!alg->set_priv_key)
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 3fc908bac21a..84baaeba1623 100644
+index 1f5f48ab18c7..00a3810bff51 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
 @@ -4200,7 +4200,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
@@ -1863,7 +1863,7 @@ index 2168b6cd7167..5d7cda175a0c 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 9bc0c74cca3c..c0700ba9f826 100644
+index 599030e1e890..74dd17d516c0 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -1980,7 +1980,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 40e7be3b0339..a1a6d9e45056 100644
+index 52b01a15aad1..83a27a937430 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2668,7 +2668,7 @@ index eb2937599cb0..7860721ef2f6 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index c60ee39cb9b1..5309daef5dcf 100644
+index 94acbacdcdf1..e4e6fc1bd393 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -426,6 +426,7 @@ struct module {
