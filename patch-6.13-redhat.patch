@@ -14,7 +14,7 @@
  crypto/akcipher.c                                  |   3 +-
  crypto/dh.c                                        |  25 +
  crypto/drbg.c                                      |  18 +-
- crypto/rng.c                                       | 156 +++++-
+ crypto/rng.c                                       | 155 +++++-
  crypto/seqiv.c                                     |  15 +-
  crypto/sig.c                                       |   3 +-
  crypto/testmgr.c                                   |   6 +-
@@ -83,7 +83,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 85 files changed, 2765 insertions(+), 218 deletions(-)
+ 85 files changed, 2764 insertions(+), 218 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 3872bc6ec49d..b98a019b0dd0 100644
@@ -624,7 +624,7 @@ index f28dfc2511a2..7ddda2ab4d7b 100644
  
  /*
 diff --git a/crypto/rng.c b/crypto/rng.c
-index 9d8804e46422..2121db692c4d 100644
+index 9d8804e46422..5dcf6fd52a77 100644
 --- a/crypto/rng.c
 +++ b/crypto/rng.c
 @@ -12,10 +12,13 @@
@@ -686,12 +686,12 @@ index 9d8804e46422..2121db692c4d 100644
 -	err = 0;
 +	return 0;
 +}
- 
--unlock:
++
 +int crypto_get_default_rng(void)
 +{
 +	int err;
-+
+ 
+-unlock:
 +	mutex_lock(&crypto_default_rng_lock);
 +	err = crypto_get_rng(&crypto_default_rng);
 +	if (!err)
@@ -739,7 +739,7 @@ index 9d8804e46422..2121db692c4d 100644
  EXPORT_SYMBOL_GPL(crypto_del_default_rng);
  #endif
  
-@@ -217,5 +237,109 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
+@@ -217,5 +237,108 @@ void crypto_unregister_rngs(struct rng_alg *algs, int count)
  }
  EXPORT_SYMBOL_GPL(crypto_unregister_rngs);
  
@@ -794,20 +794,20 @@ index 9d8804e46422..2121db692c4d 100644
 +		i = min_t(size_t, iov_iter_count(iter), sizeof(tmp));
 +		err = crypto_rng_get_bytes(rng, tmp, i);
 +		if (err) {
-+			ret = err;
++			ret = ret ?: err;
 +			break;
 +		}
 +
 +		copied = copy_to_iter(tmp, i, iter);
 +		ret += copied;
-+
-+		if (!iov_iter_count(iter))
++		if (!iov_iter_count(iter) || copied != i)
 +			break;
 +
-+		if (need_resched()) {
++		BUILD_BUG_ON(PAGE_SIZE % sizeof(tmp) != 0);
++		if (ret % PAGE_SIZE == 0) {
 +			if (signal_pending(current))
 +				break;
-+			schedule();
++			cond_resched();
 +		}
 +	}
 +
@@ -816,8 +816,7 @@ index 9d8804e46422..2121db692c4d 100644
 +	else
 +		crypto_put_default_rng();
 +	memzero_explicit(tmp, sizeof(tmp));
-+
-+	return ret;
++	return ret ? ret : -EFAULT;
 +}
 +
 +static const struct random_extrng crypto_devrandom_rng = {
