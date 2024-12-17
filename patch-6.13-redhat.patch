@@ -190,7 +190,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 64c594bd7ad0..0fc23f9db9ca 100644
+index e5b8a8832c0c..8c3c3bb63e30 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -3441,10 +3441,10 @@ index 87866b037fbe..2cec0dc5f15a 100644
  obj-$(CONFIG_MULTIUSER) += groups.o
  obj-$(CONFIG_VHOST_TASK) += vhost_task.o
 diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index a2327c4fdc8b..f28832644e0a 100644
+index da729cbbaeb9..5c2d8301d4f3 100644
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
-@@ -567,7 +567,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
+@@ -571,7 +571,12 @@ void bpf_prog_kallsyms_del_all(struct bpf_prog *fp)
  /* All BPF JIT sysctl knobs here. */
  int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_DEFAULT_ON);
  int bpf_jit_kallsyms __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_DEFAULT_ON);
