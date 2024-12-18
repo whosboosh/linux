@@ -311,7 +311,7 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index edbb52ce3f1e..479cf8a4a576 100644
+index 7d12a1305fc9..569b92def9b7 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
 @@ -2497,3 +2497,8 @@ int ipl_report_free(struct ipl_report *report)
@@ -346,7 +346,7 @@ index a3fea683b227..a3162d93f437 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a5c28975c608..93ca6c869b90 100644
+index 3e9037690814..70735c08dd33 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -1597,6 +1597,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
@@ -2498,10 +2498,10 @@ index a14f6013e316..6c20453fdf76 100644
  
  error_proc:
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index c235a8e4315e..d47f4da38c00 100644
+index f5956474bfde..d8b90cf0948b 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -576,6 +576,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -581,6 +581,9 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  {
  	struct inode *inode;
  	struct erofs_sb_info *sbi = EROFS_SB(sb);
@@ -2511,7 +2511,7 @@ index c235a8e4315e..d47f4da38c00 100644
  	int err;
  
  	sb->s_magic = EROFS_SUPER_MAGIC;
-@@ -687,6 +690,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
+@@ -691,6 +694,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
  		return err;
  
  	erofs_info(sb, "mounted with root inode @ nid %llu.", sbi->root_nid);
