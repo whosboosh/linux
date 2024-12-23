@@ -190,7 +190,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index e5b8a8832c0c..8c3c3bb63e30 100644
+index 5c9b1d2d59b4..4ada11c61aa6 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -1979,7 +1979,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d169a30eb935..a57650116e76 100644
+index a970168a3014..6b5f6ce38e6b 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -4588,7 +4588,7 @@ index 000000000000..84e22b1730cc
 +}
 +late_initcall(__add_rh_flag);
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index fb787a5715f5..d57cf26a676e 100644
+index 94ee49207a45..e1af88a08e5e 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -27,6 +27,7 @@
@@ -4599,7 +4599,7 @@ index fb787a5715f5..d57cf26a676e 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1902,6 +1903,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1903,6 +1904,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4612,7 +4612,7 @@ index fb787a5715f5..d57cf26a676e 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -1970,6 +1977,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -1971,6 +1978,7 @@ static void write_mod_c_file(struct module *mod)
  	}
  
  	add_srcversion(&buf, mod);
