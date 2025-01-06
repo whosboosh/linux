@@ -4171,6 +4171,9 @@ fi\
 #
 #
 %changelog
+* Mon Jan 06 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.13.0-0.rc6.48]
+- Revert "vmstat: disable vmstat_work on vmstat_cpu_down_prep()" (Linus Torvalds)
+
 * Mon Jan 06 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.13.0-0.rc6.48]
 - x86/insn_decoder_test: allow longer symbol-names (David Rheinsberg)
 - kernel.spec: update license field (Scott Weaver)
