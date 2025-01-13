@@ -1,5 +1,5 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/c548ea722124ac82cc33ea4827a464ce57dd2197
- c548ea722124ac82cc33ea4827a464ce57dd2197 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/d14a4a8f42b706f442d4256f0813f3baf357eb42
+ d14a4a8f42b706f442d4256f0813f3baf357eb42 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/4d11b5eee76ec8a293d0dce03f16995e5c94b07b
  4d11b5eee76ec8a293d0dce03f16995e5c94b07b crypto: rng - Fix extrng EFAULT handling
