@@ -2667,7 +2667,7 @@ index eb2937599cb0..7860721ef2f6 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 94acbacdcdf1..e4e6fc1bd393 100644
+index b3a643435357..54c09d4c6f38 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -426,6 +426,7 @@ struct module {
@@ -2678,7 +2678,7 @@ index 94acbacdcdf1..e4e6fc1bd393 100644
  	struct kobject *holders_dir;
  
  	/* Exported symbols */
-@@ -1023,4 +1024,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
+@@ -1024,4 +1025,8 @@ static inline unsigned long find_kallsyms_symbol_value(struct module *mod,
  
  #endif  /* CONFIG_MODULES && CONFIG_KALLSYMS */
  
@@ -4147,7 +4147,7 @@ index 000000000000..bb69e8965748
 +}
 diff --git a/kernel/rh_messages.h b/kernel/rh_messages.h
 new file mode 100644
-index 000000000000..d445a2da4180
+index 000000000000..647d7b9a4fe9
 --- /dev/null
 +++ b/kernel/rh_messages.h
 @@ -0,0 +1,326 @@
@@ -4233,8 +4233,8 @@ index 000000000000..d445a2da4180
 +	"nft_compat",
 +	"nicpf",
 +	"nicvf",
-+	"nvmet-fc",
-+	"nvmet-tcp",
++	"nvmet_fc",
++	"nvmet_tcp",
 +	"team",
 +	0     /* Terminating entry */
 +};
@@ -4419,6 +4419,7 @@ index 000000000000..d445a2da4180
 +	{ 0x15B3, 0x100e, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x15B3, 0x100f, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x15B3, 0x1010, PCI_ANY_ID, PCI_ANY_ID },
++	{ 0x15B3, 0x1025, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x15B3, 0xA2DF, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0064, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0065, PCI_ANY_ID, PCI_ANY_ID },
@@ -4455,7 +4456,6 @@ index 000000000000..d445a2da4180
 +	{ 0x1000, 0x0071, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0073, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0079, PCI_ANY_ID, PCI_ANY_ID },
-+	{ 0x15B3, 0xA2DC, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x006E, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0080, PCI_ANY_ID, PCI_ANY_ID },
 +	{ 0x1000, 0x0081, PCI_ANY_ID, PCI_ANY_ID },
