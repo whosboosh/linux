@@ -21,5 +21,5 @@ source can be built in different build roots (Fedora, CentOS, etc.)
 
 .. _source tree: https://gitlab.com/cki-project/kernel-ark.git
 .. _template: https://gitlab.com/cki-project/kernel-ark/-/blob/os-build/redhat/kernel.spec.template
-.. _documentation: https://gitlab.com/cki-project/kernel-ark/-/wikis/home
+.. _documentation: https://cki-project.gitlab.io/kernel-ark/
 .. _online: https://gitlab.com/cki-project/kernel-ark/-/commits/ark-patches
