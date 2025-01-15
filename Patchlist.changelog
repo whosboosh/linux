@@ -1,5 +1,5 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/1680fa2cb7a4f6e43b1eabafd09d66c2044babe3
- 1680fa2cb7a4f6e43b1eabafd09d66c2044babe3 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/7878c6084cf82543f26875e56d3deae759054d7c
+ 7878c6084cf82543f26875e56d3deae759054d7c x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/86419fda1ef20624ce657c514d0c665b4998f75d
  86419fda1ef20624ce657c514d0c665b4998f75d [redhat] rh_messages.h: driver and device updates
