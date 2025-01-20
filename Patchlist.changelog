@@ -1,5 +1,8 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/631e208299e40305155886f04918f1c4867debf3
- 631e208299e40305155886f04918f1c4867debf3 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/1589f538d0f354dafdca7964f974b67bf59e24ba
+ 1589f538d0f354dafdca7964f974b67bf59e24ba include/linux: Adjust headers for C23
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/a399374bd559b35d6d9b3495b0005f510aa4d8c3
+ a399374bd559b35d6d9b3495b0005f510aa4d8c3 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/86419fda1ef20624ce657c514d0c665b4998f75d
  86419fda1ef20624ce657c514d0c665b4998f75d [redhat] rh_messages.h: driver and device updates
