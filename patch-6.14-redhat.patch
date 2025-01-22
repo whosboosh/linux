@@ -2,12 +2,13 @@
  Documentation/admin-guide/rh-waived-features.rst   |  21 +
  Kconfig                                            |   2 +
  Kconfig.redhat                                     |  23 +
- Makefile                                           |  48 +-
+ Makefile                                           |  50 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
  arch/s390/include/asm/ipl.h                        |   1 +
  arch/s390/kernel/ipl.c                             |   5 +
  arch/s390/kernel/setup.c                           |   4 +
+ arch/x86/boot/compressed/Makefile                  |   1 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
  arch/x86/tools/insn_decoder_test.c                 |   2 +-
@@ -27,6 +28,7 @@
  drivers/char/random.c                              | 126 ++++-
  drivers/firmware/efi/Makefile                      |   1 +
  drivers/firmware/efi/efi.c                         | 124 +++--
+ drivers/firmware/efi/libstub/Makefile              |   2 +-
  drivers/firmware/efi/secureboot.c                  |  38 ++
  drivers/hid/hid-rmi.c                              |  66 ---
  drivers/hwtracing/coresight/coresight-etm4x-core.c |  19 +
@@ -80,19 +82,20 @@
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 326 +++++++++++++
  kernel/rh_waived.c                                 | 104 ++++
+ scripts/Makefile.extrawarn                         |   4 +
  scripts/mod/modpost.c                              |   8 +
  scripts/tags.sh                                    |   2 +
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 88 files changed, 2778 insertions(+), 218 deletions(-)
+ 91 files changed, 2785 insertions(+), 220 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 3872bc6ec49d..b98a019b0dd0 100644
+index 73f2b3b0f4a5..1b8d4e0f25fd 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5883,6 +5883,17 @@
+@@ -6177,6 +6177,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -110,7 +113,7 @@ index 3872bc6ec49d..b98a019b0dd0 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7158,6 +7169,15 @@
+@@ -7461,6 +7472,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -193,7 +196,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index b9464c88ac72..1d97c5162532 100644
+index 6a98b8c6a5f5..dc1c9f4dc64d 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -233,7 +236,7 @@ index b9464c88ac72..1d97c5162532 100644
  ifdef mixed-build
  # ===========================================================================
  # We're called with mixed targets (*config and build targets).
-@@ -1311,7 +1334,13 @@ define filechk_version.h
+@@ -1312,7 +1335,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -248,10 +251,11 @@ index b9464c88ac72..1d97c5162532 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1910,6 +1939,23 @@ endif
+@@ -1911,7 +1940,24 @@ endif
  
  ifdef CONFIG_MODULES
  
+-modules.order: $(build-dir)
 +scripts_build:
 +	$(MAKE) $(build)=scripts/basic
 +	$(MAKE) $(build)=scripts/mod
@@ -269,9 +273,10 @@ index b9464c88ac72..1d97c5162532 100644
 +
 +PHONY += prepare_after_cross scripts_build
 +
- modules.order: $(build-dir)
++$(MODORDER): $(build-dir)
  	@:
  
+ # KBUILD_MODPOST_NOFINAL can be set to skip the final link of modules.
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
 index 202397be76d8..3d4ba33d4305 100644
 --- a/arch/arm/Kconfig
@@ -289,10 +294,10 @@ index 202397be76d8..3d4ba33d4305 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 100570a048c5..0a5bf6abb927 100644
+index 83017757be8e..0f6daefd0d40 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1397,7 +1397,7 @@ endchoice
+@@ -1399,7 +1399,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -314,7 +319,7 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 7d12a1305fc9..569b92def9b7 100644
+index 69be2309cde0..1d85c99be81b 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
 @@ -2497,3 +2497,8 @@ int ipl_report_free(struct ipl_report *report)
@@ -327,7 +332,7 @@ index 7d12a1305fc9..569b92def9b7 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index a3fea683b227..a3162d93f437 100644
+index 0ce550faf073..acd188f28ad3 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -338,7 +343,7 @@ index a3fea683b227..a3162d93f437 100644
  #include <linux/hugetlb.h>
  #include <linux/kmemleak.h>
  
-@@ -910,6 +911,9 @@ void __init setup_arch(char **cmdline_p)
+@@ -902,6 +903,9 @@ void __init setup_arch(char **cmdline_p)
  
  	log_component_list();
  
@@ -348,11 +353,23 @@ index a3fea683b227..a3162d93f437 100644
  	/* Have one command line that is parsed and saved in /proc/cmdline */
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index f2051644de94..606c74f27459 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -25,6 +25,7 @@ targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
+ # avoid errors with '-march=i386', and future flags may depend on the target to
+ # be valid.
+ KBUILD_CFLAGS := -m$(BITS) -O2 $(CLANG_FLAGS)
++KBUILD_CFLAGS += -std=gnu11
+ KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
+ KBUILD_CFLAGS += -Wundef
+ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 3e9037690814..70735c08dd33 100644
+index 7cce91b19fb2..82bfcf5c2092 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -1597,6 +1597,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+@@ -1599,6 +1599,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
  		get_cpu_vendor(c);
  		intel_unlock_cpuid_leafs(c);
  		get_cpu_cap(c);
@@ -1475,6 +1492,19 @@ index 60c64b81d2c3..19cb19cf67d4 100644
  }
  EXPORT_SYMBOL_GPL(efi_status_to_err);
  
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index ed4e8ddbe76a..1141cd06011f 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -11,7 +11,7 @@ cflags-y			:= $(KBUILD_CFLAGS)
+ 
+ cflags-$(CONFIG_X86_32)		:= -march=i386
+ cflags-$(CONFIG_X86_64)		:= -mcmodel=small
+-cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ \
++cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 \
+ 				   -fPIC -fno-strict-aliasing -mno-red-zone \
+ 				   -mno-mmx -mno-sse -fshort-wchar \
+ 				   -Wno-pointer-sign \
 diff --git a/drivers/firmware/efi/secureboot.c b/drivers/firmware/efi/secureboot.c
 new file mode 100644
 index 000000000000..de0a3714a5d4
@@ -1982,7 +2012,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index a970168a3014..6b5f6ce38e6b 100644
+index 76b615d4d5b9..9a7eb4400908 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2099,7 +2129,7 @@ index a85d190942bd..b974ea81b62c 100644
  
  	/* initialize this in the identify path to cover controller resets */
 diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index c4bb8dfe1a45..a17435a61ed3 100644
+index 7be92d07430e..24f466155cd5 100644
 --- a/drivers/nvme/host/nvme.h
 +++ b/drivers/nvme/host/nvme.h
 @@ -953,6 +953,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
@@ -2121,7 +2151,7 @@ index c4bb8dfe1a45..a17435a61ed3 100644
  {
  }
 diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 35270172c833..60b0af30d2bf 100644
+index f57ea36d125d..eee8838fb9d4 100644
 --- a/drivers/pci/pci-driver.c
 +++ b/drivers/pci/pci-driver.c
 @@ -19,6 +19,7 @@
@@ -2323,10 +2353,10 @@ index 0b1616e93cf4..85fc52038a82 100644
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
 diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 50f1dcb6d584..993652508fbb 100644
+index 49abd7dd75a7..4d5cf20cde98 100644
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -149,6 +149,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
+@@ -148,6 +148,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
   */
  static struct pci_device_id megasas_pci_table[] = {
  
@@ -2334,7 +2364,7 @@ index 50f1dcb6d584..993652508fbb 100644
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1064R)},
  	/* xscale IOP */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078R)},
-@@ -157,16 +158,19 @@ static struct pci_device_id megasas_pci_table[] = {
+@@ -156,16 +157,19 @@ static struct pci_device_id megasas_pci_table[] = {
  	/* ppc IOP */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078GEN2)},
  	/* gen2*/
@@ -2355,10 +2385,10 @@ index 50f1dcb6d584..993652508fbb 100644
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index f2a55aa5fe65..8f4a054ae99f 100644
+index 9599d7a50028..f21ef8442db2 100644
 --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
 +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -12567,6 +12567,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
+@@ -12566,6 +12566,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
   * The pci device ids are defined in mpi/mpi2_cnfg.h.
   */
  static const struct pci_device_id mpt3sas_pci_table[] = {
@@ -2366,7 +2396,7 @@ index f2a55aa5fe65..8f4a054ae99f 100644
  	/* Spitfire ~ 2004 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2004,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12585,6 +12586,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12584,6 +12585,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2116_2,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2374,7 +2404,7 @@ index f2a55aa5fe65..8f4a054ae99f 100644
  	/* Thunderbolt ~ 2208 */
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2208_1,
  		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12609,9 +12611,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
+@@ -12608,9 +12610,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -2387,7 +2417,7 @@ index f2a55aa5fe65..8f4a054ae99f 100644
  	{ MPI2_MFGPAGE_VENDORID_LSI, MPI25_MFGPAGE_DEVID_SAS3004,
  		PCI_ANY_ID, PCI_ANY_ID },
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 7ab717ed7232..57beb0953df8 100644
+index 31535beaaa16..c617a5ce0a7b 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
 +++ b/drivers/scsi/qla2xxx/qla_os.c
 @@ -8117,6 +8117,7 @@ static const struct pci_error_handlers qla2xxx_err_handler = {
@@ -2438,7 +2468,7 @@ index d91f54a6e752..0b76e1bf20b7 100644
  };
  MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 8947dab132d7..dbf6d414fd4e 100644
+index 950d8c9fb884..be7b84fb780b 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
@@ -2456,7 +2486,7 @@ index 8947dab132d7..dbf6d414fd4e 100644
  static void sd_set_flush_flag(struct scsi_disk *sdkp,
  		struct queue_limits *lim)
  {
-@@ -4377,6 +4385,11 @@ static int __init init_sd(void)
+@@ -4371,6 +4379,11 @@ static int __init init_sd(void)
  		goto err_out_class;
  	}
  
@@ -2487,7 +2517,7 @@ index 21ac9b464696..24a92295bd8d 100644
  	 * disconnected while waiting for the lock to succeed. */
  	usb_lock_device(hdev);
 diff --git a/fs/afs/main.c b/fs/afs/main.c
-index a14f6013e316..6c20453fdf76 100644
+index 1ae0067f772d..e93f47237a91 100644
 --- a/fs/afs/main.c
 +++ b/fs/afs/main.c
 @@ -199,6 +199,9 @@ static int __init afs_init(void)
@@ -2657,10 +2687,10 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index eb2937599cb0..7860721ef2f6 100644
+index e2f1ce37c41e..2b0c2fadd8e2 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -444,6 +444,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
+@@ -443,6 +443,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
  #endif /* CONFIG_BPF_SYSCALL */
  
  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
@@ -3395,18 +3425,18 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index cbdba435b798..c5c300c4f90b 100644
+index 980b6c207cad..f5fd068977e3 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -562,6 +562,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+@@ -574,6 +574,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+ int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp);
  int security_locked_down(enum lockdown_reason what);
 +int security_lock_kernel_down(const char *where, enum lockdown_reason level);
  int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
  		      void *val, size_t val_len, u64 id, u64 flags);
  int security_bdev_alloc(struct block_device *bdev);
-@@ -1569,6 +1570,10 @@ static inline int security_locked_down(enum lockdown_reason what)
+@@ -1580,6 +1581,10 @@ static inline int security_locked_down(enum lockdown_reason what)
  {
  	return 0;
  }
@@ -3471,10 +3501,10 @@ index 2d7b9ae8714c..f62dca96c7f1 100644
  typedef __kernel_uid32_t	uid_t;
  typedef __kernel_gid32_t	gid_t;
 diff --git a/init/main.c b/init/main.c
-index 00fac1170294..17ff0814a8d1 100644
+index 893cb77aef22..feb8169b889f 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1181,6 +1181,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1182,6 +1182,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
@@ -4643,6 +4673,28 @@ index 000000000000..84e22b1730cc
 +	return 0;
 +}
 +late_initcall(__add_rh_flag);
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 1d13cecc7cc7..3d86530b4483 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -19,6 +19,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning,frame-address,)
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += -Wmissing-declarations
+ KBUILD_CFLAGS += -Wmissing-prototypes
++KBUILD_CFLAGS += -Wno-error=unterminated-string-initialization
+ 
+ ifneq ($(CONFIG_FRAME_WARN),0)
+ KBUILD_CFLAGS += -Wframe-larger-than=$(CONFIG_FRAME_WARN)
+@@ -77,6 +78,9 @@ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
+ # Warn if there is an enum types mismatch
+ KBUILD_CFLAGS += $(call cc-option,-Wenum-conversion)
+ 
++# Explicitly clear padding bits during variable initialization
++KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
++
+ KBUILD_CFLAGS += -Wextra
+ KBUILD_CFLAGS += -Wunused
+ 
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
 index 7ea59dc4926b..1cea58bf300d 100644
 --- a/scripts/mod/modpost.c
@@ -4677,7 +4729,7 @@ index 7ea59dc4926b..1cea58bf300d 100644
  	ret = snprintf(fname, sizeof(fname), "%s.mod.c", mod->name);
  	if (ret >= sizeof(fname)) {
 diff --git a/scripts/tags.sh b/scripts/tags.sh
-index b21236377998..f2f257bc1bfd 100755
+index 7939aea731f1..6d0014e78b61 100755
 --- a/scripts/tags.sh
 +++ b/scripts/tags.sh
 @@ -16,6 +16,8 @@ fi
@@ -4738,7 +4790,7 @@ index e84ddf484010..d0501353a4b9 100644
  	prompt "Kernel default lockdown mode"
  	default LOCK_DOWN_KERNEL_FORCE_NONE
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index f2bdbd55aa2b..ddf496f7fca5 100644
+index cf83afa1d879..b5ebef58b0cb 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
 @@ -74,6 +74,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
@@ -4750,10 +4802,10 @@ index f2bdbd55aa2b..ddf496f7fca5 100644
  
  static const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 09664e09fec9..a2bbb9b3ad2e 100644
+index 39df4451455b..d1e98513a15b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5798,6 +5798,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5791,6 +5791,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
