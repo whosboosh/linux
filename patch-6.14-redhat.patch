@@ -4824,3 +4824,33 @@ index 39df4451455b..d1e98513a15b 100644
  /**
   * security_bdev_alloc() - Allocate a block device LSM blob
   * @bdev: block device
+From f5d07781f06dafc7108274ddf996e39f6de4e062 Mon Sep 17 00:00:00 2001
+From: Scott Weaver <scweaver@redhat.com>
+Date: Wed, 22 Jan 2025 13:25:18 -0500
+Subject: [PATCH] redhat: fix modules.order target
+
+It appears that the patch 2007f4e00d6da ('redhat: workaround CKI cross
+compilation for scripts') didn't get applied as intended in the rebase
+following the release of v6.13.
+
+Signed-off-by: Scott Weaver <scweaver@redhat.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index dc1c9f4dc64d1..1824120db668b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1957,7 +1957,7 @@ prepare_after_cross:
+ 
+ PHONY += prepare_after_cross scripts_build
+ 
+-$(MODORDER): $(build-dir)
++modules.order: $(build-dir)
+ 	@:
+ 
+ # KBUILD_MODPOST_NOFINAL can be set to skip the final link of modules.
+-- 
+GitLab
+
