@@ -1,20 +1,23 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/88f9b5b17cb34209ba8dcc024ed7ba3e9cff4e48
- 88f9b5b17cb34209ba8dcc024ed7ba3e9cff4e48 kbuild: Use -fzero-init-padding-bits=all
+https://gitlab.com/cki-project/kernel-ark/-/commit/2b9bfb4a17365969edd45e66e71f44918b120083
+ 2b9bfb4a17365969edd45e66e71f44918b120083 redhat: fix modules.order target
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/ea85f18af30b9f876da791cd19a0b2264cec39a7
- ea85f18af30b9f876da791cd19a0b2264cec39a7 efi: libstub: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/e46a2c036a7c43c7f530698270b4ab90d224d34a
+ e46a2c036a7c43c7f530698270b4ab90d224d34a apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/ef03b987062a0d5b398f154d7062d40f4aae8d6a
- ef03b987062a0d5b398f154d7062d40f4aae8d6a apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/316e55ac2b28d0975ab1e450a3e2ba74e95113fd
+ 316e55ac2b28d0975ab1e450a3e2ba74e95113fd efi: libstub: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/8edd9b1fc7c19cf858f65cb3823e120ad9f5e4ac
- 8edd9b1fc7c19cf858f65cb3823e120ad9f5e4ac x86/boot: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/fe5bb7b4a04f64365f66f3914b1dfe26a290e89c
+ fe5bb7b4a04f64365f66f3914b1dfe26a290e89c x86/boot: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/5f5e057db725c37b526905fffc5c77eeb1f9e753
- 5f5e057db725c37b526905fffc5c77eeb1f9e753 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/37c5bad94d0d9d6bee79a47e60afcc475d8dc1ab
+ 37c5bad94d0d9d6bee79a47e60afcc475d8dc1ab kbuild: Use -fzero-init-padding-bits=all
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/269db71ce873a63cdacbe8a48b9967d5ef9ef3ee
- 269db71ce873a63cdacbe8a48b9967d5ef9ef3ee x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/cd7fb64101b9f5a7b107bafc32d80fee91f62779
+ cd7fb64101b9f5a7b107bafc32d80fee91f62779 include/linux: Adjust headers for C23
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/dd524efdf9c58c7fdb7c52ddbfc41ddbc0498d65
+ dd524efdf9c58c7fdb7c52ddbfc41ddbc0498d65 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/b8920e37d1e4c5fdbe8b990b829f79dd84e2ccf8
  b8920e37d1e4c5fdbe8b990b829f79dd84e2ccf8 [redhat] rh_messages.h: driver and device updates

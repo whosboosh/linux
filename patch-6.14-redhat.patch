@@ -2,7 +2,7 @@
  Documentation/admin-guide/rh-waived-features.rst   |  21 +
  Kconfig                                            |   2 +
  Kconfig.redhat                                     |  23 +
- Makefile                                           |  50 +-
+ Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
  arch/s390/include/asm/ipl.h                        |   1 +
@@ -82,14 +82,14 @@
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 326 +++++++++++++
  kernel/rh_waived.c                                 | 104 ++++
- scripts/Makefile.extrawarn                         |   4 +
+ scripts/Makefile.extrawarn                         |   7 +
  scripts/mod/modpost.c                              |   8 +
  scripts/tags.sh                                    |   2 +
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 91 files changed, 2785 insertions(+), 220 deletions(-)
+ 91 files changed, 2787 insertions(+), 219 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index 73f2b3b0f4a5..1b8d4e0f25fd 100644
@@ -196,7 +196,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 6a98b8c6a5f5..dc1c9f4dc64d 100644
+index 4117cc79748b..d7d71590ecd6 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -251,11 +251,10 @@ index 6a98b8c6a5f5..dc1c9f4dc64d 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1911,7 +1940,24 @@ endif
+@@ -1915,6 +1944,23 @@ endif
  
  ifdef CONFIG_MODULES
  
--modules.order: $(build-dir)
 +scripts_build:
 +	$(MAKE) $(build)=scripts/basic
 +	$(MAKE) $(build)=scripts/mod
@@ -273,15 +272,14 @@ index 6a98b8c6a5f5..dc1c9f4dc64d 100644
 +
 +PHONY += prepare_after_cross scripts_build
 +
-+$(MODORDER): $(build-dir)
+ modules.order: $(build-dir)
  	@:
  
- # KBUILD_MODPOST_NOFINAL can be set to skip the final link of modules.
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 202397be76d8..3d4ba33d4305 100644
+index 3ad4c3c97918..048b45e20fdb 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1228,9 +1228,9 @@ config HIGHMEM
+@@ -1230,9 +1230,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -294,10 +292,10 @@ index 202397be76d8..3d4ba33d4305 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 83017757be8e..0f6daefd0d40 100644
+index fcdd0ed3eca8..6ba03b3dc723 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1399,7 +1399,7 @@ endchoice
+@@ -1401,7 +1401,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -1015,10 +1013,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 74dcccdc6482..d6265ddc87ef 100644
+index 93d340027b7f..8fb1aa0cd3b6 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1802,6 +1802,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1800,6 +1800,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1090,7 +1088,7 @@ index bbf7029e224b..cf7faa970dd6 100644
  		dmi_decode_ipmi((const struct dmi_header *) dev->device_data);
  
 diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index e12b531f5c2f..082707f8dff8 100644
+index 1e5313748f8b..f2a56c624f54 100644
 --- a/drivers/char/ipmi/ipmi_msghandler.c
 +++ b/drivers/char/ipmi/ipmi_msghandler.c
 @@ -35,6 +35,7 @@
@@ -1101,7 +1099,7 @@ index e12b531f5c2f..082707f8dff8 100644
  #include <linux/delay.h>
  
  #define IPMI_DRIVER_VERSION "39.2"
-@@ -5510,8 +5511,21 @@ static int __init ipmi_init_msghandler_mod(void)
+@@ -5508,8 +5509,21 @@ static int __init ipmi_init_msghandler_mod(void)
  {
  	int rv;
  
@@ -2558,10 +2556,10 @@ index f5956474bfde..d8b90cf0948b 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 785809f33ff4..bbb10ab8e7af 100644
+index fdf4817a7dbc..98087c08f3d9 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5638,6 +5638,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5627,6 +5627,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
@@ -2750,10 +2748,10 @@ index 54d90b6c5f47..cc5def6f2b2e 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index db9b47ce3eef..2522d95fec6e 100644
+index 414ee5fff66b..38d68e735d78 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1614,6 +1614,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1628,6 +1628,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -2761,7 +2759,7 @@ index db9b47ce3eef..2522d95fec6e 100644
  int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
  		    int pass);
  
-@@ -2679,6 +2680,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+@@ -2693,6 +2694,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
  	return false;
  }
  
@@ -3544,7 +3542,7 @@ index da729cbbaeb9..5c2d8301d4f3 100644
  long bpf_jit_limit_max __read_mostly;
  
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 5684e8ce132d..51b903d023a4 100644
+index 0daf098e3207..704c5215561f 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3579,7 +3577,7 @@ index 5684e8ce132d..51b903d023a4 100644
  int sysctl_unprivileged_bpf_disabled __read_mostly =
  	IS_BUILTIN(CONFIG_BPF_UNPRIV_DEFAULT_OFF) ? 2 : 0;
  
-@@ -6115,6 +6133,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
+@@ -6119,6 +6137,11 @@ static int bpf_unpriv_handler(const struct ctl_table *table, int write,
  	if (write && !ret) {
  		if (locked_state && unpriv_enable != 1)
  			return -EPERM;
@@ -4674,18 +4672,21 @@ index 000000000000..84e22b1730cc
 +}
 +late_initcall(__add_rh_flag);
 diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index 1d13cecc7cc7..3d86530b4483 100644
+index 1d13cecc7cc7..1433ae2e9e44 100644
 --- a/scripts/Makefile.extrawarn
 +++ b/scripts/Makefile.extrawarn
-@@ -19,6 +19,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning,frame-address,)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+@@ -20,6 +20,10 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
  KBUILD_CFLAGS += -Wmissing-declarations
  KBUILD_CFLAGS += -Wmissing-prototypes
-+KBUILD_CFLAGS += -Wno-error=unterminated-string-initialization
  
++# temporarily disable a warning to allow compiling with gcc15, as suggested by
++# Jakub Jelinek in https://bugzilla.redhat.com/show_bug.cgi?id=2338533#c7
++KBUILD_CFLAGS += $(call cc-option,-Wno-error=unterminated-string-initialization)
++
  ifneq ($(CONFIG_FRAME_WARN),0)
  KBUILD_CFLAGS += -Wframe-larger-than=$(CONFIG_FRAME_WARN)
-@@ -77,6 +78,9 @@ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
+ endif
+@@ -77,6 +81,9 @@ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
  # Warn if there is an enum types mismatch
  KBUILD_CFLAGS += $(call cc-option,-Wenum-conversion)
  
@@ -4802,10 +4803,10 @@ index cf83afa1d879..b5ebef58b0cb 100644
  
  static const struct lsm_id lockdown_lsmid = {
 diff --git a/security/security.c b/security/security.c
-index 39df4451455b..d1e98513a15b 100644
+index 143561ebc3e8..2118f1d908ce 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -5791,6 +5791,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -5801,6 +5801,18 @@ int security_locked_down(enum lockdown_reason what)
  }
  EXPORT_SYMBOL(security_locked_down);
  
@@ -4824,33 +4825,3 @@ index 39df4451455b..d1e98513a15b 100644
  /**
   * security_bdev_alloc() - Allocate a block device LSM blob
   * @bdev: block device
-From f5d07781f06dafc7108274ddf996e39f6de4e062 Mon Sep 17 00:00:00 2001
-From: Scott Weaver <scweaver@redhat.com>
-Date: Wed, 22 Jan 2025 13:25:18 -0500
-Subject: [PATCH] redhat: fix modules.order target
-
-It appears that the patch 2007f4e00d6da ('redhat: workaround CKI cross
-compilation for scripts') didn't get applied as intended in the rebase
-following the release of v6.13.
-
-Signed-off-by: Scott Weaver <scweaver@redhat.com>
----
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Makefile b/Makefile
-index dc1c9f4dc64d1..1824120db668b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1957,7 +1957,7 @@ prepare_after_cross:
- 
- PHONY += prepare_after_cross scripts_build
- 
--$(MODORDER): $(build-dir)
-+modules.order: $(build-dir)
- 	@:
- 
- # KBUILD_MODPOST_NOFINAL can be set to skip the final link of modules.
--- 
-GitLab
-
