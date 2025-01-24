@@ -92,7 +92,7 @@
  91 files changed, 2787 insertions(+), 219 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 73f2b3b0f4a5..1b8d4e0f25fd 100644
+index 8fbb481db515..e024e6a4c205 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -6177,6 +6177,17 @@
@@ -113,7 +113,7 @@ index 73f2b3b0f4a5..1b8d4e0f25fd 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7461,6 +7472,15 @@
+@@ -7469,6 +7480,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -2556,10 +2556,10 @@ index f5956474bfde..d8b90cf0948b 100644
  }
  
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index fdf4817a7dbc..98087c08f3d9 100644
+index a50e5c31b937..afddbfa816f9 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -5627,6 +5627,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+@@ -5630,6 +5630,17 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  	atomic_set(&sbi->s_warning_count, 0);
  	atomic_set(&sbi->s_msg_count, 0);
  
