@@ -162,13 +162,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.14.0
 %define specversion 6.14.0
 %define patchversion 6.14
-%define pkgrelease 0.rc0.20250127gitaa22f4da2a46.7
+%define pkgrelease 0.rc0.20250127git9c5968db9e62.8
 %define kversion 6
-%define tarfile_release 6.13-7632-gaa22f4da2a46
+%define tarfile_release 6.13-8265-g9c5968db9e62
 # This is needed to do merge window version magic
 %define patchlevel 14
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 0.rc0.20250127gitaa22f4da2a46.7%{?buildid}%{?dist}
+%define specrelease 0.rc0.20250127git9c5968db9e62.8%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.14.0
 
@@ -4173,13 +4173,17 @@ fi\
 #
 #
 %changelog
-* Mon Jan 27 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-0.rc0.aa22f4da2a46.7]
+* Mon Jan 27 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-0.rc0.9c5968db9e62.8]
+- s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS (Nathan Chancellor)
 - apply -Wno-error=unterminated-string-initialization temporarily (Thorsten Leemhuis)
 - x86/boot: Use '-std=gnu11' to fix build with GCC 15 (Nathan Chancellor)
 - kbuild: Use -fzero-init-padding-bits=all (Kees Cook)
 - include/linux: Adjust headers for C23 (Jakub Jelinek)
 - x86/insn_decoder_test: allow longer symbol-names (David Rheinsberg)
 - kernel.spec: update license field (Scott Weaver)
+
+* Mon Jan 27 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-0.rc0.9c5968db9e62.7]
+- Linux v6.14.0-0.rc0.9c5968db9e62
 
 * Mon Jan 27 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-0.rc0.aa22f4da2a46.6]
 - redhat/configs: automotive: set CONFIG_TIMEOUT_PANIC (Enric Balletbo i Serra)

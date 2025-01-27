@@ -1,17 +1,20 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/74cf094db508289a09518e78240feabc79062a7b
- 74cf094db508289a09518e78240feabc79062a7b apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/b2d8090725c2bfe5ae87615c6297c08ca98b1ee5
+ b2d8090725c2bfe5ae87615c6297c08ca98b1ee5 s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/1aadbda5efc5823ecdbb074703e41f2a0ef62117
- 1aadbda5efc5823ecdbb074703e41f2a0ef62117 x86/boot: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/2f2fcc44d590a705f6d12e12f48961a21966bc8b
+ 2f2fcc44d590a705f6d12e12f48961a21966bc8b apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/1deb319796e2bd2eb575a68ac3d383c2e192f387
- 1deb319796e2bd2eb575a68ac3d383c2e192f387 kbuild: Use -fzero-init-padding-bits=all
+https://gitlab.com/cki-project/kernel-ark/-/commit/9376a4134493c2049c06dd7e64abf6bd5a26f750
+ 9376a4134493c2049c06dd7e64abf6bd5a26f750 x86/boot: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/70293980e8b18de088108e96b0b8805fbfda107b
- 70293980e8b18de088108e96b0b8805fbfda107b include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/2ceabe4412dd3c6da84189890ef9f2272f9fea8e
+ 2ceabe4412dd3c6da84189890ef9f2272f9fea8e kbuild: Use -fzero-init-padding-bits=all
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/a49145fef42c37733bdd2cd4d287e390b30f39d4
- a49145fef42c37733bdd2cd4d287e390b30f39d4 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/f4eb7281c5974c0f3046308a21583cb45235841b
+ f4eb7281c5974c0f3046308a21583cb45235841b include/linux: Adjust headers for C23
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/6ff3991d2fd88d21f21c24d3cdbe231d337a21a8
+ 6ff3991d2fd88d21f21c24d3cdbe231d337a21a8 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target
