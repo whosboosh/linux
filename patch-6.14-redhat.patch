@@ -28,7 +28,6 @@
  drivers/char/random.c                              | 126 ++++-
  drivers/firmware/efi/Makefile                      |   1 +
  drivers/firmware/efi/efi.c                         | 124 +++--
- drivers/firmware/efi/libstub/Makefile              |   2 +-
  drivers/firmware/efi/secureboot.c                  |  38 ++
  drivers/hid/hid-rmi.c                              |  66 ---
  drivers/hwtracing/coresight/coresight-etm4x-core.c |  19 +
@@ -89,10 +88,10 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 91 files changed, 2787 insertions(+), 219 deletions(-)
+ 90 files changed, 2786 insertions(+), 218 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 8fbb481db515..e024e6a4c205 100644
+index f4183bb8d66e..f5fc1823cbe0 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -6177,6 +6177,17 @@
@@ -900,10 +899,10 @@ index 17e11d51ddc3..9c136a3b6267 100644
  
  	inst->alg.base.cra_ctxsize = sizeof(struct aead_geniv_ctx);
 diff --git a/crypto/sig.c b/crypto/sig.c
-index 5e1f1f739da2..3fc9fffa718e 100644
+index dfc7cae90802..2a58d726149d 100644
 --- a/crypto/sig.c
 +++ b/crypto/sig.c
-@@ -108,8 +108,7 @@ static int sig_prepare_alg(struct sig_alg *alg)
+@@ -106,8 +106,7 @@ static int sig_prepare_alg(struct sig_alg *alg)
  {
  	struct crypto_alg *base = &alg->base;
  
@@ -914,10 +913,10 @@ index 5e1f1f739da2..3fc9fffa718e 100644
  		alg->verify = sig_default_verify;
  	if (!alg->set_priv_key)
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 1f5f48ab18c7..00a3810bff51 100644
+index e61490ba4095..d24a50804349 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
-@@ -4200,7 +4200,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
+@@ -4189,7 +4189,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
  	 * Don't invoke decrypt test which requires a private key
  	 * for vectors with only a public key.
  	 */
@@ -926,7 +925,7 @@ index 1f5f48ab18c7..00a3810bff51 100644
  		err = 0;
  		goto free_all;
  	}
-@@ -4336,7 +4336,7 @@ static int test_sig_one(struct crypto_sig *tfm, const struct sig_testvec *vecs)
+@@ -4325,7 +4325,7 @@ static int test_sig_one(struct crypto_sig *tfm, const struct sig_testvec *vecs)
  	 * Don't invoke sign test (which requires a private key)
  	 * for vectors with only a public key.
  	 */
@@ -935,7 +934,7 @@ index 1f5f48ab18c7..00a3810bff51 100644
  		return 0;
  
  	sig_size = crypto_sig_keysize(tfm);
-@@ -5180,14 +5180,12 @@ static const struct alg_test_desc alg_test_descs[] = {
+@@ -5169,14 +5169,12 @@ static const struct alg_test_desc alg_test_descs[] = {
  	}, {
  		.alg = "ecdh-nist-p256",
  		.test = alg_test_kpp,
@@ -1013,10 +1012,10 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 93d340027b7f..8fb1aa0cd3b6 100644
+index 9f4efa8f75a6..b7d9f1e31c8f 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
-@@ -1800,6 +1800,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+@@ -1801,6 +1801,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
  	if (!acpi_match_device_ids(device, ignore_serial_bus_ids))
  		return false;
  
@@ -1346,7 +1345,7 @@ index a2d0009560d0..4f3486e6a84b 100644
  obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 60c64b81d2c3..19cb19cf67d4 100644
+index 8296bf985d1d..01805208de35 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
 @@ -33,6 +33,7 @@
@@ -1357,7 +1356,7 @@ index 60c64b81d2c3..19cb19cf67d4 100644
  
  #include <asm/early_ioremap.h>
  
-@@ -1008,40 +1009,101 @@ int efi_mem_type(unsigned long phys_addr)
+@@ -1005,40 +1006,101 @@ int efi_mem_type(unsigned long phys_addr)
  	return -EINVAL;
  }
  
@@ -1490,19 +1489,6 @@ index 60c64b81d2c3..19cb19cf67d4 100644
  }
  EXPORT_SYMBOL_GPL(efi_status_to_err);
  
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index ed4e8ddbe76a..1141cd06011f 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -11,7 +11,7 @@ cflags-y			:= $(KBUILD_CFLAGS)
- 
- cflags-$(CONFIG_X86_32)		:= -march=i386
- cflags-$(CONFIG_X86_64)		:= -mcmodel=small
--cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ \
-+cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -std=gnu11 \
- 				   -fPIC -fno-strict-aliasing -mno-red-zone \
- 				   -mno-mmx -mno-sse -fshort-wchar \
- 				   -Wno-pointer-sign \
 diff --git a/drivers/firmware/efi/secureboot.c b/drivers/firmware/efi/secureboot.c
 new file mode 100644
 index 000000000000..de0a3714a5d4
@@ -1893,7 +1879,7 @@ index 2168b6cd7167..5d7cda175a0c 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 599030e1e890..74dd17d516c0 100644
+index 870c3cdbd0f6..b147dba5ffc9 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -2177,10 +2163,10 @@ index f57ea36d125d..eee8838fb9d4 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 76f4df75b08a..d7af71f1825b 100644
+index b84ff7bade82..5efa36c34f61 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
-@@ -4451,6 +4451,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
+@@ -4452,6 +4452,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9084,
  				quirk_bridge_cavm_thrx2_pcie_root);
  
@@ -2592,7 +2578,7 @@ index b164da5e129e..cd78d16ee5d6 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index e5815867aba9..b17440aaf863 100644
+index 053c57e61869..97b02a7b3fe5 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2604,7 +2590,7 @@ index e5815867aba9..b17440aaf863 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -864,6 +866,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+@@ -862,6 +864,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
  #define EFI_MEM_ATTR		9	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
  #define EFI_MEM_NO_SOFT_RESERVE	10	/* Is the kernel configured to ignore soft reservations? */
  #define EFI_PRESERVE_BS_REGIONS	11	/* Are EFI boot-services memory segments available? */
@@ -2619,7 +2605,7 @@ index e5815867aba9..b17440aaf863 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -875,6 +885,8 @@ static inline bool efi_enabled(int feature)
+@@ -873,6 +883,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2628,7 +2614,7 @@ index e5815867aba9..b17440aaf863 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -896,6 +908,8 @@ static inline bool efi_enabled(int feature)
+@@ -894,6 +906,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2637,7 +2623,7 @@ index e5815867aba9..b17440aaf863 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -910,6 +924,7 @@ static inline void efi_find_mirror(void) {}
+@@ -908,6 +922,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2645,7 +2631,7 @@ index e5815867aba9..b17440aaf863 100644
  
  /*
   * Variable Attributes
-@@ -1125,13 +1140,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1123,13 +1138,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -2748,10 +2734,10 @@ index 54d90b6c5f47..cc5def6f2b2e 100644
  
  struct taint_flag {
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 414ee5fff66b..38d68e735d78 100644
+index 47b31ad724fa..4d49bb0b4421 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1628,6 +1628,7 @@ int pci_add_dynid(struct pci_driver *drv,
+@@ -1630,6 +1630,7 @@ int pci_add_dynid(struct pci_driver *drv,
  		  unsigned long driver_data);
  const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
  					 struct pci_dev *dev);
@@ -2759,7 +2745,7 @@ index 414ee5fff66b..38d68e735d78 100644
  int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
  		    int pass);
  
-@@ -2693,6 +2694,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+@@ -2696,6 +2697,10 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
  	return false;
  }
  
