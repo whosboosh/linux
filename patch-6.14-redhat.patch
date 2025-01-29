@@ -6,6 +6,7 @@
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
  arch/s390/Makefile                                 |   2 +-
+ arch/s390/include/asm/bitops.h                     |   2 +-
  arch/s390/include/asm/ipl.h                        |   1 +
  arch/s390/kernel/ipl.c                             |   5 +
  arch/s390/kernel/setup.c                           |   4 +
@@ -91,7 +92,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 93 files changed, 2789 insertions(+), 220 deletions(-)
+ 94 files changed, 2790 insertions(+), 221 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -319,6 +320,19 @@ index 3f25498dac65..5fae311203c2 100644
  KBUILD_CFLAGS_DECOMPRESSOR += -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY
  KBUILD_CFLAGS_DECOMPRESSOR += -D__DECOMPRESSOR
  KBUILD_CFLAGS_DECOMPRESSOR += -fno-delete-null-pointer-checks -msoft-float -mbackchain
+diff --git a/arch/s390/include/asm/bitops.h b/arch/s390/include/asm/bitops.h
+index 15aa64e3020e..d5125296ade2 100644
+--- a/arch/s390/include/asm/bitops.h
++++ b/arch/s390/include/asm/bitops.h
+@@ -60,7 +60,7 @@ static __always_inline bool arch_test_bit(unsigned long nr, const volatile unsig
+ 		asm volatile(
+ 			"	tm	%[addr],%[mask]\n"
+ 			: "=@cc" (cc)
+-			: [addr] "R" (*addr), [mask] "I" (mask)
++			: [addr] "Q" (*addr), [mask] "I" (mask)
+ 			);
+ 		return cc == 3;
+ 	}
 diff --git a/arch/s390/include/asm/ipl.h b/arch/s390/include/asm/ipl.h
 index b0d00032479d..afb9544fb007 100644
 --- a/arch/s390/include/asm/ipl.h
