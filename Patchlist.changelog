@@ -1,20 +1,20 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/b2d8090725c2bfe5ae87615c6297c08ca98b1ee5
- b2d8090725c2bfe5ae87615c6297c08ca98b1ee5 s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
+https://gitlab.com/cki-project/kernel-ark/-/commit/45a128fe0b7784e3f5f25555ddaf34b12b92ad6e
+ 45a128fe0b7784e3f5f25555ddaf34b12b92ad6e s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/2f2fcc44d590a705f6d12e12f48961a21966bc8b
- 2f2fcc44d590a705f6d12e12f48961a21966bc8b apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/04e5592f581255b4f9e76aff9dc04e4ae9760b28
+ 04e5592f581255b4f9e76aff9dc04e4ae9760b28 apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/9376a4134493c2049c06dd7e64abf6bd5a26f750
- 9376a4134493c2049c06dd7e64abf6bd5a26f750 x86/boot: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/b5b7ee2faa74ae8a67232c91313330746551b698
+ b5b7ee2faa74ae8a67232c91313330746551b698 x86/boot: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/2ceabe4412dd3c6da84189890ef9f2272f9fea8e
- 2ceabe4412dd3c6da84189890ef9f2272f9fea8e kbuild: Use -fzero-init-padding-bits=all
+https://gitlab.com/cki-project/kernel-ark/-/commit/3782cd31a9b479219be25ee37d5fbbc3a3884073
+ 3782cd31a9b479219be25ee37d5fbbc3a3884073 kbuild: Use -fzero-init-padding-bits=all
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/f4eb7281c5974c0f3046308a21583cb45235841b
- f4eb7281c5974c0f3046308a21583cb45235841b include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/a951d67efa3e19b2e7d915f27524bf9d7f14fee9
+ a951d67efa3e19b2e7d915f27524bf9d7f14fee9 include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/6ff3991d2fd88d21f21c24d3cdbe231d337a21a8
- 6ff3991d2fd88d21f21c24d3cdbe231d337a21a8 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/4a51b6d5518d892d98863181ec1a9722800f9484
+ 4a51b6d5518d892d98863181ec1a9722800f9484 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target

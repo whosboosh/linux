@@ -93,10 +93,10 @@
  92 files changed, 2788 insertions(+), 220 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d0f6c055dfcc..07ffe652c4d9 100644
+index fb8752b42ec8..4e22c8f2f90e 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6177,6 +6177,17 @@
+@@ -6181,6 +6181,17 @@
  		2	The "airplane mode" button toggles between everything
  			blocked and everything unblocked.
  
@@ -114,7 +114,7 @@ index d0f6c055dfcc..07ffe652c4d9 100644
  	ring3mwait=disable
  			[KNL] Disable ring 3 MONITOR/MWAIT feature on supported
  			CPUs.
-@@ -7476,6 +7487,15 @@
+@@ -7480,6 +7491,15 @@
  	unknown_nmi_panic
  			[X86] Cause panic on unknown NMI.
  
@@ -277,10 +277,10 @@ index 4117cc79748b..d7d71590ecd6 100644
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 3ad4c3c97918..048b45e20fdb 100644
+index 835b5f100e92..179ad4af54a7 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1230,9 +1230,9 @@ config HIGHMEM
+@@ -1231,9 +1231,9 @@ config HIGHMEM
  	  If unsure, say n.
  
  config HIGHPTE
@@ -1664,10 +1664,10 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index dd8c74f893db..f2d1fb1b7645 100644
+index 2c1a60577728..06b06d0e7b4a 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -10,6 +10,7 @@
+@@ -11,6 +11,7 @@
  #include <linux/init.h>
  #include <linux/types.h>
  #include <linux/device.h>
@@ -1675,7 +1675,7 @@ index dd8c74f893db..f2d1fb1b7645 100644
  #include <linux/io.h>
  #include <linux/err.h>
  #include <linux/fs.h>
-@@ -2345,6 +2346,16 @@ static const struct amba_id etm4_ids[] = {
+@@ -2380,6 +2381,16 @@ static const struct amba_id etm4_ids[] = {
  	{},
  };
  
@@ -1692,7 +1692,7 @@ index dd8c74f893db..f2d1fb1b7645 100644
  MODULE_DEVICE_TABLE(amba, etm4_ids);
  
  static struct amba_driver etm4x_amba_driver = {
-@@ -2413,6 +2424,11 @@ static int __init etm4x_init(void)
+@@ -2448,6 +2459,11 @@ static int __init etm4x_init(void)
  {
  	int ret;
  
@@ -1704,7 +1704,7 @@ index dd8c74f893db..f2d1fb1b7645 100644
  	ret = etm4_pm_setup();
  
  	/* etm4_pm_setup() does its own cleanup - exit on error */
-@@ -2439,6 +2455,9 @@ static int __init etm4x_init(void)
+@@ -2474,6 +2490,9 @@ static int __init etm4x_init(void)
  
  static void __exit etm4x_exit(void)
  {
@@ -2460,10 +2460,10 @@ index 6b9b8218b512..f6def6339bc2 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2271) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2261) },
 diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 062ec5f24758..cc198956fe99 100644
+index 6b0e6b4cd8af..f5bc9c1dfd74 100644
 --- a/drivers/scsi/qla4xxx/ql4_os.c
 +++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -9865,6 +9865,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
+@@ -9866,6 +9866,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
  		.subvendor	= PCI_ANY_ID,
  		.subdevice	= PCI_ANY_ID,
  	},
@@ -2471,7 +2471,7 @@ index 062ec5f24758..cc198956fe99 100644
  	{
  		.vendor         = PCI_VENDOR_ID_QLOGIC,
  		.device         = PCI_DEVICE_ID_QLOGIC_ISP8022,
-@@ -9883,6 +9884,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
+@@ -9884,6 +9885,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
  		.subvendor	= PCI_ANY_ID,
  		.subdevice	= PCI_ANY_ID,
  	},
@@ -2511,7 +2511,7 @@ index 950d8c9fb884..be7b84fb780b 100644
  	if (err)
  		goto err_out_driver;
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 21ac9b464696..24a92295bd8d 100644
+index c3f839637cb5..1588b007db6f 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
 @@ -5846,6 +5846,13 @@ static void hub_event(struct work_struct *work)
@@ -4744,7 +4744,7 @@ index 7ea59dc4926b..1cea58bf300d 100644
  	ret = snprintf(fname, sizeof(fname), "%s.mod.c", mod->name);
  	if (ret >= sizeof(fname)) {
 diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 7939aea731f1..6d0014e78b61 100755
+index 45eaf35f5bff..8cd9b8bbadc0 100755
 --- a/scripts/tags.sh
 +++ b/scripts/tags.sh
 @@ -16,6 +16,8 @@ fi
