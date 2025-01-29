@@ -4180,6 +4180,9 @@ fi\
 #
 #
 %changelog
+* Wed Jan 29 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.0-0.rc0.20250129git05dbaf8dd8bf.10]
+- Add -fzero-init-padding-bits to bindgen_skip_cflags (Justin M. Forbes)
+
 * Wed Jan 29 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-0.rc0.05dbaf8dd8bf.10]
 - s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS (Nathan Chancellor)
 - apply -Wno-error=unterminated-string-initialization temporarily (Thorsten Leemhuis)

@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/670bfcfe5eea9f5ed932c7a119f1c3affd8de11b
+ 670bfcfe5eea9f5ed932c7a119f1c3affd8de11b Add -fzero-init-padding-bits to bindgen_skip_cflags
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/45a128fe0b7784e3f5f25555ddaf34b12b92ad6e
  45a128fe0b7784e3f5f25555ddaf34b12b92ad6e s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
 

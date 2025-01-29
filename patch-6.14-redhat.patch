@@ -83,6 +83,7 @@
  kernel/rh_messages.c                               | 414 ++++++++++++++++
  kernel/rh_messages.h                               | 326 +++++++++++++
  kernel/rh_waived.c                                 | 104 ++++
+ rust/Makefile                                      |   1 +
  scripts/Makefile.extrawarn                         |   7 +
  scripts/mod/modpost.c                              |   8 +
  scripts/tags.sh                                    |   2 +
@@ -90,7 +91,7 @@
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 92 files changed, 2788 insertions(+), 220 deletions(-)
+ 93 files changed, 2789 insertions(+), 220 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -4685,6 +4686,18 @@ index 000000000000..84e22b1730cc
 +	return 0;
 +}
 +late_initcall(__add_rh_flag);
+diff --git a/rust/Makefile b/rust/Makefile
+index 71a05a3c895a..3c3da7faebb3 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -240,6 +240,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
+ 	-fzero-call-used-regs=% -fno-stack-clash-protection \
+ 	-fno-inline-functions-called-once -fsanitize=bounds-strict \
+ 	-fstrict-flex-arrays=% -fmin-function-alignment=% \
++	-fzero-init-padding-bits=% \
+ 	--param=% --param asan-%
+ 
+ # Derived from `scripts/Makefile.clang`.
 diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
 index 1d13cecc7cc7..1433ae2e9e44 100644
 --- a/scripts/Makefile.extrawarn
