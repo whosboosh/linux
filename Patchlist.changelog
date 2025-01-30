@@ -1,23 +1,26 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/670bfcfe5eea9f5ed932c7a119f1c3affd8de11b
- 670bfcfe5eea9f5ed932c7a119f1c3affd8de11b Add -fzero-init-padding-bits to bindgen_skip_cflags
+https://gitlab.com/cki-project/kernel-ark/-/commit/6305f3ea8a10c856e3b6c1fd0be9aa92b88e1166
+ 6305f3ea8a10c856e3b6c1fd0be9aa92b88e1166 s390/bitops: Use correct constraint for arch_test_bit() inline assembly
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/45a128fe0b7784e3f5f25555ddaf34b12b92ad6e
- 45a128fe0b7784e3f5f25555ddaf34b12b92ad6e s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
+https://gitlab.com/cki-project/kernel-ark/-/commit/39cd7468d940f06192970f39c5ee196e67530524
+ 39cd7468d940f06192970f39c5ee196e67530524 Add -fzero-init-padding-bits to bindgen_skip_cflags
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/04e5592f581255b4f9e76aff9dc04e4ae9760b28
- 04e5592f581255b4f9e76aff9dc04e4ae9760b28 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/c20a86740408f23ca7f94b8bae686f1cfe580a84
+ c20a86740408f23ca7f94b8bae686f1cfe580a84 s390: Add '-std=gnu11' to decompressor and purgatory CFLAGS
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/b5b7ee2faa74ae8a67232c91313330746551b698
- b5b7ee2faa74ae8a67232c91313330746551b698 x86/boot: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/809fdb5507dee145a16e53794c423c12f1432a1d
+ 809fdb5507dee145a16e53794c423c12f1432a1d apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/3782cd31a9b479219be25ee37d5fbbc3a3884073
- 3782cd31a9b479219be25ee37d5fbbc3a3884073 kbuild: Use -fzero-init-padding-bits=all
+https://gitlab.com/cki-project/kernel-ark/-/commit/21db1662846a927339559b2a99d9df2ab6d40062
+ 21db1662846a927339559b2a99d9df2ab6d40062 x86/boot: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/a951d67efa3e19b2e7d915f27524bf9d7f14fee9
- a951d67efa3e19b2e7d915f27524bf9d7f14fee9 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/dcd640e15c7e90f74b723292f27149fbae495410
+ dcd640e15c7e90f74b723292f27149fbae495410 kbuild: Use -fzero-init-padding-bits=all
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/4a51b6d5518d892d98863181ec1a9722800f9484
- 4a51b6d5518d892d98863181ec1a9722800f9484 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/b241170b1273cb4daeb43c9ec7a400250a6e508d
+ b241170b1273cb4daeb43c9ec7a400250a6e508d include/linux: Adjust headers for C23
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/312b590f1984870c2e59b3740d2f40943798bcb1
+ 312b590f1984870c2e59b3740d2f40943798bcb1 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target

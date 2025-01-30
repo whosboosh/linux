@@ -1165,7 +1165,7 @@ index 1e5313748f8b..f2a56c624f54 100644
  	rv = ipmi_register_driver();
  	mutex_unlock(&ipmi_interfaces_mutex);
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 23ee76bbb4aa..ad0bb8bfd2b0 100644
+index 2581186fa61b..c5ca9adf7764 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
 @@ -51,9 +51,11 @@
@@ -3571,7 +3571,7 @@ index da729cbbaeb9..5c2d8301d4f3 100644
  long bpf_jit_limit_max __read_mostly;
  
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0daf098e3207..704c5215561f 100644
+index c420edbfb7c8..7ace838beb7a 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
 @@ -26,6 +26,7 @@
@@ -3694,7 +3694,7 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/kernel/panic.c b/kernel/panic.c
-index fbc59b3b64d0..5ec50bb8c1fc 100644
+index d8635d5cecb2..293960754b9d 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
 @@ -511,6 +511,19 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
