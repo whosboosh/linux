@@ -5,12 +5,9 @@
  Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
- arch/s390/Makefile                                 |   2 +-
- arch/s390/include/asm/bitops.h                     |   2 +-
  arch/s390/include/asm/ipl.h                        |   1 +
  arch/s390/kernel/ipl.c                             |   5 +
  arch/s390/kernel/setup.c                           |   4 +
- arch/s390/purgatory/Makefile                       |   2 +-
  arch/x86/boot/compressed/Makefile                  |   1 +
  arch/x86/kernel/cpu/common.c                       |   1 +
  arch/x86/kernel/setup.c                            |  98 +++-
@@ -85,14 +82,14 @@
  kernel/rh_messages.h                               | 326 +++++++++++++
  kernel/rh_waived.c                                 | 104 ++++
  rust/Makefile                                      |   1 +
- scripts/Makefile.extrawarn                         |   7 +
+ scripts/Makefile.extrawarn                         |   4 +
  scripts/mod/modpost.c                              |   8 +
  scripts/tags.sh                                    |   2 +
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |   1 +
  security/security.c                                |  12 +
- 94 files changed, 2790 insertions(+), 221 deletions(-)
+ 91 files changed, 2784 insertions(+), 218 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -199,7 +196,7 @@ index 000000000000..fd77bd5c97e2
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 4117cc79748b..d7d71590ecd6 100644
+index 9e0d63d9d94b..0d73eef87646 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -307,32 +304,6 @@ index fcdd0ed3eca8..6ba03b3dc723 100644
  	help
  	  For systems with 52-bit userspace VAs enabled, the kernel will attempt
  	  to maintain compatibility with older software by providing 48-bit VAs
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index 3f25498dac65..5fae311203c2 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -22,7 +22,7 @@ KBUILD_AFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -D__ASSEMBLY__
- ifndef CONFIG_AS_IS_LLVM
- KBUILD_AFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),$(aflags_dwarf))
- endif
--KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack
-+KBUILD_CFLAGS_DECOMPRESSOR := $(CLANG_FLAGS) -m64 -O2 -mpacked-stack -std=gnu11
- KBUILD_CFLAGS_DECOMPRESSOR += -DDISABLE_BRANCH_PROFILING -D__NO_FORTIFY
- KBUILD_CFLAGS_DECOMPRESSOR += -D__DECOMPRESSOR
- KBUILD_CFLAGS_DECOMPRESSOR += -fno-delete-null-pointer-checks -msoft-float -mbackchain
-diff --git a/arch/s390/include/asm/bitops.h b/arch/s390/include/asm/bitops.h
-index 15aa64e3020e..d5125296ade2 100644
---- a/arch/s390/include/asm/bitops.h
-+++ b/arch/s390/include/asm/bitops.h
-@@ -60,7 +60,7 @@ static __always_inline bool arch_test_bit(unsigned long nr, const volatile unsig
- 		asm volatile(
- 			"	tm	%[addr],%[mask]\n"
- 			: "=@cc" (cc)
--			: [addr] "R" (*addr), [mask] "I" (mask)
-+			: [addr] "Q" (*addr), [mask] "I" (mask)
- 			);
- 		return cc == 3;
- 	}
 diff --git a/arch/s390/include/asm/ipl.h b/arch/s390/include/asm/ipl.h
 index b0d00032479d..afb9544fb007 100644
 --- a/arch/s390/include/asm/ipl.h
@@ -359,7 +330,7 @@ index 69be2309cde0..1d85c99be81b 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index 1298f0860733..c169a898fe00 100644
+index d78bcfe707b5..f3a71214a211 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -370,7 +341,7 @@ index 1298f0860733..c169a898fe00 100644
  #include <linux/hugetlb.h>
  #include <linux/kmemleak.h>
  
-@@ -890,6 +891,9 @@ void __init setup_arch(char **cmdline_p)
+@@ -916,6 +917,9 @@ void __init setup_arch(char **cmdline_p)
  
  	log_component_list();
  
@@ -380,19 +351,6 @@ index 1298f0860733..c169a898fe00 100644
  	/* Have one command line that is parsed and saved in /proc/cmdline */
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
-diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
-index 24eccaa29337..bdcf2a3b6c41 100644
---- a/arch/s390/purgatory/Makefile
-+++ b/arch/s390/purgatory/Makefile
-@@ -13,7 +13,7 @@ CFLAGS_sha256.o := -D__DISABLE_EXPORTS -D__NO_FORTIFY
- $(obj)/mem.o: $(srctree)/arch/s390/lib/mem.S FORCE
- 	$(call if_changed_rule,as_o_S)
- 
--KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes
-+KBUILD_CFLAGS := -std=gnu11 -fno-strict-aliasing -Wall -Wstrict-prototypes
- KBUILD_CFLAGS += -Wno-pointer-sign -Wno-sign-compare
- KBUILD_CFLAGS += -fno-zero-initialized-in-bss -fno-builtin -ffreestanding
- KBUILD_CFLAGS += -Os -m64 -msoft-float -fno-common
 diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
 index f2051644de94..606c74f27459 100644
 --- a/arch/x86/boot/compressed/Makefile
@@ -2039,7 +1997,7 @@ index a00671b58701..eeef2766b8b3 100644
  	if (ret < 0)
  		goto err_allowedips;
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 76b615d4d5b9..9a7eb4400908 100644
+index 40046770f1bf..9acf12b28c30 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
 @@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
@@ -2109,7 +2067,7 @@ index 76b615d4d5b9..9a7eb4400908 100644
  #ifdef CONFIG_NVME_HOST_AUTH
  		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
 diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index a85d190942bd..b974ea81b62c 100644
+index 2a7635565083..eaa430e40a4f 100644
 --- a/drivers/nvme/host/multipath.c
 +++ b/drivers/nvme/host/multipath.c
 @@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
@@ -2727,7 +2685,7 @@ index e2f1ce37c41e..2b0c2fadd8e2 100644
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
 diff --git a/include/linux/module.h b/include/linux/module.h
-index 37eb5d88f6eb..967ebeb288ed 100644
+index 23792d5d7b74..6ded05874b3c 100644
 --- a/include/linux/module.h
 +++ b/include/linux/module.h
 @@ -426,6 +426,7 @@ struct module {
@@ -3619,7 +3577,7 @@ index c420edbfb7c8..7ace838beb7a 100644
  	}
  
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 8808b6906d5a..4ceee5671fd6 100644
+index 1fb9ad289a6f..d3451705aac4 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
 @@ -65,6 +65,8 @@
@@ -3647,7 +3605,7 @@ index 8808b6906d5a..4ceee5671fd6 100644
  	&modinfo_initstate,
  	&modinfo_coresize,
  #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
-@@ -3201,6 +3205,11 @@ static int early_mod_check(struct load_info *info, int flags)
+@@ -3277,6 +3281,11 @@ static int early_mod_check(struct load_info *info, int flags)
  		return -EPERM;
  	}
  
@@ -3659,7 +3617,7 @@ index 8808b6906d5a..4ceee5671fd6 100644
  	err = rewrite_section_headers(info, flags);
  	if (err)
  		return err;
-@@ -3773,6 +3782,10 @@ void print_modules(void)
+@@ -3849,6 +3858,10 @@ void print_modules(void)
  		pr_cont(" [last unloaded: %s%s]", last_unloaded_module.name,
  			last_unloaded_module.taints);
  	pr_cont("\n");
@@ -4701,7 +4659,7 @@ index 000000000000..84e22b1730cc
 +}
 +late_initcall(__add_rh_flag);
 diff --git a/rust/Makefile b/rust/Makefile
-index 71a05a3c895a..3c3da7faebb3 100644
+index 8fcfd60447bc..285de608c41f 100644
 --- a/rust/Makefile
 +++ b/rust/Makefile
 @@ -240,6 +240,7 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
@@ -4713,7 +4671,7 @@ index 71a05a3c895a..3c3da7faebb3 100644
  
  # Derived from `scripts/Makefile.clang`.
 diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index 1d13cecc7cc7..1433ae2e9e44 100644
+index eb719f6d8d53..1433ae2e9e44 100644
 --- a/scripts/Makefile.extrawarn
 +++ b/scripts/Makefile.extrawarn
 @@ -20,6 +20,10 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
@@ -4727,18 +4685,8 @@ index 1d13cecc7cc7..1433ae2e9e44 100644
  ifneq ($(CONFIG_FRAME_WARN),0)
  KBUILD_CFLAGS += -Wframe-larger-than=$(CONFIG_FRAME_WARN)
  endif
-@@ -77,6 +81,9 @@ KBUILD_CFLAGS += $(call cc-option,-Werror=designated-init)
- # Warn if there is an enum types mismatch
- KBUILD_CFLAGS += $(call cc-option,-Wenum-conversion)
- 
-+# Explicitly clear padding bits during variable initialization
-+KBUILD_CFLAGS += $(call cc-option,-fzero-init-padding-bits=all)
-+
- KBUILD_CFLAGS += -Wextra
- KBUILD_CFLAGS += -Wunused
- 
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 7ea59dc4926b..1cea58bf300d 100644
+index e18ae7dc8140..44c9f8cd8149 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -27,6 +27,7 @@
@@ -4749,7 +4697,7 @@ index 7ea59dc4926b..1cea58bf300d 100644
  
  static bool module_enabled;
  /* Are we using CONFIG_MODVERSIONS? */
-@@ -1903,6 +1904,12 @@ static void write_buf(struct buffer *b, const char *fname)
+@@ -1955,6 +1956,12 @@ static void write_buf(struct buffer *b, const char *fname)
  	}
  }
  
@@ -4762,7 +4710,7 @@ index 7ea59dc4926b..1cea58bf300d 100644
  static void write_if_changed(struct buffer *b, const char *fname)
  {
  	char *tmp;
-@@ -1971,6 +1978,7 @@ static void write_mod_c_file(struct module *mod)
+@@ -2024,6 +2031,7 @@ static void write_mod_c_file(struct module *mod)
  	}
  
  	add_srcversion(&buf, mod);
