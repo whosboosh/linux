@@ -1,17 +1,17 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/a2dafab81b58a1a9ec8a54a6e4a161c627df067c
- a2dafab81b58a1a9ec8a54a6e4a161c627df067c Add -fzero-init-padding-bits to bindgen_skip_cflags
+https://gitlab.com/cki-project/kernel-ark/-/commit/9a6a0edccfbbb7da23ee46e54aeaef881a70c361
+ 9a6a0edccfbbb7da23ee46e54aeaef881a70c361 Add -fzero-init-padding-bits to bindgen_skip_cflags
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/c28fdc04c0c3882ed68a3804cbdd1333e71195e1
- c28fdc04c0c3882ed68a3804cbdd1333e71195e1 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/7268882afbbca110d882c572ec695cddb674d51d
+ 7268882afbbca110d882c572ec695cddb674d51d apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/cfb91e9dccdce34176868e4137dc5b611eb9a126
- cfb91e9dccdce34176868e4137dc5b611eb9a126 x86/boot: Use '-std=gnu11' to fix build with GCC 15
+https://gitlab.com/cki-project/kernel-ark/-/commit/4172f02e42ef8643d5a8b6670daac0a4caa436da
+ 4172f02e42ef8643d5a8b6670daac0a4caa436da x86/boot: Use '-std=gnu11' to fix build with GCC 15
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/a1d8d35418dc2064b8b3a0e0c88162f8398d5c7d
- a1d8d35418dc2064b8b3a0e0c88162f8398d5c7d include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/0c7e5088274a3c03581ef027c7b08bc5b1579f9a
+ 0c7e5088274a3c03581ef027c7b08bc5b1579f9a include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/3ff5b99264bfbd6c78df626d0104705f9d07af9d
- 3ff5b99264bfbd6c78df626d0104705f9d07af9d x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/ed637ff0158d3ab49dd60bff71d262422db66d93
+ ed637ff0158d3ab49dd60bff71d262422db66d93 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target
