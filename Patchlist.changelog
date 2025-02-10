@@ -1,17 +1,11 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/cfdcfd56eea77ce7c18b00c50f7552338966c866
- cfdcfd56eea77ce7c18b00c50f7552338966c866 Add -fzero-init-padding-bits to bindgen_skip_cflags
+https://gitlab.com/cki-project/kernel-ark/-/commit/5381413f2aefcd0b5fe4891e5a2c5f84d3f7564a
+ 5381413f2aefcd0b5fe4891e5a2c5f84d3f7564a apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/1a05f9dbe4f752b6f064264008f148cf09cc1040
- 1a05f9dbe4f752b6f064264008f148cf09cc1040 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/8077d354bee3cfb549f6ef0a9add36ae3877054a
+ 8077d354bee3cfb549f6ef0a9add36ae3877054a include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/f322becac482cbae41b4f41095fcc1f623913af0
- f322becac482cbae41b4f41095fcc1f623913af0 x86/boot: Use '-std=gnu11' to fix build with GCC 15
-
-https://gitlab.com/cki-project/kernel-ark/-/commit/d6e0590f8a446a3a376a70ab9d9f9f460afb507c
- d6e0590f8a446a3a376a70ab9d9f9f460afb507c include/linux: Adjust headers for C23
-
-https://gitlab.com/cki-project/kernel-ark/-/commit/f0f053fa1707ae6461b8f90afdd94b6f8c3d2dce
- f0f053fa1707ae6461b8f90afdd94b6f8c3d2dce x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/422b3ad0dcd702dafd2ac3d278c4de3b93b7e07d
+ 422b3ad0dcd702dafd2ac3d278c4de3b93b7e07d x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target
