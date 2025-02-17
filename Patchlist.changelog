@@ -1,11 +1,59 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/1681a954a237e1a973bda47539c85e029260ee89
- 1681a954a237e1a973bda47539c85e029260ee89 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/2c062aaa5a90464527b0bd9ba675639ec476242a
+ 2c062aaa5a90464527b0bd9ba675639ec476242a apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/90b4ddba3ee227e8bee4f1f86ba854da33d1c2b5
- 90b4ddba3ee227e8bee4f1f86ba854da33d1c2b5 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/14ee53d49b7b4f1b27cdc833c30206afb2d2e915
+ 14ee53d49b7b4f1b27cdc833c30206afb2d2e915 include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/83b59bcd2c2501bc48eb9ac862c51e4ae24bbd22
- 83b59bcd2c2501bc48eb9ac862c51e4ae24bbd22 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/40cb80b9f06aa404604c70c2e8aba10dfdacb402
+ 40cb80b9f06aa404604c70c2e8aba10dfdacb402 x86/insn_decoder_test: allow longer symbol-names
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/823c03387bfa05b7e6ae2183bcc575aae67791f3
+ 823c03387bfa05b7e6ae2183bcc575aae67791f3 efi,lockdown: fix kernel lockdown on Secure Boot
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/a68a37697cd8843ebd2e3ead3b90c58c4703dcb5
+ a68a37697cd8843ebd2e3ead3b90c58c4703dcb5 Revert "nvme: Return BLK_STS_TARGET if the DNR bit is set"
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/4071facb43f4fb4fd2f8bf01aac8481759c1b22f
+ 4071facb43f4fb4fd2f8bf01aac8481759c1b22f Revert "nvme: allow local retry and proper failover for REQ_FAILFAST_TRANSPORT"
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/8a32431f7ec14655884b569cc40a07f0215381c3
+ 8a32431f7ec14655884b569cc40a07f0215381c3 Revert "nvme: decouple basic ANA log page re-read support from native multipathing"
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/b977a34bdb5cef8a59107cf00f1d20575e84ac76
+ b977a34bdb5cef8a59107cf00f1d20575e84ac76 Revert "nvme: nvme_mpath_init remove multipath check"
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/5d878e8fa09cbffbdeecb0ba4c7111904ece499e
+ 5d878e8fa09cbffbdeecb0ba4c7111904ece499e redhat: automotive: define CONFIG_RH_AUTOMOTIVE
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/7ca78a8bb54c74194cd008f2a66230bf42a0ccf0
+ 7ca78a8bb54c74194cd008f2a66230bf42a0ccf0 media: ov08x40: Don't log ov08x40_check_hwcfg() errors twice
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/aac4abe4caf0bc1cc6beae59bae781727df41bba
+ aac4abe4caf0bc1cc6beae59bae781727df41bba media: ov08x40: Add missing '\n' to ov08x40_check_hwcfg() error messages
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/6e532cd9727bf11ad4975ea9f73004a34f4bf4a9
+ 6e532cd9727bf11ad4975ea9f73004a34f4bf4a9 media: ov08x40: Add missing ov08x40_identify_module() call on stream-start
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/c650959b90019b8c7d9556afb90fba2e5b2656db
+ c650959b90019b8c7d9556afb90fba2e5b2656db media: ov08x40: Improve ov08x40_[read|write]_reg() error returns
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/c66f33cb5dbde98c07e9462a9ceab82c889dec05
+ c66f33cb5dbde98c07e9462a9ceab82c889dec05 media: ov08x40: Improve ov08x40_identify_module() error logging
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/7d4f663fa639700153320d761205345c2efdc358
+ 7d4f663fa639700153320d761205345c2efdc358 media: ov08x40: Move ov08x40_identify_module() function up
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/a067145ac9934d1bdd6b709091fc33cc9954b9be
+ a067145ac9934d1bdd6b709091fc33cc9954b9be media: ov08x40: Get clock on ACPI platforms too
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/91a73e72d8975a38354fc52f809b99354da68768
+ 91a73e72d8975a38354fc52f809b99354da68768 media: ov08x40: Get reset GPIO and regulators on ACPI platforms too
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/18c04c0b3cfa460371aa76b63207f35f869a62b6
+ 18c04c0b3cfa460371aa76b63207f35f869a62b6 media: ov08x40: Move fwnode_graph_get_next_endpoint() call up
+
+https://gitlab.com/cki-project/kernel-ark/-/commit/70d40bb0a1abf65ca2c384859aaa385e9956ffdc
+ 70d40bb0a1abf65ca2c384859aaa385e9956ffdc media: ov08x40: Properly turn sensor on/off when runtime-suspended
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/f5d07781f06dafc7108274ddf996e39f6de4e062
  f5d07781f06dafc7108274ddf996e39f6de4e062 redhat: fix modules.order target

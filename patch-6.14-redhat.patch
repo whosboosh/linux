@@ -1,7 +1,7 @@
  Documentation/admin-guide/kernel-parameters.txt    |  20 +
  Documentation/admin-guide/rh-waived-features.rst   |  21 +
  Kconfig                                            |   2 +
- Kconfig.redhat                                     |  23 +
+ Kconfig.redhat                                     |  31 ++
  Makefile                                           |  48 +-
  arch/arm/Kconfig                                   |   4 +-
  arch/arm64/Kconfig                                 |   2 +-
@@ -32,12 +32,10 @@
  drivers/hwtracing/coresight/coresight-etm4x-core.c |  19 +
  drivers/input/rmi4/rmi_driver.c                    | 124 +++--
  drivers/iommu/iommu.c                              |  22 +
+ drivers/media/i2c/ov08x40.c                        | 167 ++++---
  drivers/message/fusion/mptsas.c                    |   5 +
  drivers/message/fusion/mptspi.c                    |   6 +
  drivers/net/wireguard/main.c                       |   6 +
- drivers/nvme/host/core.c                           |  22 +-
- drivers/nvme/host/multipath.c                      |  19 +-
- drivers/nvme/host/nvme.h                           |   4 +
  drivers/pci/pci-driver.c                           |   9 +
  drivers/pci/quirks.c                               |  24 +
  drivers/scsi/aacraid/linit.c                       |   2 +
@@ -56,7 +54,7 @@
  include/linux/crypto.h                             |   3 +
  include/linux/efi.h                                |  22 +-
  include/linux/kernel.h                             |  16 +
- include/linux/lsm_hook_defs.h                      |   2 +
+ include/linux/lsm_hook_defs.h                      |   1 +
  include/linux/module.h                             |   5 +
  include/linux/panic.h                              |  18 +-
  include/linux/pci.h                                |   5 +
@@ -65,7 +63,7 @@
  include/linux/rh_kabi.h                            | 541 +++++++++++++++++++++
  include/linux/rh_waived.h                          |  19 +
  include/linux/rmi.h                                |   1 +
- include/linux/security.h                           |   5 +
+ include/linux/security.h                           |   9 +
  include/linux/stdarg.h                             |  10 +
  include/linux/stddef.h                             |   2 +
  include/linux/types.h                              |   2 +
@@ -85,9 +83,8 @@
  scripts/tags.sh                                    |   2 +
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
- security/lockdown/lockdown.c                       |   1 +
- security/security.c                                |  12 +
- 89 files changed, 2782 insertions(+), 218 deletions(-)
+ security/lockdown/lockdown.c                       |  11 +
+ 86 files changed, 2842 insertions(+), 289 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -166,10 +163,10 @@ index 745bc773f567..f57ff40109d7 100644
 +source "Kconfig.redhat"
 diff --git a/Kconfig.redhat b/Kconfig.redhat
 new file mode 100644
-index 000000000000..fd77bd5c97e2
+index 000000000000..85771d74c34f
 --- /dev/null
 +++ b/Kconfig.redhat
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,31 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
 +# Red Hat specific options
@@ -192,9 +189,17 @@ index 000000000000..fd77bd5c97e2
 +	  be disabled in case of a debug build, because debug builds
 +	  allow to change struct sizes.
 +
++config RH_AUTOMOTIVE
++	bool "Enable automotive only code"
++	depends on RHEL_DIFFERENCES
++	default n
++	help
++	  This option controls whether code is included in the automotive
++	  kernel build. If you are building an automotive kernel, say Y.
++
 +endmenu
 diff --git a/Makefile b/Makefile
-index 89628e354ca7..9dd2110692ed 100644
+index 96407c1d6be1..641bb93841e0 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -249,7 +254,7 @@ index 89628e354ca7..9dd2110692ed 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1915,6 +1944,23 @@ endif
+@@ -1910,6 +1939,23 @@ endif
  
  ifdef CONFIG_MODULES
  
@@ -290,10 +295,10 @@ index 835b5f100e92..179ad4af54a7 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index fcdd0ed3eca8..6ba03b3dc723 100644
+index 940343beb3d4..003bf6492519 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -1401,7 +1401,7 @@ endchoice
+@@ -1400,7 +1400,7 @@ endchoice
  
  config ARM64_FORCE_52BIT
  	bool "Force 52-bit virtual addresses for userspace"
@@ -1332,7 +1337,7 @@ index a2d0009560d0..4f3486e6a84b 100644
  obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 8296bf985d1d..01805208de35 100644
+index 7309394b8fc9..d9f7cbba5769 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
 @@ -33,6 +33,7 @@
@@ -1343,7 +1348,7 @@ index 8296bf985d1d..01805208de35 100644
  
  #include <asm/early_ioremap.h>
  
-@@ -1005,40 +1006,101 @@ int efi_mem_type(unsigned long phys_addr)
+@@ -1007,40 +1008,101 @@ int efi_mem_type(unsigned long phys_addr)
  	return -EINVAL;
  }
  
@@ -1866,7 +1871,7 @@ index 2168b6cd7167..5d7cda175a0c 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 870c3cdbd0f6..b147dba5ffc9 100644
+index 60aed01e54f2..64758cca794b 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -1905,6 +1910,303 @@ index 870c3cdbd0f6..b147dba5ffc9 100644
  /**
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
+diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
+index b9682264e2f5..c2a399e3bb41 100644
+--- a/drivers/media/i2c/ov08x40.c
++++ b/drivers/media/i2c/ov08x40.c
+@@ -1322,9 +1322,6 @@ static int ov08x40_power_on(struct device *dev)
+ 	struct ov08x40 *ov08x = to_ov08x40(sd);
+ 	int ret;
+ 
+-	if (is_acpi_node(dev_fwnode(dev)))
+-		return 0;
+-
+ 	ret = clk_prepare_enable(ov08x->xvclk);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to enable xvclk\n");
+@@ -1360,9 +1357,6 @@ static int ov08x40_power_off(struct device *dev)
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct ov08x40 *ov08x = to_ov08x40(sd);
+ 
+-	if (is_acpi_node(dev_fwnode(dev)))
+-		return 0;
+-
+ 	gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
+ 	regulator_bulk_disable(ARRAY_SIZE(ov08x40_supply_names),
+ 			       ov08x->supplies);
+@@ -1400,7 +1394,7 @@ static int ov08x40_read_reg(struct ov08x40 *ov08x,
+ 
+ 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+ 	if (ret != ARRAY_SIZE(msgs))
+-		return -EIO;
++		return ret < 0 ? ret : -EIO;
+ 
+ 	*val = be32_to_cpu(data_be);
+ 
+@@ -1469,7 +1463,7 @@ static int ov08x40_write_reg(struct ov08x40 *ov08x,
+ 			     u16 reg, u32 len, u32 __val)
+ {
+ 	struct i2c_client *client = v4l2_get_subdevdata(&ov08x->sd);
+-	int buf_i, val_i;
++	int buf_i, val_i, ret;
+ 	u8 buf[6], *val_p;
+ 	__be32 val;
+ 
+@@ -1487,8 +1481,9 @@ static int ov08x40_write_reg(struct ov08x40 *ov08x,
+ 	while (val_i < 4)
+ 		buf[buf_i++] = val_p[val_i++];
+ 
+-	if (i2c_master_send(client, buf, len + 2) != len + 2)
+-		return -EIO;
++	ret = i2c_master_send(client, buf, len + 2);
++	if (ret != len + 2)
++		return ret < 0 ? ret : -EIO;
+ 
+ 	return 0;
+ }
+@@ -1937,6 +1932,34 @@ static int ov08x40_stop_streaming(struct ov08x40 *ov08x)
+ 				 OV08X40_REG_VALUE_08BIT, OV08X40_MODE_STANDBY);
+ }
+ 
++/* Verify chip ID */
++static int ov08x40_identify_module(struct ov08x40 *ov08x)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&ov08x->sd);
++	int ret;
++	u32 val;
++
++	if (ov08x->identified)
++		return 0;
++
++	ret = ov08x40_read_reg(ov08x, OV08X40_REG_CHIP_ID,
++			       OV08X40_REG_VALUE_24BIT, &val);
++	if (ret) {
++		dev_err(&client->dev, "error reading chip-id register: %d\n", ret);
++		return ret;
++	}
++
++	if (val != OV08X40_CHIP_ID) {
++		dev_err(&client->dev, "chip id mismatch: %x!=%x\n",
++			OV08X40_CHIP_ID, val);
++		return -ENXIO;
++	}
++
++	ov08x->identified = true;
++
++	return 0;
++}
++
+ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct ov08x40 *ov08x = to_ov08x40(sd);
+@@ -1950,6 +1973,10 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
+ 		if (ret < 0)
+ 			goto err_unlock;
+ 
++		ret = ov08x40_identify_module(ov08x);
++		if (ret)
++			goto err_rpm_put;
++
+ 		/*
+ 		 * Apply default & customized values
+ 		 * and then start streaming.
+@@ -1974,32 +2001,6 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
+ 	return ret;
+ }
+ 
+-/* Verify chip ID */
+-static int ov08x40_identify_module(struct ov08x40 *ov08x)
+-{
+-	struct i2c_client *client = v4l2_get_subdevdata(&ov08x->sd);
+-	int ret;
+-	u32 val;
+-
+-	if (ov08x->identified)
+-		return 0;
+-
+-	ret = ov08x40_read_reg(ov08x, OV08X40_REG_CHIP_ID,
+-			       OV08X40_REG_VALUE_24BIT, &val);
+-	if (ret)
+-		return ret;
+-
+-	if (val != OV08X40_CHIP_ID) {
+-		dev_err(&client->dev, "chip id mismatch: %x!=%x\n",
+-			OV08X40_CHIP_ID, val);
+-		return -ENXIO;
+-	}
+-
+-	ov08x->identified = true;
+-
+-	return 0;
+-}
+-
+ static const struct v4l2_subdev_video_ops ov08x40_video_ops = {
+ 	.s_stream = ov08x40_set_stream,
+ };
+@@ -2151,65 +2152,69 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
+ 	int ret;
+ 	u32 xvclk_rate;
+ 
+-	if (!fwnode)
+-		return -ENXIO;
++	/*
++	 * Sometimes the fwnode graph is initialized by the bridge driver.
++	 * Bridge drivers doing this also add sensor properties, wait for this.
++	 */
++	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
++	if (!ep)
++		return dev_err_probe(dev, -EPROBE_DEFER,
++				     "waiting for fwnode graph endpoint\n");
+ 
+-	if (!is_acpi_node(fwnode)) {
+-		ov08x->xvclk = devm_clk_get(dev, NULL);
+-		if (IS_ERR(ov08x->xvclk)) {
+-			dev_err(dev, "could not get xvclk clock (%pe)\n",
+-				ov08x->xvclk);
+-			return PTR_ERR(ov08x->xvclk);
+-		}
++	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
++	fwnode_handle_put(ep);
++	if (ret)
++		return dev_err_probe(dev, ret, "parsing endpoint failed\n");
+ 
+-		xvclk_rate = clk_get_rate(ov08x->xvclk);
++	ov08x->reset_gpio = devm_gpiod_get_optional(dev, "reset",
++						    GPIOD_OUT_LOW);
++	if (IS_ERR(ov08x->reset_gpio)) {
++		ret = dev_err_probe(dev, PTR_ERR(ov08x->reset_gpio),
++				    "getting reset GPIO\n");
++		goto out_err;
++	}
+ 
+-		ov08x->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+-							    GPIOD_OUT_LOW);
+-		if (IS_ERR(ov08x->reset_gpio))
+-			return PTR_ERR(ov08x->reset_gpio);
++	for (i = 0; i < ARRAY_SIZE(ov08x40_supply_names); i++)
++		ov08x->supplies[i].supply = ov08x40_supply_names[i];
+ 
+-		for (i = 0; i < ARRAY_SIZE(ov08x40_supply_names); i++)
+-			ov08x->supplies[i].supply = ov08x40_supply_names[i];
++	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ov08x40_supply_names),
++				      ov08x->supplies);
++	if (ret)
++		goto out_err;
+ 
+-		ret = devm_regulator_bulk_get(dev,
+-					      ARRAY_SIZE(ov08x40_supply_names),
+-					      ov08x->supplies);
+-		if (ret)
+-			return ret;
++	ov08x->xvclk = devm_clk_get_optional(dev, NULL);
++	if (IS_ERR(ov08x->xvclk)) {
++		ret = dev_err_probe(dev, PTR_ERR(ov08x->xvclk),
++				    "getting xvclk\n");
++		goto out_err;
++	}
++	if (ov08x->xvclk) {
++		xvclk_rate = clk_get_rate(ov08x->xvclk);
+ 	} else {
+ 		ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency",
+ 					       &xvclk_rate);
+ 		if (ret) {
+-			dev_err(dev, "can't get clock frequency");
+-			return ret;
++			dev_err(dev, "can't get clock frequency\n");
++			goto out_err;
+ 		}
+ 	}
+ 
+ 	if (xvclk_rate != OV08X40_XVCLK) {
+-		dev_err(dev, "external clock %d is not supported",
++		dev_err(dev, "external clock %d is not supported\n",
+ 			xvclk_rate);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_err;
+ 	}
+ 
+-	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
+-	if (!ep)
+-		return -ENXIO;
+-
+-	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+-	fwnode_handle_put(ep);
+-	if (ret)
+-		return ret;
+-
+ 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != OV08X40_DATA_LANES) {
+-		dev_err(dev, "number of CSI2 data lanes %d is not supported",
++		dev_err(dev, "number of CSI2 data lanes %d is not supported\n",
+ 			bus_cfg.bus.mipi_csi2.num_data_lanes);
+ 		ret = -EINVAL;
+ 		goto out_err;
+ 	}
+ 
+ 	if (!bus_cfg.nr_of_link_frequencies) {
+-		dev_err(dev, "no link frequencies defined");
++		dev_err(dev, "no link frequencies defined\n");
+ 		ret = -EINVAL;
+ 		goto out_err;
+ 	}
+@@ -2222,7 +2227,7 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
+ 		}
+ 
+ 		if (j == bus_cfg.nr_of_link_frequencies) {
+-			dev_err(dev, "no link frequency %lld supported",
++			dev_err(dev, "no link frequency %lld supported\n",
+ 				link_freq_menu_items[i]);
+ 			ret = -EINVAL;
+ 			goto out_err;
+@@ -2246,10 +2251,8 @@ static int ov08x40_probe(struct i2c_client *client)
+ 
+ 	/* Check HW config */
+ 	ret = ov08x40_check_hwcfg(ov08x, &client->dev);
+-	if (ret) {
+-		dev_err(&client->dev, "failed to check hwcfg: %d", ret);
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	/* Initialize subdev */
+ 	v4l2_i2c_subdev_init(&ov08x->sd, client, &ov08x40_subdev_ops);
+@@ -2264,10 +2267,8 @@ static int ov08x40_probe(struct i2c_client *client)
+ 
+ 		/* Check module identity */
+ 		ret = ov08x40_identify_module(ov08x);
+-		if (ret) {
+-			dev_err(&client->dev, "failed to find sensor: %d\n", ret);
++		if (ret)
+ 			goto probe_power_off;
+-		}
+ 	}
+ 
+ 	/* Set default mode to max resolution */
+@@ -2324,11 +2325,14 @@ static void ov08x40_remove(struct i2c_client *client)
+ 	ov08x40_free_controls(ov08x);
+ 
+ 	pm_runtime_disable(&client->dev);
++	if (!pm_runtime_status_suspended(&client->dev))
++		ov08x40_power_off(&client->dev);
+ 	pm_runtime_set_suspended(&client->dev);
+-
+-	ov08x40_power_off(&client->dev);
+ }
+ 
++static DEFINE_RUNTIME_DEV_PM_OPS(ov08x40_pm_ops, ov08x40_power_off,
++				 ov08x40_power_on, NULL);
++
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id ov08x40_acpi_ids[] = {
+ 	{"OVTI08F4"},
+@@ -2349,6 +2353,7 @@ static struct i2c_driver ov08x40_i2c_driver = {
+ 		.name = "ov08x40",
+ 		.acpi_match_table = ACPI_PTR(ov08x40_acpi_ids),
+ 		.of_match_table = ov08x40_of_match,
++		.pm = pm_sleep_ptr(&ov08x40_pm_ops),
+ 	},
+ 	.probe = ov08x40_probe,
+ 	.remove = ov08x40_remove,
 diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
 index 7e79da9684ed..7129a8906734 100644
 --- a/drivers/message/fusion/mptsas.c
@@ -1982,145 +2284,6 @@ index a00671b58701..eeef2766b8b3 100644
  	ret = wg_allowedips_slab_init();
  	if (ret < 0)
  		goto err_allowedips;
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 818d4e49aab5..90bb547062cd 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -276,6 +276,9 @@ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl)
- 
- static blk_status_t nvme_error_status(u16 status)
- {
-+	if (unlikely(status & NVME_STATUS_DNR))
-+		return BLK_STS_TARGET;
-+
- 	switch (status & NVME_SCT_SC_MASK) {
- 	case NVME_SC_SUCCESS:
- 		return BLK_STS_OK;
-@@ -390,6 +393,7 @@ enum nvme_disposition {
- 	COMPLETE,
- 	RETRY,
- 	FAILOVER,
-+	FAILUP,
- 	AUTHENTICATE,
- };
- 
-@@ -398,7 +402,7 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
- 	if (likely(nvme_req(req)->status == 0))
- 		return COMPLETE;
- 
--	if (blk_noretry_request(req) ||
-+	if ((req->cmd_flags & (REQ_FAILFAST_DEV | REQ_FAILFAST_DRIVER)) ||
- 	    (nvme_req(req)->status & NVME_STATUS_DNR) ||
- 	    nvme_req(req)->retries >= nvme_max_retries)
- 		return COMPLETE;
-@@ -406,10 +410,11 @@ static inline enum nvme_disposition nvme_decide_disposition(struct request *req)
- 	if ((nvme_req(req)->status & NVME_SCT_SC_MASK) == NVME_SC_AUTH_REQUIRED)
- 		return AUTHENTICATE;
- 
--	if (req->cmd_flags & REQ_NVME_MPATH) {
-+	if (req->cmd_flags & (REQ_NVME_MPATH | REQ_FAILFAST_TRANSPORT)) {
- 		if (nvme_is_path_error(nvme_req(req)->status) ||
- 		    blk_queue_dying(req->q))
--			return FAILOVER;
-+			return (req->cmd_flags & REQ_NVME_MPATH) ?
-+				FAILOVER : FAILUP;
- 	} else {
- 		if (blk_queue_dying(req->q))
- 			return COMPLETE;
-@@ -451,6 +456,14 @@ void nvme_end_req(struct request *req)
- 	blk_mq_end_request(req, status);
- }
- 
-+static inline void nvme_failup_req(struct request *req)
-+{
-+	nvme_update_ana(req);
-+
-+	nvme_req(req)->status = NVME_SC_HOST_PATH_ERROR;
-+	nvme_end_req(req);
-+}
-+
- void nvme_complete_rq(struct request *req)
- {
- 	struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-@@ -480,6 +493,9 @@ void nvme_complete_rq(struct request *req)
- 	case FAILOVER:
- 		nvme_failover_req(req);
- 		return;
-+	case FAILUP:
-+		nvme_failup_req(req);
-+		return;
- 	case AUTHENTICATE:
- #ifdef CONFIG_NVME_HOST_AUTH
- 		queue_work(nvme_wq, &ctrl->dhchap_auth_work);
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 2a7635565083..eaa430e40a4f 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -83,14 +83,10 @@ void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
- 			blk_freeze_queue_start(h->disk->queue);
- }
- 
--void nvme_failover_req(struct request *req)
-+void nvme_update_ana(struct request *req)
- {
- 	struct nvme_ns *ns = req->q->queuedata;
- 	u16 status = nvme_req(req)->status & NVME_SCT_SC_MASK;
--	unsigned long flags;
--	struct bio *bio;
--
--	nvme_mpath_clear_current_path(ns);
- 
- 	/*
- 	 * If we got back an ANA error, we know the controller is alive but not
-@@ -101,6 +97,16 @@ void nvme_failover_req(struct request *req)
- 		set_bit(NVME_NS_ANA_PENDING, &ns->flags);
- 		queue_work(nvme_wq, &ns->ctrl->ana_work);
- 	}
-+}
-+
-+void nvme_failover_req(struct request *req)
-+{
-+	struct nvme_ns *ns = req->q->queuedata;
-+	unsigned long flags;
-+	struct bio *bio;
-+
-+	nvme_mpath_clear_current_path(ns);
-+	nvme_update_ana(req);
- 
- 	spin_lock_irqsave(&ns->head->requeue_lock, flags);
- 	for (bio = req->bio; bio; bio = bio->bi_next) {
-@@ -1039,8 +1045,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	int error = 0;
- 
- 	/* check if multipath is enabled and we have the capability */
--	if (!multipath || !ctrl->subsys ||
--	    !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
-+	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
- 		return 0;
- 
- 	/* initialize this in the identify path to cover controller resets */
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 7be92d07430e..24f466155cd5 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -953,6 +953,7 @@ void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys);
- void nvme_mpath_start_freeze(struct nvme_subsystem *subsys);
- void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys);
- void nvme_failover_req(struct request *req);
-+void nvme_update_ana(struct request *req);
- void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
- int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
- void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid);
-@@ -995,6 +996,9 @@ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
- static inline void nvme_failover_req(struct request *req)
- {
- }
-+static inline void nvme_update_ana(struct request *req)
-+{
-+}
- static inline void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
- {
- }
 diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
 index f57ea36d125d..eee8838fb9d4 100644
 --- a/drivers/pci/pci-driver.c
@@ -2150,7 +2313,7 @@ index f57ea36d125d..eee8838fb9d4 100644
  		return rc;
  	if (rc < 0) {
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index b84ff7bade82..5efa36c34f61 100644
+index 82b21e34c545..0cf24ba613a2 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -4452,6 +4452,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
@@ -2470,10 +2633,10 @@ index 950d8c9fb884..be7b84fb780b 100644
  	if (err)
  		goto err_out_driver;
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index c3f839637cb5..1588b007db6f 100644
+index a76bb50b6202..ec759a0d6330 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
-@@ -5846,6 +5846,13 @@ static void hub_event(struct work_struct *work)
+@@ -5856,6 +5856,13 @@ static void hub_event(struct work_struct *work)
  			(u16) hub->change_bits[0],
  			(u16) hub->event_bits[0]);
  
@@ -2565,7 +2728,7 @@ index b164da5e129e..cd78d16ee5d6 100644
  /*
   * Miscellaneous stuff.
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 053c57e61869..97b02a7b3fe5 100644
+index 7d63d1d75f22..c7481fdedbdd 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -2577,7 +2740,7 @@ index 053c57e61869..97b02a7b3fe5 100644
  typedef unsigned long efi_status_t;
  typedef u8 efi_bool_t;
  typedef u16 efi_char16_t;		/* UNICODE character */
-@@ -862,6 +864,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
+@@ -863,6 +865,14 @@ static inline int efi_range_is_wc(unsigned long start, unsigned long len)
  #define EFI_MEM_ATTR		9	/* Did firmware publish an EFI_MEMORY_ATTRIBUTES table? */
  #define EFI_MEM_NO_SOFT_RESERVE	10	/* Is the kernel configured to ignore soft reservations? */
  #define EFI_PRESERVE_BS_REGIONS	11	/* Are EFI boot-services memory segments available? */
@@ -2592,7 +2755,7 @@ index 053c57e61869..97b02a7b3fe5 100644
  
  #ifdef CONFIG_EFI
  /*
-@@ -873,6 +883,8 @@ static inline bool efi_enabled(int feature)
+@@ -874,6 +884,8 @@ static inline bool efi_enabled(int feature)
  }
  extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
  
@@ -2601,7 +2764,7 @@ index 053c57e61869..97b02a7b3fe5 100644
  bool __pure __efi_soft_reserve_enabled(void);
  
  static inline bool __pure efi_soft_reserve_enabled(void)
-@@ -894,6 +906,8 @@ static inline bool efi_enabled(int feature)
+@@ -895,6 +907,8 @@ static inline bool efi_enabled(int feature)
  static inline void
  efi_reboot(enum reboot_mode reboot_mode, const char *__unused) {}
  
@@ -2610,7 +2773,7 @@ index 053c57e61869..97b02a7b3fe5 100644
  static inline bool efi_soft_reserve_enabled(void)
  {
  	return false;
-@@ -908,6 +922,7 @@ static inline void efi_find_mirror(void) {}
+@@ -909,6 +923,7 @@ static inline void efi_find_mirror(void) {}
  #endif
  
  extern int efi_status_to_err(efi_status_t status);
@@ -2618,7 +2781,7 @@ index 053c57e61869..97b02a7b3fe5 100644
  
  /*
   * Variable Attributes
-@@ -1123,13 +1138,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
+@@ -1124,13 +1139,6 @@ static inline bool efi_runtime_disabled(void) { return true; }
  extern void efi_call_virt_check_flags(unsigned long flags, const void *caller);
  extern unsigned long efi_call_virt_save_flags(void);
  
@@ -2658,18 +2821,17 @@ index be2e8c0a187e..114e213c89e2 100644
 +
  #endif
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41e..2b0c2fadd8e2 100644
+index e2f1ce37c41e..3fe30fcc506c 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -443,6 +443,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
- #endif /* CONFIG_BPF_SYSCALL */
+@@ -444,6 +444,7 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
  
  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-+LSM_HOOK(int, 0, lock_kernel_down, const char *where, enum lockdown_reason level)
-+
  
++
  #ifdef CONFIG_PERF_EVENTS
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
+ LSM_HOOK(int, 0, perf_event_alloc, struct perf_event *event)
 diff --git a/include/linux/module.h b/include/linux/module.h
 index 30e5b19bafa9..e18f45c86adb 100644
 --- a/include/linux/module.h
@@ -3396,28 +3558,23 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..f5fd068977e3 100644
+index 980b6c207cad..a0f0b41d7dcc 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -574,6 +574,7 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp);
- int security_locked_down(enum lockdown_reason what);
-+int security_lock_kernel_down(const char *where, enum lockdown_reason level);
- int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
- 		      void *val, size_t val_len, u64 id, u64 flags);
- int security_bdev_alloc(struct block_device *bdev);
-@@ -1580,6 +1581,10 @@ static inline int security_locked_down(enum lockdown_reason what)
- {
- 	return 0;
+@@ -2386,4 +2386,13 @@ static inline void security_initramfs_populated(void)
  }
+ #endif /* CONFIG_SECURITY */
+ 
++#ifdef CONFIG_SECURITY_LOCKDOWN_LSM
++extern int security_lock_kernel_down(const char *where, enum lockdown_reason level);
++#else
 +static inline int security_lock_kernel_down(const char *where, enum lockdown_reason level)
 +{
 +	return 0;
 +}
- static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
- 				    u32 *uctx_len, void *val, size_t val_len,
- 				    u64 id, u64 flags)
++#endif /* CONFIG_SECURITY_LOCKDOWN_LSM */
++
+ #endif /* ! __LINUX_SECURITY_H */
 diff --git a/include/linux/stdarg.h b/include/linux/stdarg.h
 index c8dc7f4f390c..af7eb0ed138e 100644
 --- a/include/linux/stdarg.h
@@ -4660,7 +4817,7 @@ index dc081cf46d21..25fe35170155 100644
  KBUILD_CFLAGS += -Wframe-larger-than=$(CONFIG_FRAME_WARN)
  endif
 diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 36b28987a2f0..c3f3ccd5597e 100644
+index c35d22607978..08e338a4d082 100644
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
 @@ -27,6 +27,7 @@
@@ -4754,24 +4911,12 @@ index e84ddf484010..d0501353a4b9 100644
  	prompt "Kernel default lockdown mode"
  	default LOCK_DOWN_KERNEL_FORCE_NONE
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index cf83afa1d879..b5ebef58b0cb 100644
+index cf83afa1d879..aba751e7abff 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -74,6 +74,7 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
- 
- static struct security_hook_list lockdown_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
-+	LSM_HOOK_INIT(lock_kernel_down, lock_kernel_down),
- };
- 
- static const struct lsm_id lockdown_lsmid = {
-diff --git a/security/security.c b/security/security.c
-index 143561ebc3e8..2118f1d908ce 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5801,6 +5801,18 @@ int security_locked_down(enum lockdown_reason what)
+@@ -72,6 +72,17 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+ 	return 0;
  }
- EXPORT_SYMBOL(security_locked_down);
  
 +/**
 + * security_lock_kernel_down() - Put the kernel into lock-down mode.
@@ -4781,10 +4926,9 @@ index 143561ebc3e8..2118f1d908ce 100644
 + */
 +int security_lock_kernel_down(const char *where, enum lockdown_reason level)
 +{
-+	return call_int_hook(lock_kernel_down, where, level);
++	return lock_kernel_down(where, level);
 +}
-+EXPORT_SYMBOL(security_lock_kernel_down);
 +
- /**
-  * security_bdev_alloc() - Allocate a block device LSM blob
-  * @bdev: block device
+ static struct security_hook_list lockdown_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
+ };
