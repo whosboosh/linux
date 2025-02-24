@@ -1,11 +1,11 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/3c17a68c0e07b84ed7ec7e765a194ca779092403
- 3c17a68c0e07b84ed7ec7e765a194ca779092403 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/885969556eeea2347e25698fc9302d527e055069
+ 885969556eeea2347e25698fc9302d527e055069 apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/d46bf713847bc76ec3ff1a9d69ab18b7e6b27105
- d46bf713847bc76ec3ff1a9d69ab18b7e6b27105 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/bcfd05b3ade2c6bd06ed7bfe3a6f97de3ad436ec
+ bcfd05b3ade2c6bd06ed7bfe3a6f97de3ad436ec include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/3698efc7c59070e3b14d90711e84aa4526a99487
- 3698efc7c59070e3b14d90711e84aa4526a99487 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/2128a649ec86769dce535c4078d564173cea4165
+ 2128a649ec86769dce535c4078d564173cea4165 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/823c03387bfa05b7e6ae2183bcc575aae67791f3
  823c03387bfa05b7e6ae2183bcc575aae67791f3 efi,lockdown: fix kernel lockdown on Secure Boot
