@@ -199,7 +199,7 @@ index 000000000000..85771d74c34f
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 30dab4c8b012..ac25a88f2d2d 100644
+index 70bdbf2218fc..6689ba0800df 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -367,7 +367,7 @@ index 7cce91b19fb2..82bfcf5c2092 100644
  		get_cpu_address_sizes(c);
  		cpu_parse_early_param();
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index cebee310e200..efe2c967f758 100644
+index cebee310e200..70a656b9988b 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -400,7 +400,7 @@ index cebee310e200..efe2c967f758 100644
 +
 +	/* RHEL supports single cpu on guests only */
 +	if (((topology_num_threads_per_package() * __max_threads_per_core) == 1) &&
-+	    !guest && is_kdump_kernel()) {
++	    !guest && !is_kdump_kernel()) {
 +		pr_crit("Detected single cpu native boot.\n");
 +		pr_crit("Important:  In this kernel, single threaded, single CPU 64-bit physical systems are unsupported.");
 +	}
@@ -1024,10 +1024,10 @@ index 9f4efa8f75a6..b7d9f1e31c8f 100644
  	acpi_dev_get_resources(device, &resource_list,
  			       acpi_check_serial_bus_slave,
 diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-index fdfa7b266218..f5f8ba457c93 100644
+index e7ace4b10f15..fbb2bbfd026d 100644
 --- a/drivers/ata/libahci.c
 +++ b/drivers/ata/libahci.c
-@@ -729,6 +729,24 @@ int ahci_stop_engine(struct ata_port *ap)
+@@ -730,6 +730,24 @@ int ahci_stop_engine(struct ata_port *ap)
  	tmp &= ~PORT_CMD_START;
  	writel(tmp, port_mmio + PORT_CMD);
  
