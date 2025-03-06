@@ -1,11 +1,11 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/d273db7649f17c4ec05d78dbe21cbe255643e2e6
- d273db7649f17c4ec05d78dbe21cbe255643e2e6 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/c4904244076d748fd1d8fd9f6bf8a9ca20de469a
+ c4904244076d748fd1d8fd9f6bf8a9ca20de469a apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/95b0aa5251822b0945bc4ef1b9aab4d3a2c642b0
- 95b0aa5251822b0945bc4ef1b9aab4d3a2c642b0 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/d149ef8e70c7d8de3ada08fe44181d2c33abe776
+ d149ef8e70c7d8de3ada08fe44181d2c33abe776 include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/1acbf2768e21e7b400a1718c98e5dcce900eff87
- 1acbf2768e21e7b400a1718c98e5dcce900eff87 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/8810cb219385bb9e456366e762df2da24eb93480
+ 8810cb219385bb9e456366e762df2da24eb93480 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/a80114a29498954d43ad1e848199d326d56a298b
  a80114a29498954d43ad1e848199d326d56a298b arch/x86/kernel/setup.c: fix rh_check_supported
