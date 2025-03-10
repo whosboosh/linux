@@ -199,7 +199,7 @@ index 000000000000..85771d74c34f
 +
 +endmenu
 diff --git a/Makefile b/Makefile
-index 70bdbf2218fc..6689ba0800df 100644
+index 1d6a9ec8a2ac..3e467123fa00 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -239,7 +239,7 @@ index 70bdbf2218fc..6689ba0800df 100644
  ifdef mixed-build
  # ===========================================================================
  # We're called with mixed targets (*config and build targets).
-@@ -1312,7 +1335,13 @@ define filechk_version.h
+@@ -1317,7 +1340,13 @@ define filechk_version.h
  	((c) > 255 ? 255 : (c)))';                                       \
  	echo \#define LINUX_VERSION_MAJOR $(VERSION);                    \
  	echo \#define LINUX_VERSION_PATCHLEVEL $(PATCHLEVEL);            \
@@ -254,7 +254,7 @@ index 70bdbf2218fc..6689ba0800df 100644
  endef
  
  $(version_h): private PATCHLEVEL := $(or $(PATCHLEVEL), 0)
-@@ -1910,6 +1939,23 @@ endif
+@@ -1915,6 +1944,23 @@ endif
  
  ifdef CONFIG_MODULES
  
@@ -2633,7 +2633,7 @@ index 950d8c9fb884..be7b84fb780b 100644
  	if (err)
  		goto err_out_driver;
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index a76bb50b6202..ec759a0d6330 100644
+index dcba4281ea48..bb82bf5148b0 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
 @@ -5856,6 +5856,13 @@ static void hub_event(struct work_struct *work)
