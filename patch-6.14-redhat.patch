@@ -43,7 +43,6 @@
  drivers/scsi/hpsa.c                                |   4 +
  drivers/scsi/lpfc/lpfc_ids.h                       |  12 +
  drivers/scsi/megaraid/megaraid_sas_base.c          |   4 +
- drivers/scsi/mpt3sas/mpt3sas_scsih.c               |   4 +
  drivers/scsi/qla2xxx/qla_os.c                      |   6 +
  drivers/scsi/qla4xxx/ql4_os.c                      |   2 +
  drivers/scsi/sd.c                                  |  13 +
@@ -67,7 +66,7 @@
  include/linux/stdarg.h                             |  10 +
  include/linux/stddef.h                             |   2 +
  include/linux/types.h                              |   2 +
- init/main.c                                        |   3 +
+ init/main.c                                        |   5 +
  kernel/Makefile                                    |   1 +
  kernel/bpf/core.c                                  |   5 +
  kernel/bpf/syscall.c                               |  23 +
@@ -84,7 +83,7 @@
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |  11 +
- 86 files changed, 2842 insertions(+), 289 deletions(-)
+ 85 files changed, 2840 insertions(+), 289 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -2518,38 +2517,6 @@ index d85f990aec88..fcddaa91f25e 100644
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_FUSION)},
  	/* Fusion */
  	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index a456e5ec74d8..75b918d6b932 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -12566,6 +12566,7 @@ scsih_pci_mmio_enabled(struct pci_dev *pdev)
-  * The pci device ids are defined in mpi/mpi2_cnfg.h.
-  */
- static const struct pci_device_id mpt3sas_pci_table[] = {
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	/* Spitfire ~ 2004 */
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2004,
- 		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12584,6 +12585,7 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
- 		PCI_ANY_ID, PCI_ANY_ID },
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2116_2,
- 		PCI_ANY_ID, PCI_ANY_ID },
-+#endif
- 	/* Thunderbolt ~ 2208 */
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SAS2208_1,
- 		PCI_ANY_ID, PCI_ANY_ID },
-@@ -12608,9 +12610,11 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
- 		PCI_ANY_ID, PCI_ANY_ID },
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
- 		PCI_ANY_ID, PCI_ANY_ID },
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	/* SSS6200 */
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SSS6200,
- 		PCI_ANY_ID, PCI_ANY_ID },
-+#endif
- 	/* Fury ~ 3004 and 3008 */
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI25_MFGPAGE_DEVID_SAS3004,
- 		PCI_ANY_ID, PCI_ANY_ID },
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
 index 6b9b8218b512..f6def6339bc2 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
@@ -3629,10 +3596,21 @@ index 1c509ce8f7f6..4e08ce851059 100644
  typedef __kernel_uid32_t	uid_t;
  typedef __kernel_gid32_t	gid_t;
 diff --git a/init/main.c b/init/main.c
-index 2a1757826397..378cdc6cc3cf 100644
+index 2a1757826397..7bd174445f1b 100644
 --- a/init/main.c
 +++ b/init/main.c
-@@ -1172,6 +1172,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+@@ -1160,8 +1160,10 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
+ 	char fn_name[KSYM_SYMBOL_LEN];
+ 	unsigned long addr;
+ 
++#ifndef CONFIG_RHEL_DIFFERENCES
+ 	if (list_empty(&blacklisted_initcalls))
+ 		return false;
++#endif
+ 
+ 	addr = (unsigned long) dereference_function_descriptor(fn);
+ 	sprint_symbol_no_offset(fn_name, addr);
+@@ -1172,6 +1174,9 @@ static bool __init_or_module initcall_blacklisted(initcall_t fn)
  	 */
  	strreplace(fn_name, ' ', '\0');
  
