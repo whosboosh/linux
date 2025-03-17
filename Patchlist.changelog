@@ -1,11 +1,11 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/aece4fee0d08b9ab71d1b89e4096ee5d43a1c5c1
- aece4fee0d08b9ab71d1b89e4096ee5d43a1c5c1 apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/6707eb45991e68c9b2d231acfcc4acef5329cd79
+ 6707eb45991e68c9b2d231acfcc4acef5329cd79 apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/04660c6034b895734095e694d7ddb0c8a8edd62c
- 04660c6034b895734095e694d7ddb0c8a8edd62c include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/633be2bc828b77d8bc253e2df381f1c45f895e5a
+ 633be2bc828b77d8bc253e2df381f1c45f895e5a include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/13409e90eafc2dbc019710a8dfaca973e76424bc
- 13409e90eafc2dbc019710a8dfaca973e76424bc x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/3258b25c2557121af8b132b451578c5987a45923
+ 3258b25c2557121af8b132b451578c5987a45923 x86/insn_decoder_test: allow longer symbol-names
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/a7dbc25e5c52db9089499c46ef42c765af103139
  a7dbc25e5c52db9089499c46ef42c765af103139 Revert "mpt*: remove certain deprecated pci-ids"
