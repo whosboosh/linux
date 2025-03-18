@@ -32,19 +32,16 @@
  drivers/hwtracing/coresight/coresight-etm4x-core.c |  19 +
  drivers/input/rmi4/rmi_driver.c                    | 124 +++--
  drivers/iommu/iommu.c                              |  22 +
- drivers/media/i2c/ov08x40.c                        | 167 ++++---
+ drivers/media/i2c/ov08x40.c                        | 170 +++----
  drivers/message/fusion/mptsas.c                    |   5 +
  drivers/message/fusion/mptspi.c                    |   6 +
  drivers/net/wireguard/main.c                       |   6 +
  drivers/pci/pci-driver.c                           |   9 +
  drivers/pci/quirks.c                               |  24 +
  drivers/scsi/aacraid/linit.c                       |   2 +
- drivers/scsi/be2iscsi/be_main.c                    |   2 +
  drivers/scsi/hpsa.c                                |   4 +
  drivers/scsi/lpfc/lpfc_ids.h                       |  12 +
- drivers/scsi/megaraid/megaraid_sas_base.c          |   4 +
  drivers/scsi/qla2xxx/qla_os.c                      |   6 +
- drivers/scsi/qla4xxx/ql4_os.c                      |   2 +
  drivers/scsi/sd.c                                  |  13 +
  drivers/usb/core/hub.c                             |   7 +
  fs/afs/main.c                                      |   3 +
@@ -83,7 +80,7 @@
  security/integrity/platform_certs/load_uefi.c      |   6 +-
  security/lockdown/Kconfig                          |  13 +
  security/lockdown/lockdown.c                       |  11 +
- 85 files changed, 2840 insertions(+), 289 deletions(-)
+ 82 files changed, 2834 insertions(+), 290 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
 index fb8752b42ec8..4e22c8f2f90e 100644
@@ -1910,7 +1907,7 @@ index 60aed01e54f2..64758cca794b 100644
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
 diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
-index b9682264e2f5..c2a399e3bb41 100644
+index b9682264e2f5..54575eea3c49 100644
 --- a/drivers/media/i2c/ov08x40.c
 +++ b/drivers/media/i2c/ov08x40.c
 @@ -1322,9 +1322,6 @@ static int ov08x40_power_on(struct device *dev)
@@ -1923,6 +1920,15 @@ index b9682264e2f5..c2a399e3bb41 100644
  	ret = clk_prepare_enable(ov08x->xvclk);
  	if (ret < 0) {
  		dev_err(dev, "failed to enable xvclk\n");
+@@ -1344,7 +1341,7 @@ static int ov08x40_power_on(struct device *dev)
+ 	}
+ 
+ 	gpiod_set_value_cansleep(ov08x->reset_gpio, 0);
+-	usleep_range(1500, 1800);
++	usleep_range(5000, 5500);
+ 
+ 	return 0;
+ 
 @@ -1360,9 +1357,6 @@ static int ov08x40_power_off(struct device *dev)
  	struct v4l2_subdev *sd = dev_get_drvdata(dev);
  	struct ov08x40 *ov08x = to_ov08x40(sd);
@@ -1963,7 +1969,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  
  	return 0;
  }
-@@ -1937,6 +1932,34 @@ static int ov08x40_stop_streaming(struct ov08x40 *ov08x)
+@@ -1937,6 +1932,35 @@ static int ov08x40_stop_streaming(struct ov08x40 *ov08x)
  				 OV08X40_REG_VALUE_08BIT, OV08X40_MODE_STANDBY);
  }
  
@@ -1990,6 +1996,7 @@ index b9682264e2f5..c2a399e3bb41 100644
 +		return -ENXIO;
 +	}
 +
++	dev_dbg(&client->dev, "chip id 0x%x\n", val);
 +	ov08x->identified = true;
 +
 +	return 0;
@@ -1998,7 +2005,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
  {
  	struct ov08x40 *ov08x = to_ov08x40(sd);
-@@ -1950,6 +1973,10 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
+@@ -1950,6 +1974,10 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
  		if (ret < 0)
  			goto err_unlock;
  
@@ -2009,7 +2016,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  		/*
  		 * Apply default & customized values
  		 * and then start streaming.
-@@ -1974,32 +2001,6 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
+@@ -1974,32 +2002,6 @@ static int ov08x40_set_stream(struct v4l2_subdev *sd, int enable)
  	return ret;
  }
  
@@ -2042,7 +2049,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  static const struct v4l2_subdev_video_ops ov08x40_video_ops = {
  	.s_stream = ov08x40_set_stream,
  };
-@@ -2151,65 +2152,69 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
+@@ -2151,65 +2153,69 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
  	int ret;
  	u32 xvclk_rate;
  
@@ -2071,7 +2078,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  
 -		xvclk_rate = clk_get_rate(ov08x->xvclk);
 +	ov08x->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						    GPIOD_OUT_LOW);
++						    GPIOD_OUT_HIGH);
 +	if (IS_ERR(ov08x->reset_gpio)) {
 +		ret = dev_err_probe(dev, PTR_ERR(ov08x->reset_gpio),
 +				    "getting reset GPIO\n");
@@ -2148,7 +2155,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  		ret = -EINVAL;
  		goto out_err;
  	}
-@@ -2222,7 +2227,7 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
+@@ -2222,7 +2228,7 @@ static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
  		}
  
  		if (j == bus_cfg.nr_of_link_frequencies) {
@@ -2157,7 +2164,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  				link_freq_menu_items[i]);
  			ret = -EINVAL;
  			goto out_err;
-@@ -2246,10 +2251,8 @@ static int ov08x40_probe(struct i2c_client *client)
+@@ -2246,10 +2252,8 @@ static int ov08x40_probe(struct i2c_client *client)
  
  	/* Check HW config */
  	ret = ov08x40_check_hwcfg(ov08x, &client->dev);
@@ -2169,7 +2176,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  
  	/* Initialize subdev */
  	v4l2_i2c_subdev_init(&ov08x->sd, client, &ov08x40_subdev_ops);
-@@ -2264,10 +2267,8 @@ static int ov08x40_probe(struct i2c_client *client)
+@@ -2264,10 +2268,8 @@ static int ov08x40_probe(struct i2c_client *client)
  
  		/* Check module identity */
  		ret = ov08x40_identify_module(ov08x);
@@ -2181,7 +2188,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  	}
  
  	/* Set default mode to max resolution */
-@@ -2324,11 +2325,14 @@ static void ov08x40_remove(struct i2c_client *client)
+@@ -2324,11 +2326,14 @@ static void ov08x40_remove(struct i2c_client *client)
  	ov08x40_free_controls(ov08x);
  
  	pm_runtime_disable(&client->dev);
@@ -2198,7 +2205,7 @@ index b9682264e2f5..c2a399e3bb41 100644
  #ifdef CONFIG_ACPI
  static const struct acpi_device_id ov08x40_acpi_ids[] = {
  	{"OVTI08F4"},
-@@ -2349,6 +2353,7 @@ static struct i2c_driver ov08x40_i2c_driver = {
+@@ -2349,6 +2354,7 @@ static struct i2c_driver ov08x40_i2c_driver = {
  		.name = "ov08x40",
  		.acpi_match_table = ACPI_PTR(ov08x40_acpi_ids),
  		.of_match_table = ov08x40_of_match,
@@ -2366,24 +2373,6 @@ index 91170a67cc91..0772eddd7670 100644
  	{ 0x9005, 0x028b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 62 }, /* Adaptec PMC Series 6 (Tupelo) */
  	{ 0x9005, 0x028c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 63 }, /* Adaptec PMC Series 7 (Denali) */
  	{ 0x9005, 0x028d, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 64 }, /* Adaptec PMC Series 8 */
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 76a1e373386e..e110b9e75aa2 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -387,11 +387,13 @@ static int beiscsi_eh_device_reset(struct scsi_cmnd *sc)
- 
- /*------------------- PCI Driver operations and data ----------------- */
- static const struct pci_device_id beiscsi_pci_id_table[] = {
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID1) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, BE_DEVICE_ID2) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID1) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID2) },
- 	{ PCI_DEVICE(BE_VENDOR_ID, OC_DEVICE_ID3) },
-+#endif
- 	{ PCI_DEVICE(ELX_VENDOR_ID, OC_SKH_ID1) },
- 	{ 0 }
- };
 diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
 index 84d8de07b7ae..af05ff30c379 100644
 --- a/drivers/scsi/hpsa.c
@@ -2485,38 +2474,6 @@ index 0b1616e93cf4..85fc52038a82 100644
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G6_FC,
  		PCI_ANY_ID, PCI_ANY_ID, },
  	{PCI_VENDOR_ID_EMULEX, PCI_DEVICE_ID_LANCER_G7_FC,
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index d85f990aec88..fcddaa91f25e 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -148,6 +148,7 @@ megasas_set_ld_removed_by_fw(struct megasas_instance *instance);
-  */
- static const struct pci_device_id megasas_pci_table[] = {
- 
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1064R)},
- 	/* xscale IOP */
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078R)},
-@@ -156,16 +157,19 @@ static const struct pci_device_id megasas_pci_table[] = {
- 	/* ppc IOP */
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1078GEN2)},
- 	/* gen2*/
-+#endif
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0079GEN2)},
- 	/* gen2*/
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0073SKINNY)},
- 	/* skinny*/
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS0071SKINNY)},
- 	/* skinny*/
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_VERDE_ZCR)},
- 	/* xscale IOP, vega */
- 	{PCI_DEVICE(PCI_VENDOR_ID_DELL, PCI_DEVICE_ID_DELL_PERC5)},
- 	/* xscale IOP */
-+#endif
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_FUSION)},
- 	/* Fusion */
- 	{PCI_DEVICE(PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_PLASMA)},
 diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
 index 6b9b8218b512..f6def6339bc2 100644
 --- a/drivers/scsi/qla2xxx/qla_os.c
@@ -2548,26 +2505,6 @@ index 6b9b8218b512..f6def6339bc2 100644
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2071) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2271) },
  	{ PCI_DEVICE(PCI_VENDOR_ID_QLOGIC, PCI_DEVICE_ID_QLOGIC_ISP2261) },
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 6b0e6b4cd8af..f5bc9c1dfd74 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -9866,6 +9866,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
- 	},
-+#ifndef CONFIG_RHEL_DIFFERENCES
- 	{
- 		.vendor         = PCI_VENDOR_ID_QLOGIC,
- 		.device         = PCI_DEVICE_ID_QLOGIC_ISP8022,
-@@ -9884,6 +9885,7 @@ static const struct pci_device_id qla4xxx_pci_tbl[] = {
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
- 	},
-+#endif
- 	{0, 0},
- };
- MODULE_DEVICE_TABLE(pci, qla4xxx_pci_tbl);
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
 index 950d8c9fb884..be7b84fb780b 100644
 --- a/drivers/scsi/sd.c
