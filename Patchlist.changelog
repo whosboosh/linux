@@ -1,14 +1,14 @@
-https://gitlab.com/cki-project/kernel-ark/-/commit/af62f097f5d1c64b98900e2db09fee4ff7f21c66
- af62f097f5d1c64b98900e2db09fee4ff7f21c66 mei: vsc: Fix fortify-panic caused by invalid counted_by() use
+https://gitlab.com/cki-project/kernel-ark/-/commit/62c8b960ac29123120679713d9af3699a131320d
+ 62c8b960ac29123120679713d9af3699a131320d apply -Wno-error=unterminated-string-initialization temporarily
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/14299023211182156daa4f117788d7bda81e1e1c
- 14299023211182156daa4f117788d7bda81e1e1c apply -Wno-error=unterminated-string-initialization temporarily
+https://gitlab.com/cki-project/kernel-ark/-/commit/1d80a0ca33d0f3dc08748a5b29e7a90683480ece
+ 1d80a0ca33d0f3dc08748a5b29e7a90683480ece include/linux: Adjust headers for C23
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/7bb2f5565c6dc806d422a2a9e4a6ad411f60cb03
- 7bb2f5565c6dc806d422a2a9e4a6ad411f60cb03 include/linux: Adjust headers for C23
+https://gitlab.com/cki-project/kernel-ark/-/commit/a2b469d541d286bdc008c198158aa58b3fe6ba33
+ a2b469d541d286bdc008c198158aa58b3fe6ba33 x86/insn_decoder_test: allow longer symbol-names
 
-https://gitlab.com/cki-project/kernel-ark/-/commit/b8aef7b7caa01acb0d171dba6b17fb130e97a293
- b8aef7b7caa01acb0d171dba6b17fb130e97a293 x86/insn_decoder_test: allow longer symbol-names
+https://gitlab.com/cki-project/kernel-ark/-/commit/97cfb1ed8fdcb10f75ef199427eed4563511ec49
+ 97cfb1ed8fdcb10f75ef199427eed4563511ec49 mei: vsc: Fix fortify-panic caused by invalid counted_by() use
 
 https://gitlab.com/cki-project/kernel-ark/-/commit/be163c8164ebf72e9820a78774533b1f0672d751
  be163c8164ebf72e9820a78774533b1f0672d751 Revert "be2iscsi: remove unsupported device IDs"
