@@ -150,7 +150,7 @@ Summary: The Linux kernel
 #  kernel release. (This includes prepatch or "rc" releases.)
 # Set released_kernel to 0 when the upstream source tarball contains an
 #  unreleased kernel development snapshot.
-%global released_kernel 0
+%global released_kernel 1
 # Set debugbuildsenabled to 1 to build separate base and debug kernels
 #  (on supported architectures). The kernel-debug-* subpackages will
 #  contain the debug kernel.
@@ -159,18 +159,18 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.14.0
-%define specversion 6.14.0
+%define specrpmversion 6.14.1
+%define specversion 6.14.1
 %define patchversion 6.14
-%define pkgrelease 63
+%define pkgrelease 300
 %define kversion 6
-%define tarfile_release 6.14
+%define tarfile_release 6.14.1
 # This is needed to do merge window version magic
 %define patchlevel 14
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 63%{?buildid}%{?dist}
+%define specrelease 300%{?buildid}%{?dist}
 # This defines the kabi tarball version
-%define kabiversion 6.14.0
+%define kabiversion 6.14.1
 
 # If this variable is set to 1, a bpf selftests build failure will cause a
 # fatal kernel package build error
@@ -766,6 +766,7 @@ BuildRequires: libnl3-devel
 
 %if %{with_tools} && %{with_ynl}
 BuildRequires: python3-pyyaml python3-jsonschema python3-pip python3-setuptools >= 61
+BuildRequires: (python3-wheel if python3-setuptools < 70)
 %endif
 
 %if %{with_tools} || %{signmodules} || %{signkernel}
@@ -2040,14 +2041,6 @@ cat imaca.pem >> ../certs/rhel.pem
 
 for i in *.config; do
   sed -i 's@CONFIG_SYSTEM_TRUSTED_KEYS=""@CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"@' $i
-done
-%endif
-
-# Adjust FIPS module name for RHEL
-%if 0%{?rhel}
-%{log_msg "Adjust FIPS module name for RHEL"}
-for i in *.config; do
-  sed -i 's/CONFIG_CRYPTO_FIPS_NAME=.*/CONFIG_CRYPTO_FIPS_NAME="Red Hat Enterprise Linux %{rhel} - Kernel Cryptographic API"/' $i
 done
 %endif
 
@@ -4212,10 +4205,44 @@ fi\
 #
 #
 %changelog
-* Mon Mar 24 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-63]
-- apply -Wno-error=unterminated-string-initialization temporarily (Thorsten Leemhuis)
-- include/linux: Adjust headers for C23 (Jakub Jelinek)
+* Mon Apr 07 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.1-0]
+- Config updates for 6.14.1 (Justin M. Forbes)
+- redhat/kernel.spec: list python3-wheel explicitly for Fedora<42 (Jan Stancek)
+- serial: 8250_dma: terminate correct DMA in tx_dma_flush() (John Keeping)
+- serial: stm32: do not deassert RS485 RTS GPIO prematurely (Cheick Traore)
+- perf tools: Fix up some comments and code to properly use the event_source bus (Greg Kroah-Hartman)
+- memstick: rtsx_usb_ms: Fix slab-use-after-free in rtsx_usb_ms_drv_remove (Luo Qiu)
+- usb: xhci: Apply the link chain quirk on NEC isoc endpoints (Michal Pecio)
+- usb: xhci: Don't skip on Stopped - Length Invalid (Michal Pecio)
+- net: usb: usbnet: restore usb%%d name exception for local mac addresses (Dominique Martinet)
+- net: usb: qmi_wwan: add Telit Cinterion FE990B composition (Fabio Porcedda)
+- net: usb: qmi_wwan: add Telit Cinterion FN990B composition (Fabio Porcedda)
+- tty: serial: fsl_lpuart: disable transmitter before changing RS485 related registers (Sherry Sun)
+- tty: serial: 8250: Add Brainboxes XC devices (Cameron Williams)
+- tty: serial: 8250: Add some more device IDs (Cameron Williams)
+- counter: microchip-tcb-capture: Fix undefined counter channel state on probe (William Breathitt Gray)
+- counter: stm32-lptimer-cnt: fix error handling when enabling (Fabrice Gasnier)
+- ALSA: hda/realtek: Bass speaker fixup for ASUS UM5606KA (Andres Traumann)
+- ALSA: hda/realtek: Support mute LED on HP Laptop 15s-du3xxx (Dhruv Deshpande)
+- netfilter: socket: Lookup orig tuple for IPv6 SNAT (Maxim Mikityanskiy)
+- cgroup/rstat: Fix forceidle time in cpu.stat (Abel Wu)
+- atm: Fix NULL pointer dereference (Minjoong Kim)
+- HID: hid-plantronics: Add mic mute mapping and generalize quirks (Terry Junge)
+- ALSA: usb-audio: Add quirk for Plantronics headsets to fix control names (Terry Junge)
+- Documentation/powerpc/fadump: add additional parameter feature details (Mamatha Inamdar) [RHEL-70827]
+- powerpc: increase MIN RMA size for CAS negotiation (Mamatha Inamdar) [RHEL-70827]
+- powerpc/fadump: fix additional param memory reservation for HASH MMU (Mamatha Inamdar) [RHEL-70827]
+- powerpc: export MIN RMA size (Mamatha Inamdar) [RHEL-70827]
+- fedora: arm64: move some TI drivers to modular (Peter Robinson)
+- fedora: minor cleanups for 6.14 (Peter Robinson)
+- Initial setup for stable Fedora releases (Justin M. Forbes)
+- powerpc64/ftrace: fix module loading without patchable function entries (Anthony Iliopoulos)
 - x86/insn_decoder_test: allow longer symbol-names (David Rheinsberg)
+- apply -Wno-error=unterminated-string-initialization temporarily (Thorsten Leemhuis)
+- Linux v6.14.1
+
+* Mon Mar 24 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.0-1]
+- Reset RHEL_RELEASE for 6.15 cycle (Justin M. Forbes)
 
 * Mon Mar 24 2025 Fedora Kernel Team <kernel-team@fedoraproject.org> [6.14.0-62]
 - arm64: cleanup and de-dupe erratum (Peter Robinson)
