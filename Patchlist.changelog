@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/b58d3f80cb10dac25b2503f2a537e96dd2457218
+ b58d3f80cb10dac25b2503f2a537e96dd2457218 Revert "loop: Add sanity check for read/write_iter"
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/6f21234ca80186c3ac2dba318fa458f967c6f677
  6f21234ca80186c3ac2dba318fa458f967c6f677 powerpc/bpf: fix JIT code size calculation of bpf trampoline
 

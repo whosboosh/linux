@@ -162,13 +162,13 @@ Summary: The Linux kernel
 %define specrpmversion 6.14.7
 %define specversion 6.14.7
 %define patchversion 6.14
-%define pkgrelease 300
+%define pkgrelease 301
 %define kversion 6
 %define tarfile_release 6.14.7
 # This is needed to do merge window version magic
 %define patchlevel 14
 # This allows pkg_release to have configurable %%{?dist} tag
-%define specrelease 300%{?buildid}%{?dist}
+%define specrelease 301%{?buildid}%{?dist}
 # This defines the kabi tarball version
 %define kabiversion 6.14.7
 
@@ -4205,6 +4205,10 @@ fi\
 #
 #
 %changelog
+* Mon May 19 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.7-301]
+- Revert "loop: Add sanity check for read/write_iter" (Justin M. Forbes)
+- Fix up typo in release_targets (Justin M. Forbes)
+
 * Sun May 18 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.7-0]
 - Turn on MITIGATION_ITS for RHEL configs (Justin M. Forbes)
 - Add bug to Bugsfixed for 6.14.7 (Justin M. Forbes)
