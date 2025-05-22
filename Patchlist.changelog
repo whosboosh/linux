@@ -1,3 +1,6 @@
+https://gitlab.com/cki-project/kernel-ark/-/commit/9db433b73d8cf57ca0ac9cb17fda0d7609a3deb7
+ 9db433b73d8cf57ca0ac9cb17fda0d7609a3deb7 drm/xe/display: Re-use display vmas when possible
+
 https://gitlab.com/cki-project/kernel-ark/-/commit/b58d3f80cb10dac25b2503f2a537e96dd2457218
  b58d3f80cb10dac25b2503f2a537e96dd2457218 Revert "loop: Add sanity check for read/write_iter"
 
