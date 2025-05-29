@@ -159,18 +159,18 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.14.8
-%define specversion 6.14.8
+%define specrpmversion 6.14.9
+%define specversion 6.14.9
 %define patchversion 6.14
 %define pkgrelease 300
 %define kversion 6
-%define tarfile_release 6.14.8
+%define tarfile_release 6.14.9
 # This is needed to do merge window version magic
 %define patchlevel 14
 # This allows pkg_release to have configurable %%{?dist} tag
 %define specrelease 300%{?buildid}%{?dist}
 # This defines the kabi tarball version
-%define kabiversion 6.14.8
+%define kabiversion 6.14.9
 
 # If this variable is set to 1, a bpf selftests build failure will cause a
 # fatal kernel package build error
@@ -4205,6 +4205,12 @@ fi\
 #
 #
 %changelog
+* Thu May 29 2025 Justin M. Forbes <jforbes@fedoraproject.org> [6.14.9-0]
+- Revert "drm/amd/display: more liberal vmin/vmax update for freesync" (Justin M. Forbes)
+- Reapply "loop: Add sanity check for read/write_iter" (Justin M. Forbes)
+- aarch64: Switch TI_SCI_CLK and TI_SCI_PM_DOMAINS symbols to built-in (Peter Robinson)
+- Linux v6.14.9
+
 * Thu May 22 2025 Augusto Caringi <acaringi@redhat.com> [6.14.8-0]
 - drm/xe/display: Re-use display vmas when possible (Maarten Lankhorst) [2367813]
 - Revert "loop: Add sanity check for read/write_iter" (Justin M. Forbes)
