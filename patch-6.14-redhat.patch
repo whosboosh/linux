@@ -80,7 +80,7 @@
  79 files changed, 3167 insertions(+), 679 deletions(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-kernel-fadump b/Documentation/ABI/testing/sysfs-kernel-fadump
-index 2f9daa7ca55b..b64b7622e6fc 100644
+index 2f9daa7ca55be..b64b7622e6fc0 100644
 --- a/Documentation/ABI/testing/sysfs-kernel-fadump
 +++ b/Documentation/ABI/testing/sysfs-kernel-fadump
 @@ -55,4 +55,5 @@ Date:		May 2024
@@ -91,7 +91,7 @@ index 2f9daa7ca55b..b64b7622e6fc 100644
 +		parameters to be passed to capture kernel. For HASH MMU it
 +		is exported only if RMA size higher than 768MB.
 diff --git a/Documentation/arch/powerpc/firmware-assisted-dump.rst b/Documentation/arch/powerpc/firmware-assisted-dump.rst
-index 7e37aadd1f77..7e266e749cd5 100644
+index 7e37aadd1f772..7e266e749cd53 100644
 --- a/Documentation/arch/powerpc/firmware-assisted-dump.rst
 +++ b/Documentation/arch/powerpc/firmware-assisted-dump.rst
 @@ -120,6 +120,28 @@ to ensure that crash data is preserved to process later.
@@ -124,7 +124,7 @@ index 7e37aadd1f77..7e266e749cd5 100644
  -----------------------
  
 diff --git a/MAINTAINERS b/MAINTAINERS
-index c0d5232a473b..00b60a837d5e 100644
+index c0d5232a473b8..00b60a837d5e5 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -17461,6 +17461,23 @@ T:	git git://linuxtv.org/media.git
@@ -152,7 +152,7 @@ index c0d5232a473b..00b60a837d5e 100644
  M:	Jimmy Su <jimmy.su@intel.com>
  L:	linux-media@vger.kernel.org
 diff --git a/Makefile b/Makefile
-index 884279eb952d..55904348cd59 100644
+index 0f3aad52b3de8..743dae6fc73e9 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -22,6 +22,18 @@ $(if $(filter __%, $(MAKECMDGOALS)), \
@@ -217,7 +217,7 @@ index 884279eb952d..55904348cd59 100644
  	@:
  
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f3f6b7a33b79..803bd258f1b7 100644
+index f3f6b7a33b793..803bd258f1b72 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
 @@ -1231,9 +1231,9 @@ config HIGHMEM
@@ -233,7 +233,7 @@ index f3f6b7a33b79..803bd258f1b7 100644
  	  The VM uses one page of physical memory for each page table.
  	  For systems with a lot of processes, this can use a lot of
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3e7483ad5276..6ec02dbd2dd0 100644
+index 3e7483ad5276c..6ec02dbd2dd0a 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
 @@ -1409,7 +1409,7 @@ endchoice
@@ -246,7 +246,7 @@ index 3e7483ad5276..6ec02dbd2dd0 100644
  	  For systems with 52-bit userspace VAs enabled, the kernel will attempt
  	  to maintain compatibility with older software by providing 48-bit VAs
 diff --git a/arch/powerpc/include/asm/prom.h b/arch/powerpc/include/asm/prom.h
-index c0107d8ddd8c..f679a11a7e7f 100644
+index c0107d8ddd8c8..f679a11a7e7f0 100644
 --- a/arch/powerpc/include/asm/prom.h
 +++ b/arch/powerpc/include/asm/prom.h
 @@ -17,6 +17,8 @@
@@ -259,7 +259,7 @@ index c0107d8ddd8c..f679a11a7e7f 100644
  #define OF_DT_END_NODE		0x2		/* End node */
  #define OF_DT_PROP		0x3		/* Property: name off, size,
 diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 4b371c738213..26e3d151e048 100644
+index 4b371c738213c..26e3d151e0483 100644
 --- a/arch/powerpc/kernel/fadump.c
 +++ b/arch/powerpc/kernel/fadump.c
 @@ -33,6 +33,7 @@
@@ -301,7 +301,7 @@ index 4b371c738213..26e3d151e048 100644
  
  	fw_dump.param_area = memblock_phys_alloc_range(COMMAND_LINE_SIZE,
 diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index fe4659ba8c22..827c958677f8 100644
+index fe4659ba8c22a..827c958677f8c 100644
 --- a/arch/powerpc/kernel/prom_init.c
 +++ b/arch/powerpc/kernel/prom_init.c
 @@ -1061,7 +1061,7 @@ static const struct ibm_arch_vec ibm_architecture_vec_template __initconst = {
@@ -314,7 +314,7 @@ index fe4659ba8c22..827c958677f8 100644
  		.min_rma_percent = 0,	/* min RMA percentage of total RAM */
  		.max_pft_size = 48,	/* max log_2(hash table size) */
 diff --git a/arch/powerpc/net/bpf_jit.h b/arch/powerpc/net/bpf_jit.h
-index 6beacaec63d3..4c26912c2e3c 100644
+index 6beacaec63d30..4c26912c2e3c3 100644
 --- a/arch/powerpc/net/bpf_jit.h
 +++ b/arch/powerpc/net/bpf_jit.h
 @@ -51,8 +51,16 @@
@@ -363,7 +363,7 @@ index 6beacaec63d3..4c26912c2e3c 100644
  
  #ifndef CONFIG_PPC_KERNEL_PCREL
 diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
-index 2991bb171a9b..c0684733e9d6 100644
+index 2991bb171a9bb..c0684733e9d6a 100644
 --- a/arch/powerpc/net/bpf_jit_comp.c
 +++ b/arch/powerpc/net/bpf_jit_comp.c
 @@ -504,10 +504,11 @@ static int invoke_bpf_prog(u32 *image, u32 *ro_image, struct codegen_context *ct
@@ -430,7 +430,7 @@ index 2991bb171a9b..c0684733e9d6 100644
  }
  
 diff --git a/arch/powerpc/net/bpf_jit_comp32.c b/arch/powerpc/net/bpf_jit_comp32.c
-index c4db278dae36..0aace304dfe1 100644
+index c4db278dae360..0aace304dfe19 100644
 --- a/arch/powerpc/net/bpf_jit_comp32.c
 +++ b/arch/powerpc/net/bpf_jit_comp32.c
 @@ -313,7 +313,6 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
@@ -456,7 +456,7 @@ index c4db278dae36..0aace304dfe1 100644
  			addrs[++i] = ctx->idx * 4;
  			break;
 diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-index 233703b06d7c..5daa77aee7f7 100644
+index 233703b06d7c9..5daa77aee7f72 100644
 --- a/arch/powerpc/net/bpf_jit_comp64.c
 +++ b/arch/powerpc/net/bpf_jit_comp64.c
 @@ -227,7 +227,14 @@ int bpf_jit_emit_func_call_rel(u32 *image, u32 *fimage, struct codegen_context *
@@ -497,7 +497,7 @@ index 233703b06d7c..5daa77aee7f7 100644
  			addrs[++i] = ctx->idx * 4;
  			break;
 diff --git a/arch/s390/include/asm/ipl.h b/arch/s390/include/asm/ipl.h
-index b0d00032479d..afb9544fb007 100644
+index b0d00032479d6..afb9544fb0074 100644
 --- a/arch/s390/include/asm/ipl.h
 +++ b/arch/s390/include/asm/ipl.h
 @@ -139,6 +139,7 @@ int ipl_report_add_component(struct ipl_report *report, struct kexec_buf *kbuf,
@@ -509,7 +509,7 @@ index b0d00032479d..afb9544fb007 100644
  /*
   * DIAG 308 support
 diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index 69be2309cde0..1d85c99be81b 100644
+index 69be2309cde00..1d85c99be81be 100644
 --- a/arch/s390/kernel/ipl.c
 +++ b/arch/s390/kernel/ipl.c
 @@ -2497,3 +2497,8 @@ int ipl_report_free(struct ipl_report *report)
@@ -522,7 +522,7 @@ index 69be2309cde0..1d85c99be81b 100644
 +	return !!ipl_secure_flag;
 +}
 diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index d78bcfe707b5..f3a71214a211 100644
+index d78bcfe707b51..f3a71214a2118 100644
 --- a/arch/s390/kernel/setup.c
 +++ b/arch/s390/kernel/setup.c
 @@ -49,6 +49,7 @@
@@ -544,7 +544,7 @@ index d78bcfe707b5..f3a71214a211 100644
  	/* boot_command_line has been already set up in early.c */
  	*cmdline_p = boot_command_line;
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index cebee310e200..8d015c5faf59 100644
+index cebee310e2009..8d015c5faf59a 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
 @@ -21,6 +21,7 @@
@@ -591,7 +591,7 @@ index cebee310e200..8d015c5faf59 100644
  	reserve_initrd();
  
 diff --git a/arch/x86/tools/insn_decoder_test.c b/arch/x86/tools/insn_decoder_test.c
-index 472540aeabc2..366e07546344 100644
+index 472540aeabc23..366e07546344b 100644
 --- a/arch/x86/tools/insn_decoder_test.c
 +++ b/arch/x86/tools/insn_decoder_test.c
 @@ -106,7 +106,7 @@ static void parse_args(int argc, char **argv)
@@ -604,7 +604,7 @@ index 472540aeabc2..366e07546344 100644
  int main(int argc, char **argv)
  {
 diff --git a/crypto/akcipher.c b/crypto/akcipher.c
-index 72c82d9aa077..da1ac5de8252 100644
+index 72c82d9aa0778..da1ac5de8252d 100644
 --- a/crypto/akcipher.c
 +++ b/crypto/akcipher.c
 @@ -141,8 +141,7 @@ int crypto_register_akcipher(struct akcipher_alg *alg)
@@ -618,7 +618,7 @@ index 72c82d9aa077..da1ac5de8252 100644
  		alg->set_priv_key = akcipher_default_set_key;
  
 diff --git a/crypto/dh.c b/crypto/dh.c
-index afc0fd847761..e13258c3d1d1 100644
+index afc0fd8477613..e13258c3d1d1a 100644
 --- a/crypto/dh.c
 +++ b/crypto/dh.c
 @@ -227,10 +227,35 @@ static int dh_compute_value(struct kpp_request *req)
@@ -658,7 +658,7 @@ index afc0fd847761..e13258c3d1d1 100644
  	}
  
 diff --git a/crypto/seqiv.c b/crypto/seqiv.c
-index 17e11d51ddc3..9c136a3b6267 100644
+index 17e11d51ddc36..9c136a3b62679 100644
 --- a/crypto/seqiv.c
 +++ b/crypto/seqiv.c
 @@ -132,6 +132,19 @@ static int seqiv_aead_decrypt(struct aead_request *req)
@@ -691,7 +691,7 @@ index 17e11d51ddc3..9c136a3b6267 100644
  
  	inst->alg.base.cra_ctxsize = sizeof(struct aead_geniv_ctx);
 diff --git a/crypto/sig.c b/crypto/sig.c
-index dfc7cae90802..2a58d726149d 100644
+index dfc7cae908028..2a58d726149db 100644
 --- a/crypto/sig.c
 +++ b/crypto/sig.c
 @@ -106,8 +106,7 @@ static int sig_prepare_alg(struct sig_alg *alg)
@@ -705,7 +705,7 @@ index dfc7cae90802..2a58d726149d 100644
  		alg->verify = sig_default_verify;
  	if (!alg->set_priv_key)
 diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index e61490ba4095..d24a50804349 100644
+index e61490ba40958..d24a508043490 100644
 --- a/crypto/testmgr.c
 +++ b/crypto/testmgr.c
 @@ -4189,7 +4189,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
@@ -742,7 +742,7 @@ index e61490ba4095..d24a50804349 100644
  			.kpp = __VECS(ecdh_p384_tv_template)
  		}
 diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-index 20d757687e3d..90a13f20f052 100644
+index 20d757687e3d9..90a13f20f052b 100644
 --- a/drivers/acpi/apei/hest.c
 +++ b/drivers/acpi/apei/hest.c
 @@ -142,6 +142,14 @@ static int apei_hest_parse(apei_hest_func_t func, void *data)
@@ -761,7 +761,7 @@ index 20d757687e3d..90a13f20f052 100644
  	for (i = 0; i < hest_tab->error_source_count; i++) {
  		len = hest_esrc_len(hest_hdr);
 diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
-index 1687483ff319..390b67f19181 100644
+index 1687483ff319e..390b67f19181a 100644
 --- a/drivers/acpi/irq.c
 +++ b/drivers/acpi/irq.c
 @@ -143,6 +143,7 @@ struct acpi_irq_parse_one_ctx {
@@ -804,7 +804,7 @@ index 1687483ff319..390b67f19181 100644
  	return ctx.rc;
  }
 diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 9f4efa8f75a6..b7d9f1e31c8f 100644
+index 9f4efa8f75a61..b7d9f1e31c8f6 100644
 --- a/drivers/acpi/scan.c
 +++ b/drivers/acpi/scan.c
 @@ -1801,6 +1801,15 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
@@ -824,7 +824,7 @@ index 9f4efa8f75a6..b7d9f1e31c8f 100644
  	acpi_dev_get_resources(device, &resource_list,
  			       acpi_check_serial_bus_slave,
 diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-index 22afa4ff860d..78eacccaa1ae 100644
+index 22afa4ff860d1..78eacccaa1ae8 100644
 --- a/drivers/ata/libahci.c
 +++ b/drivers/ata/libahci.c
 @@ -730,6 +730,24 @@ int ahci_stop_engine(struct ata_port *ap)
@@ -853,7 +853,7 @@ index 22afa4ff860d..78eacccaa1ae 100644
  	tmp = ata_wait_register(ap, port_mmio + PORT_CMD,
  				PORT_CMD_LIST_ON, PORT_CMD_LIST_ON, 1, 500);
 diff --git a/drivers/char/ipmi/ipmi_dmi.c b/drivers/char/ipmi/ipmi_dmi.c
-index bbf7029e224b..cf7faa970dd6 100644
+index bbf7029e224be..cf7faa970dd65 100644
 --- a/drivers/char/ipmi/ipmi_dmi.c
 +++ b/drivers/char/ipmi/ipmi_dmi.c
 @@ -215,6 +215,21 @@ static int __init scan_for_dmi_ipmi(void)
@@ -879,7 +879,7 @@ index bbf7029e224b..cf7faa970dd6 100644
  		dmi_decode_ipmi((const struct dmi_header *) dev->device_data);
  
 diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 1e5313748f8b..f2a56c624f54 100644
+index 1e5313748f8b5..f2a56c624f541 100644
 --- a/drivers/char/ipmi/ipmi_msghandler.c
 +++ b/drivers/char/ipmi/ipmi_msghandler.c
 @@ -35,6 +35,7 @@
@@ -914,7 +914,7 @@ index 1e5313748f8b..f2a56c624f54 100644
  	rv = ipmi_register_driver();
  	mutex_unlock(&ipmi_interfaces_mutex);
 diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index a2d0009560d0..4f3486e6a84b 100644
+index a2d0009560d0f..4f3486e6a84b2 100644
 --- a/drivers/firmware/efi/Makefile
 +++ b/drivers/firmware/efi/Makefile
 @@ -25,6 +25,7 @@ subdir-$(CONFIG_EFI_STUB)		+= libstub
@@ -926,7 +926,7 @@ index a2d0009560d0..4f3486e6a84b 100644
  obj-$(CONFIG_EFI_RCI2_TABLE)		+= rci2-table.o
  obj-$(CONFIG_EFI_EMBEDDED_FIRMWARE)	+= embedded-firmware.o
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 7309394b8fc9..d9f7cbba5769 100644
+index 7309394b8fc98..d9f7cbba5769d 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
 @@ -33,6 +33,7 @@
@@ -1072,7 +1072,7 @@ index 7309394b8fc9..d9f7cbba5769 100644
  
 diff --git a/drivers/firmware/efi/secureboot.c b/drivers/firmware/efi/secureboot.c
 new file mode 100644
-index 000000000000..de0a3714a5d4
+index 0000000000000..de0a3714a5d44
 --- /dev/null
 +++ b/drivers/firmware/efi/secureboot.c
 @@ -0,0 +1,38 @@
@@ -1115,7 +1115,7 @@ index 000000000000..de0a3714a5d4
 +	}
 +}
 diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 1a7bfc548d70..4801dcde2cb3 100644
+index 1a7bfc548d702..4801dcde2cb3e 100644
 --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 @@ -670,21 +670,15 @@ static void dm_crtc_high_irq(void *interrupt_params)
@@ -1146,7 +1146,7 @@ index 1a7bfc548d70..4801dcde2cb3 100644
  
  	/*
 diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-index 612e9b0ec14a..3e014afaee08 100644
+index 612e9b0ec14ab..3e014afaee087 100644
 --- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
 +++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
 @@ -1130,7 +1130,7 @@ intel_prepare_plane_fb(struct drm_plane *_plane,
@@ -1159,7 +1159,7 @@ index 612e9b0ec14a..3e014afaee08 100644
  		return ret;
  
 diff --git a/drivers/gpu/drm/i915/display/intel_cursor.c b/drivers/gpu/drm/i915/display/intel_cursor.c
-index 57cf8f46a458..ae7243ad6e0c 100644
+index 57cf8f46a4589..ae7243ad6e0ca 100644
 --- a/drivers/gpu/drm/i915/display/intel_cursor.c
 +++ b/drivers/gpu/drm/i915/display/intel_cursor.c
 @@ -865,7 +865,7 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
@@ -1172,7 +1172,7 @@ index 57cf8f46a458..ae7243ad6e0c 100644
  		goto out_free;
  
 diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.c b/drivers/gpu/drm/i915/display/intel_fb_pin.c
-index d3a86f9c6bc8..dd3ac7f98dfc 100644
+index d3a86f9c6bc86..dd3ac7f98dfcc 100644
 --- a/drivers/gpu/drm/i915/display/intel_fb_pin.c
 +++ b/drivers/gpu/drm/i915/display/intel_fb_pin.c
 @@ -252,7 +252,8 @@ intel_plane_fb_min_phys_alignment(const struct intel_plane_state *plane_state)
@@ -1186,7 +1186,7 @@ index d3a86f9c6bc8..dd3ac7f98dfc 100644
  	struct intel_plane *plane = to_intel_plane(plane_state->uapi.plane);
  	const struct intel_framebuffer *fb =
 diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.h b/drivers/gpu/drm/i915/display/intel_fb_pin.h
-index ac0319b53af0..0fc6d9044638 100644
+index ac0319b53af08..0fc6d90446381 100644
 --- a/drivers/gpu/drm/i915/display/intel_fb_pin.h
 +++ b/drivers/gpu/drm/i915/display/intel_fb_pin.h
 @@ -23,7 +23,8 @@ intel_fb_pin_to_ggtt(const struct drm_framebuffer *fb,
@@ -1200,7 +1200,7 @@ index ac0319b53af0..0fc6d9044638 100644
  
  #endif
 diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 00852ff5b247..6c0808133397 100644
+index 00852ff5b2470..6c08081333976 100644
 --- a/drivers/gpu/drm/i915/display/intel_fbdev.c
 +++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
 @@ -695,3 +695,8 @@ struct intel_framebuffer *intel_fbdev_framebuffer(struct intel_fbdev *fbdev)
@@ -1213,7 +1213,7 @@ index 00852ff5b247..6c0808133397 100644
 +	return fbdev ? fbdev->vma : NULL;
 +}
 diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.h b/drivers/gpu/drm/i915/display/intel_fbdev.h
-index 08de2d5b3433..24a3434558cb 100644
+index 08de2d5b34338..24a3434558cb6 100644
 --- a/drivers/gpu/drm/i915/display/intel_fbdev.h
 +++ b/drivers/gpu/drm/i915/display/intel_fbdev.h
 @@ -17,6 +17,8 @@ struct intel_framebuffer;
@@ -1239,7 +1239,7 @@ index 08de2d5b3433..24a3434558cb 100644
  
  #endif /* __INTEL_FBDEV_H__ */
 diff --git a/drivers/gpu/drm/xe/compat-i915-headers/i915_vma.h b/drivers/gpu/drm/xe/compat-i915-headers/i915_vma.h
-index bdae8392e125..4465c40f8134 100644
+index bdae8392e1253..4465c40f81341 100644
 --- a/drivers/gpu/drm/xe/compat-i915-headers/i915_vma.h
 +++ b/drivers/gpu/drm/xe/compat-i915-headers/i915_vma.h
 @@ -10,6 +10,8 @@
@@ -1260,7 +1260,7 @@ index bdae8392e125..4465c40f8134 100644
  	struct xe_ggtt_node *node;
  };
 diff --git a/drivers/gpu/drm/xe/display/xe_fb_pin.c b/drivers/gpu/drm/xe/display/xe_fb_pin.c
-index 9fa51b84737c..25ce032bb293 100644
+index 9fa51b84737ca..25ce032bb293f 100644
 --- a/drivers/gpu/drm/xe/display/xe_fb_pin.c
 +++ b/drivers/gpu/drm/xe/display/xe_fb_pin.c
 @@ -9,6 +9,7 @@
@@ -1354,7 +1354,7 @@ index 9fa51b84737c..25ce032bb293 100644
  }
  
 diff --git a/drivers/hid/hid-rmi.c b/drivers/hid/hid-rmi.c
-index d4af17fdba46..154f0403cbf4 100644
+index d4af17fdba467..154f0403cbf4c 100644
 --- a/drivers/hid/hid-rmi.c
 +++ b/drivers/hid/hid-rmi.c
 @@ -321,21 +321,12 @@ static int rmi_input_event(struct hid_device *hdev, u8 *data, int size)
@@ -1456,7 +1456,7 @@ index d4af17fdba46..154f0403cbf4 100644
  	data->xport.ops = &hid_rmi_ops;
  
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 5bda265d0234..25fd94e40bb6 100644
+index 5bda265d02340..25fd94e40bb6a 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
 @@ -11,6 +11,7 @@
@@ -1507,7 +1507,7 @@ index 5bda265d0234..25fd94e40bb6 100644
  	platform_driver_unregister(&etm4_platform_driver);
  	etm4_pm_clear();
 diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index 2168b6cd7167..5d7cda175a0c 100644
+index 2168b6cd71673..5d7cda175a0ce 100644
 --- a/drivers/input/rmi4/rmi_driver.c
 +++ b/drivers/input/rmi4/rmi_driver.c
 @@ -182,34 +182,47 @@ void rmi_set_attn_data(struct rmi_device *rmi_dev, unsigned long irq_status,
@@ -1699,7 +1699,7 @@ index 2168b6cd7167..5d7cda175a0c 100644
  	if (data->f01_container->dev.driver) {
  		/* Driver already bound, so enable ATTN now. */
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 3a2804a98203..9c9bba8176b4 100644
+index 6e59b2c4c39b7..dfd12ec3f6e47 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
 @@ -8,6 +8,7 @@
@@ -1710,7 +1710,7 @@ index 3a2804a98203..9c9bba8176b4 100644
  #include <linux/kernel.h>
  #include <linux/bits.h>
  #include <linux/bug.h>
-@@ -2912,6 +2913,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
+@@ -2922,6 +2923,27 @@ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
  }
  EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
  
@@ -1739,7 +1739,7 @@ index 3a2804a98203..9c9bba8176b4 100644
   * iommu_setup_default_domain - Set the default_domain for the group
   * @group: Group to change
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 85ecb2aeefdb..d34910feaed7 100644
+index 85ecb2aeefdbf..d34910feaed74 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -356,6 +356,26 @@ config VIDEO_OV02A10
@@ -1770,7 +1770,7 @@ index 85ecb2aeefdb..d34910feaed7 100644
          tristate "OmniVision OV08D10 sensor support"
          help
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index fbb988bd067a..bf35fd1707b7 100644
+index fbb988bd067a1..bf35fd1707b7b 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
 @@ -82,6 +82,8 @@ obj-$(CONFIG_VIDEO_MT9V111) += mt9v111.o
@@ -1784,7 +1784,7 @@ index fbb988bd067a..bf35fd1707b7 100644
  obj-$(CONFIG_VIDEO_OV13858) += ov13858.o
 diff --git a/drivers/media/i2c/ov02c10.c b/drivers/media/i2c/ov02c10.c
 new file mode 100644
-index 000000000000..9e3d4a4e12ce
+index 0000000000000..9e3d4a4e12ced
 --- /dev/null
 +++ b/drivers/media/i2c/ov02c10.c
 @@ -0,0 +1,1013 @@
@@ -2803,7 +2803,7 @@ index 000000000000..9e3d4a4e12ce
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/media/i2c/ov02e10.c b/drivers/media/i2c/ov02e10.c
 new file mode 100644
-index 000000000000..d74dc62e189d
+index 0000000000000..d74dc62e189db
 --- /dev/null
 +++ b/drivers/media/i2c/ov02e10.c
 @@ -0,0 +1,969 @@
@@ -3777,7 +3777,7 @@ index 000000000000..d74dc62e189d
 +MODULE_DESCRIPTION("OmniVision OV02E10 sensor driver");
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
-index 625fbcd39068..54575eea3c49 100644
+index 625fbcd39068e..54575eea3c490 100644
 --- a/drivers/media/i2c/ov08x40.c
 +++ b/drivers/media/i2c/ov08x40.c
 @@ -1322,9 +1322,6 @@ static int ov08x40_power_on(struct device *dev)
@@ -3999,7 +3999,7 @@ index 625fbcd39068..54575eea3c49 100644
  
  	/* Set default mode to max resolution */
 diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 82b21e34c545..0cf24ba613a2 100644
+index 82b21e34c545e..0cf24ba613a21 100644
 --- a/drivers/pci/quirks.c
 +++ b/drivers/pci/quirks.c
 @@ -4452,6 +4452,30 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_BROADCOM, 0x9000,
@@ -4034,7 +4034,7 @@ index 82b21e34c545..0cf24ba613a2 100644
   * Intersil/Techwell TW686[4589]-based video capture cards have an empty (zero)
   * class code.  Fix it.
 diff --git a/drivers/platform/x86/intel/int3472/Makefile b/drivers/platform/x86/intel/int3472/Makefile
-index a8aba07bf1dc..103661e6685d 100644
+index a8aba07bf1dc2..103661e6685d0 100644
 --- a/drivers/platform/x86/intel/int3472/Makefile
 +++ b/drivers/platform/x86/intel/int3472/Makefile
 @@ -1,7 +1,8 @@
@@ -4048,7 +4048,7 @@ index a8aba07bf1dc..103661e6685d 100644
  
  intel_skl_int3472_common-y		+= common.o
 diff --git a/drivers/platform/x86/intel/int3472/clk_and_regulator.c b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
-index 16e36ac0a7b4..c85cbfbc16c1 100644
+index 16e36ac0a7b45..c85cbfbc16c18 100644
 --- a/drivers/platform/x86/intel/int3472/clk_and_regulator.c
 +++ b/drivers/platform/x86/intel/int3472/clk_and_regulator.c
 @@ -5,7 +5,6 @@
@@ -4286,7 +4286,7 @@ index 16e36ac0a7b4..c85cbfbc16c1 100644
 +		regulator_unregister(int3472->regulators[i].rdev);
  }
 diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
-index 145dec66df64..51b818e62a25 100644
+index 145dec66df64a..51b818e62a252 100644
 --- a/drivers/platform/x86/intel/int3472/common.h
 +++ b/drivers/platform/x86/intel/int3472/common.h
 @@ -22,25 +22,39 @@
@@ -4409,7 +4409,7 @@ index 145dec66df64..51b818e62a25 100644
  
  int skl_int3472_register_pled(struct int3472_discrete_device *int3472, struct gpio_desc *gpio);
 diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
-index 092252eb95a8..394975f55d64 100644
+index 092252eb95a87..394975f55d645 100644
 --- a/drivers/platform/x86/intel/int3472/discrete.c
 +++ b/drivers/platform/x86/intel/int3472/discrete.c
 @@ -5,6 +5,7 @@
@@ -4666,7 +4666,7 @@ index 092252eb95a8..394975f55d64 100644
  	if (ret)
 diff --git a/drivers/platform/x86/intel/int3472/discrete_quirks.c b/drivers/platform/x86/intel/int3472/discrete_quirks.c
 new file mode 100644
-index 000000000000..bf88863803b2
+index 0000000000000..bf88863803b2c
 --- /dev/null
 +++ b/drivers/platform/x86/intel/int3472/discrete_quirks.c
 @@ -0,0 +1,22 @@
@@ -4693,7 +4693,7 @@ index 000000000000..bf88863803b2
 +	{ }
 +};
 diff --git a/drivers/platform/x86/intel/pmc/adl.c b/drivers/platform/x86/intel/pmc/adl.c
-index e7878558fd90..de361a316d51 100644
+index e7878558fd909..de361a316d51d 100644
 --- a/drivers/platform/x86/intel/pmc/adl.c
 +++ b/drivers/platform/x86/intel/pmc/adl.c
 @@ -311,20 +311,8 @@ const struct pmc_reg_map adl_reg_map = {
@@ -4723,7 +4723,7 @@ index e7878558fd90..de361a316d51 100644
 +	.resume = cnl_resume,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
-index 05dec4f5019f..54b0e8e56de9 100644
+index 05dec4f5019f3..54b0e8e56de92 100644
 --- a/drivers/platform/x86/intel/pmc/arl.c
 +++ b/drivers/platform/x86/intel/pmc/arl.c
 @@ -16,6 +16,7 @@
@@ -4848,7 +4848,7 @@ index 05dec4f5019f..54b0e8e56de9 100644
 +	.init = arl_h_core_init,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
-index fc5193fdf8a8..f147ec51c7fd 100644
+index fc5193fdf8a88..f147ec51c7fd0 100644
 --- a/drivers/platform/x86/intel/pmc/cnp.c
 +++ b/drivers/platform/x86/intel/pmc/cnp.c
 @@ -274,20 +274,9 @@ int cnl_resume(struct pmc_dev *pmcdev)
@@ -4878,7 +4878,7 @@ index fc5193fdf8a8..f147ec51c7fd 100644
 -	return 0;
 -}
 diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 1ee0fb5f8250..28e0c09dd599 100644
+index 1ee0fb5f8250b..28e0c09dd599a 100644
 --- a/drivers/platform/x86/intel/pmc/core.c
 +++ b/drivers/platform/x86/intel/pmc/core.c
 @@ -1345,40 +1345,79 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
@@ -5031,7 +5031,7 @@ index 1ee0fb5f8250..28e0c09dd599 100644
  		pmc_core_clean_structure(pdev);
  		return ret;
 diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index b9d3291d0bf2..987fde3ffc1c 100644
+index b9d3291d0bf2c..987fde3ffc1ce 100644
 --- a/drivers/platform/x86/intel/pmc/core.h
 +++ b/drivers/platform/x86/intel/pmc/core.h
 @@ -430,12 +430,34 @@ struct pmc_dev {
@@ -5100,7 +5100,7 @@ index b9d3291d0bf2..987fde3ffc1c 100644
  void cnl_suspend(struct pmc_dev *pmcdev);
  int cnl_resume(struct pmc_dev *pmcdev);
 diff --git a/drivers/platform/x86/intel/pmc/icl.c b/drivers/platform/x86/intel/pmc/icl.c
-index 71b0fd6cb7d8..6952c8ef58a0 100644
+index 71b0fd6cb7d84..6952c8ef58a01 100644
 --- a/drivers/platform/x86/intel/pmc/icl.c
 +++ b/drivers/platform/x86/intel/pmc/icl.c
 @@ -50,18 +50,6 @@ const struct pmc_reg_map icl_reg_map = {
@@ -5126,7 +5126,7 @@ index 71b0fd6cb7d8..6952c8ef58a0 100644
 +	.map = &icl_reg_map,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
-index be029f12cdf4..5a78807b9bc2 100644
+index be029f12cdf40..5a78807b9bc25 100644
 --- a/drivers/platform/x86/intel/pmc/lnl.c
 +++ b/drivers/platform/x86/intel/pmc/lnl.c
 @@ -550,22 +550,15 @@ static int lnl_resume(struct pmc_dev *pmcdev)
@@ -5162,7 +5162,7 @@ index be029f12cdf4..5a78807b9bc2 100644
 +	.init = lnl_core_init,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
-index 02949fed76e9..705b7e1b0b86 100644
+index 02949fed76e91..705b7e1b0b865 100644
 --- a/drivers/platform/x86/intel/pmc/mtl.c
 +++ b/drivers/platform/x86/intel/pmc/mtl.c
 @@ -990,39 +990,18 @@ static int mtl_resume(struct pmc_dev *pmcdev)
@@ -5218,7 +5218,7 @@ index 02949fed76e9..705b7e1b0b86 100644
 +	.init = mtl_core_init,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
-index ab993a69e33e..9289cd76b014 100644
+index ab993a69e33ee..9289cd76b0145 100644
 --- a/drivers/platform/x86/intel/pmc/spt.c
 +++ b/drivers/platform/x86/intel/pmc/spt.c
 @@ -8,6 +8,8 @@
@@ -5269,7 +5269,7 @@ index ab993a69e33e..9289cd76b014 100644
 +	.init = spt_core_init,
 +};
 diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
-index e0580de18077..758bd8d162e5 100644
+index e0580de180773..758bd8d162e59 100644
 --- a/drivers/platform/x86/intel/pmc/tgl.c
 +++ b/drivers/platform/x86/intel/pmc/tgl.c
 @@ -285,35 +285,28 @@ void pmc_core_get_tgl_lpm_reqs(struct platform_device *pdev)
@@ -5325,7 +5325,7 @@ index e0580de18077..758bd8d162e5 100644
 +	.init = tgl_core_init,
 +};
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 950d8c9fb884..77ac6f8c1805 100644
+index 950d8c9fb8843..77ac6f8c18054 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
 @@ -121,6 +121,14 @@ static const char *sd_cache_types[] = {
@@ -5353,7 +5353,7 @@ index 950d8c9fb884..77ac6f8c1805 100644
  	if (err)
  		goto err_out_driver;
 diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index dcba4281ea48..bb82bf5148b0 100644
+index dcba4281ea486..bb82bf5148b00 100644
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
 @@ -5856,6 +5856,13 @@ static void hub_event(struct work_struct *work)
@@ -5371,7 +5371,7 @@ index dcba4281ea48..bb82bf5148b0 100644
  	 * disconnected while waiting for the lock to succeed. */
  	usb_lock_device(hdev);
 diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-index b164da5e129e..72bfb79b491d 100644
+index b164da5e129e8..72bfb79b491da 100644
 --- a/include/linux/crypto.h
 +++ b/include/linux/crypto.h
 @@ -134,6 +134,8 @@
@@ -5384,7 +5384,7 @@ index b164da5e129e..72bfb79b491d 100644
   * Miscellaneous stuff.
   */
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 7d63d1d75f22..c7481fdedbdd 100644
+index 7d63d1d75f22f..c7481fdedbddb 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
 @@ -45,6 +45,8 @@ struct screen_info;
@@ -5452,7 +5452,7 @@ index 7d63d1d75f22..c7481fdedbdd 100644
  enum efi_secureboot_mode efi_get_secureboot_mode(efi_get_variable_t *get_var)
  {
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41e..3fe30fcc506c 100644
+index e2f1ce37c41ef..3fe30fcc506c4 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
 @@ -444,6 +444,7 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
@@ -5464,7 +5464,7 @@ index e2f1ce37c41e..3fe30fcc506c 100644
  LSM_HOOK(int, 0, perf_event_open, struct perf_event_attr *attr, int type)
  LSM_HOOK(int, 0, perf_event_alloc, struct perf_event *event)
 diff --git a/include/linux/rmi.h b/include/linux/rmi.h
-index ab7eea01ab42..fff7c5f737fc 100644
+index ab7eea01ab427..fff7c5f737fc8 100644
 --- a/include/linux/rmi.h
 +++ b/include/linux/rmi.h
 @@ -364,6 +364,7 @@ struct rmi_driver_data {
@@ -5476,7 +5476,7 @@ index ab7eea01ab42..fff7c5f737fc 100644
  
  int rmi_register_transport_device(struct rmi_transport_dev *xport);
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..a0f0b41d7dcc 100644
+index 980b6c207cade..a0f0b41d7dcca 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
 @@ -2386,4 +2386,13 @@ static inline void security_initramfs_populated(void)
@@ -5494,7 +5494,7 @@ index 980b6c207cad..a0f0b41d7dcc 100644
 +
  #endif /* ! __LINUX_SECURITY_H */
 diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index a2ff4242e623..f0d2be1ee4f1 100644
+index a2ff4242e623d..f0d2be1ee4f1c 100644
 --- a/kernel/module/signing.c
 +++ b/kernel/module/signing.c
 @@ -61,10 +61,17 @@ int mod_verify_sig(const void *mod, struct load_info *info)
@@ -5517,7 +5517,7 @@ index a2ff4242e623..f0d2be1ee4f1 100644
  
  int module_sig_check(struct load_info *info, int flags)
 diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index 5652d9035232..904300ab9b04 100644
+index 5652d90352320..904300ab9b042 100644
 --- a/scripts/Makefile.extrawarn
 +++ b/scripts/Makefile.extrawarn
 @@ -21,6 +21,10 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
@@ -5532,7 +5532,7 @@ index 5652d9035232..904300ab9b04 100644
  KBUILD_CFLAGS += -Wframe-larger-than=$(CONFIG_FRAME_WARN)
  endif
 diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 45eaf35f5bff..8cd9b8bbadc0 100755
+index 45eaf35f5bff8..8cd9b8bbadc0b 100755
 --- a/scripts/tags.sh
 +++ b/scripts/tags.sh
 @@ -16,6 +16,8 @@ fi
@@ -5545,7 +5545,7 @@ index 45eaf35f5bff..8cd9b8bbadc0 100755
  # ignore arbitrary directories
  if [ -n "${IGNORE_DIRS}" ]; then
 diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..182e8090cfe8 100644
+index d1fdd113450a6..182e8090cfe85 100644
 --- a/security/integrity/platform_certs/load_uefi.c
 +++ b/security/integrity/platform_certs/load_uefi.c
 @@ -74,7 +74,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
@@ -5569,7 +5569,7 @@ index d1fdd113450a..182e8090cfe8 100644
  	}
  
 diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-index e84ddf484010..d0501353a4b9 100644
+index e84ddf4840101..d0501353a4b95 100644
 --- a/security/lockdown/Kconfig
 +++ b/security/lockdown/Kconfig
 @@ -16,6 +16,19 @@ config SECURITY_LOCKDOWN_LSM_EARLY
@@ -5593,7 +5593,7 @@ index e84ddf484010..d0501353a4b9 100644
  	prompt "Kernel default lockdown mode"
  	default LOCK_DOWN_KERNEL_FORCE_NONE
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index cf83afa1d879..aba751e7abff 100644
+index cf83afa1d879a..aba751e7abffe 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
 @@ -72,6 +72,17 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
