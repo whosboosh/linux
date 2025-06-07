@@ -158,7 +158,7 @@ Summary: The Linux kernel
 #  to build the base kernel using the debug configuration. (Specifying
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
-# define buildid .local
+%define buildid .vfio
 %define specrpmversion 6.14.10
 %define specversion 6.14.10
 %define patchversion 6.14
@@ -312,8 +312,6 @@ Summary: The Linux kernel
 
 %if %{with_verbose}
 %define make_opts V=1
-%else
-%define make_opts -s
 %endif
 
 %if %{with toolchain_clang}
@@ -846,29 +844,6 @@ BuildRequires: clang
 %if %{with clang_lto}
 BuildRequires: llvm
 BuildRequires: lld
-%endif
-
-%if %{with_efiuki}
-BuildRequires: dracut
-# For dracut UEFI uki binaries
-BuildRequires: binutils
-# For the initrd
-BuildRequires: lvm2
-BuildRequires: systemd-boot-unsigned
-# For systemd-stub and systemd-pcrphase
-BuildRequires: systemd-udev >= 252-1
-# For UKI kernel cmdline addons
-BuildRequires: systemd-ukify
-# For TPM operations in UKI initramfs
-BuildRequires: tpm2-tools
-# For UKI sb cert
-%if 0%{?rhel}%{?centos} && !0%{?eln}
-%if 0%{?centos}
-BuildRequires: centos-sb-certs >= 9.0-23
-%else
-BuildRequires: redhat-sb-certs >= 9.4-0.1
-%endif
-%endif
 %endif
 
 # Because this is the kernel, it's hard to get a single upstream URL
@@ -2123,7 +2098,7 @@ cp_vmlinux()
 %define build_hostldflags %{?build_ldflags}
 %endif
 
-%define make %{__make} %{?cross_opts} %{?make_opts} HOSTCFLAGS="%{?build_hostcflags}" HOSTLDFLAGS="%{?build_hostldflags}"
+%define make %{__make} -j16 %{?cross_opts} %{?make_opts} HOSTCFLAGS="%{?build_hostcflags}" HOSTLDFLAGS="%{?build_hostldflags}"
 
 InitBuildVars() {
     %{log_msg "InitBuildVars for $1"}

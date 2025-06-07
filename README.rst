@@ -1,3 +1,10 @@
+## Building
+1. checkout the latest "fedora" stream e.g. f42
+2. Pull the sources and build an SRPM `fedpkg srpm`
+3. Extract the SRPM `rpmbuild -Uvh <name>`
+4. Build, my preference `time rpmbuild -bb -D 'without_efiuki 0' --without debuginfo --with baseonly --target=x86_64 kernel.spec 2>&1 | tee rpm-out`
+
+
 ===================
 The Kernel dist-git
 ===================

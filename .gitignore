@@ -1,2 +1,6 @@
 *.xz
 *.bz2
+x86_64
+kernel-\*
+x86\*
+kernel*
